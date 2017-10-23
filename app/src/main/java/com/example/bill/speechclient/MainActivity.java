@@ -55,8 +55,6 @@ public class MainActivity extends Activity implements RecognitionListener {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,3);
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,10000);
-       CallWit callWit = new CallWit();
-        callWit.execute(adress);
         record();
     }
 
@@ -136,9 +134,9 @@ public class MainActivity extends Activity implements RecognitionListener {
     @Override
     public void onResults(Bundle results) {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
-
         response.setText(matches.get(0));
+        CallWit callWit = new CallWit;
+        callWit.execute(adress,matches.get(0));
 
     }
 
