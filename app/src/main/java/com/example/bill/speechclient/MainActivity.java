@@ -33,6 +33,8 @@ public class MainActivity extends Activity implements RecognitionListener {
     private ProgressBar progressBar;
     private SpeechRecognizer speechRecognizer;
     private Intent intent;
+    private static final String adress ="https://api.wit.ai/message?v=20171023&q=";
+
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,8 @@ public class MainActivity extends Activity implements RecognitionListener {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,3);
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,10000);
+       CallWit callWit = new CallWit();
+        callWit.execute(adress);
         record();
     }
 
