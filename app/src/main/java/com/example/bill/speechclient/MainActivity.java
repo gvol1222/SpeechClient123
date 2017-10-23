@@ -9,12 +9,9 @@ import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -135,7 +132,7 @@ public class MainActivity extends Activity implements RecognitionListener {
     public void onResults(Bundle results) {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         response.setText(matches.get(0));
-        CallWit callWit = new CallWit;
+        CallWit callWit = new CallWit();
         callWit.execute(adress,matches.get(0));
 
     }
