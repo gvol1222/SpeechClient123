@@ -1,5 +1,7 @@
 package com.example.bill.speechclient;
 
+
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -56,8 +58,8 @@ public class CallWit extends AsyncTask {
     protected Object doInBackground(Object[] objects) {
 
         String urlString = objects[0].toString();
+        String message  = objects[1].toString();
         String result = "";
-        message = "παιξε μου βίντεο με πιθηκους";
         BufferedReader in =null;
         HttpURLConnection connection;
         try {
