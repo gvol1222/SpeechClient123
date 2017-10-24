@@ -1,30 +1,30 @@
 package com.example.bill.speechclient;
 
 
-
+import com.example.bill.speechclient.youtube;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.telecom.Call;
 import android.util.Log;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
+
+import java.util.Map;
 
 /**
  * Created by bill on 10/23/17.
@@ -34,7 +34,6 @@ public class CallWit extends AsyncTask {
 
     private static final String accessToken ="Bearer 7L2SKE6KUZRVDNWSM7XWDNRS4UHUQM4S";
     private static final String header = "Authorization";
-    private String value,text;
     private Context activityCOntext;
 
 
@@ -54,14 +53,15 @@ public class CallWit extends AsyncTask {
     protected void onPostExecute(Object o) {
 
         super.onPostExecute(o);
-        value = CreateJson(o.toString());
-     Log.d("value!!!!!!!!",value);
-        Intent intent = new Intent(Intent.ACTION_SEARCH);
-        intent.setPackage("com.google.android.youtube");
-        intent.putExtra("query", value);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activityCOntext.startActivity(intent);
-
+        Map<String,String> fetchjson = CreateJson(o.toString());
+        String application = fetchjson.get("application");
+        String search = fetchjson.get("app_search");
+        Log.d("APPKind",application);
+        if (application=="Youtube")
+        {
+            youtube.get(activityCOntext, search);
+        }
+        
     }
 
     @Override
@@ -88,16 +88,11 @@ public class CallWit extends AsyncTask {
 
         try {
             messageencoded = URLEncoder.encode(message,"UTF-8");
-            //Log.d("BILLOG",messageencoded);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         String url = urlString +messageencoded;
         String result = GetResults(url);
-       // JSONObject json = CreateJson(result);
-        //Log.i("info:", value+"text: "+text);
-
-
         return result;
     }
 
@@ -151,21 +146,25 @@ public class CallWit extends AsyncTask {
 
     }
 
-    private String CreateJson(String result){
+    private Map<String, String> CreateJson(String result) {
         JSONObject jObject = null;
+        Map<String, String> features = null;
         try {
-             jObject = new JSONObject(result);
+            features = new HashMap<String, String>();
+            jObject = new JSONObject(result);
             jObject = jObject.getJSONObject("entities");
             JSONArray app_to_open = jObject.getJSONArray("app_to_open");
             JSONArray contact = jObject.getJSONArray("app_search_text");
-             value = contact.getJSONObject(0).getString("value");
-          //  Log.i("info:", value+"text: "+text);
+            String application = app_to_open.getJSONObject(0).getString("value");
+            String value = contact.getJSONObject(0).getString("value");
+            features.put("application", application);
+            features.put("app_search", value);
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return value;
+        return features;
     }
 
 
