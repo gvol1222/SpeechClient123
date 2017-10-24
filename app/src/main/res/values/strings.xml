@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SpeechClient</string>
+    <string name="text"></string>
 </resources>

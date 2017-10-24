@@ -2,10 +2,18 @@ package com.example.bill.speechclient;
 
 
 
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.util.Xml;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -26,10 +34,15 @@ public class CallWit extends AsyncTask {
 
     private static final String accessToken ="Bearer 7L2SKE6KUZRVDNWSM7XWDNRS4UHUQM4S";
     private static final String header = "Authorization";
-    private String message;
+    private String value,text;
+    private Context activityCOntext;
 
-    public CallWit() {
-        super();
+
+
+    public CallWit(Context activityCOntext)
+    {
+        this.activityCOntext = activityCOntext;
+
     }
 
     @Override
@@ -39,7 +52,16 @@ public class CallWit extends AsyncTask {
 
     @Override
     protected void onPostExecute(Object o) {
+
         super.onPostExecute(o);
+        value = CreateJson(o.toString());
+     Log.d("value!!!!!!!!",value);
+        Intent intent = new Intent(Intent.ACTION_SEARCH);
+        intent.setPackage("com.google.android.youtube");
+        intent.putExtra("query", value);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activityCOntext.startActivity(intent);
+
     }
 
     @Override
@@ -58,24 +80,36 @@ public class CallWit extends AsyncTask {
     }
 
     @Override
-    protected Object doInBackground(Object[] objects) {
+    protected String doInBackground(Object[] objects) {
 
         String urlString = objects[0].toString();
         String message  = objects[1].toString();
-
         String messageencoded  = null;
+
         try {
             messageencoded = URLEncoder.encode(message,"UTF-8");
-            Log.d("BILLOG",messageencoded);
+            //Log.d("BILLOG",messageencoded);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String result = "";
-        BufferedReader in =null;
+        String url = urlString +messageencoded;
+        String result = GetResults(url);
+       // JSONObject json = CreateJson(result);
+        //Log.i("info:", value+"text: "+text);
+
+
+        return result;
+    }
+
+    private String GetResults(String url){
         HttpURLConnection connection;
+        BufferedReader in =null;
+        String line = null;
+        String result = null;
+
         try {
-            URL url = new URL(urlString+messageencoded);
-            connection = (HttpURLConnection) url.openConnection();
+             URL urlWit = new URL(url);
+            connection = (HttpURLConnection) urlWit.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept","application/json");
             connection.setRequestProperty(header,accessToken);
@@ -91,14 +125,50 @@ public class CallWit extends AsyncTask {
         }
 
         try {
-            while ((result = in.readLine()) != null )
-                Log.i("info:",result);
+            StringBuilder sb = new StringBuilder();
+            while ((line = in.readLine()) != null ) {
+                sb.append(line+"\n");
+                Log.i("info:",sb.toString());
+
+
+            }
+            result = sb.toString();
             connection.disconnect();
 
         } catch (IOException e) {
             e.printStackTrace();
+
+        }finally {
+            try {
+                if(in!=null)
+                    in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return result;
+
     }
+
+    private String CreateJson(String result){
+        JSONObject jObject = null;
+        try {
+             jObject = new JSONObject(result);
+            jObject = jObject.getJSONObject("entities");
+            JSONArray app_to_open = jObject.getJSONArray("app_to_open");
+            JSONArray contact = jObject.getJSONArray("app_search_text");
+             value = contact.getJSONObject(0).getString("value");
+          //  Log.i("info:", value+"text: "+text);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+
+
+
 }

@@ -1,21 +1,31 @@
 package com.example.bill.speechclient;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -29,7 +39,10 @@ public class MainActivity extends Activity implements RecognitionListener {
     private ToggleButton btnIput;
     private ProgressBar progressBar;
     private SpeechRecognizer speechRecognizer;
-    private Intent intent;
+    private Intent intent, IntentCall;
+    CallWit callWit;
+    SharedPreferences sharedPref;
+    public String text;
     private static final String adress ="https://api.wit.ai/message?v=20171023&q=";
 
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
@@ -50,9 +63,14 @@ public class MainActivity extends Activity implements RecognitionListener {
         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,3);
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,10000);
+       // intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,3);
+       // intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,10000);
+
+      //  sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+       // callWit.setSharedPreferences(sharedPref);
+        //IntentCall = new Intent();
         record();
+
     }
 
     private void record(){
@@ -61,6 +79,7 @@ public class MainActivity extends Activity implements RecognitionListener {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 startRecord(b);
+
             }
         });
 
@@ -73,6 +92,8 @@ public class MainActivity extends Activity implements RecognitionListener {
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
             speechRecognizer.startListening(intent);
+            Log.d("changed", String.valueOf(b));
+
         }else {
             progressBar.setIndeterminate(false);
             progressBar.setVisibility(View.INVISIBLE);
@@ -87,8 +108,8 @@ public class MainActivity extends Activity implements RecognitionListener {
     @Override
     protected void onPause() {
         super.onPause();
-        if(speechRecognizer != null)
-            speechRecognizer.destroy();
+        //if(speechRecognizer != null)
+            //speechRecognizer.destroy();
     }
 
     @Override
@@ -105,6 +126,7 @@ public class MainActivity extends Activity implements RecognitionListener {
     public void onBeginningOfSpeech() {
         progressBar.setIndeterminate(false);
         progressBar.setMax(10);
+        Log.d("starting....","test");
 
     }
 
@@ -121,6 +143,8 @@ public class MainActivity extends Activity implements RecognitionListener {
     @Override
     public void onEndOfSpeech() {
         progressBar.setVisibility(View.INVISIBLE);
+        btnIput.setChecked(false);
+       // speechRecognizer.stopListening();
     }
 
     @Override
@@ -132,7 +156,8 @@ public class MainActivity extends Activity implements RecognitionListener {
     public void onResults(Bundle results) {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         response.setText(matches.get(0));
-        CallWit callWit = new CallWit();
+        callWit = new CallWit(this.getApplicationContext());
+
         callWit.execute(adress,matches.get(0));
 
     }
@@ -194,6 +219,7 @@ public class MainActivity extends Activity implements RecognitionListener {
                 }
 
             }
+            return;
         }
     }
 }
