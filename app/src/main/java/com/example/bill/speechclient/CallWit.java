@@ -57,7 +57,7 @@ public class CallWit extends AsyncTask {
         String application = fetchjson.get("application");
         String search = fetchjson.get("app_search");
         Log.d("APPKind",application);
-        if (application=="Youtube")
+        if (application.equals("Youtube"))
         {
             youtube.get(activityCOntext, search);
         }
