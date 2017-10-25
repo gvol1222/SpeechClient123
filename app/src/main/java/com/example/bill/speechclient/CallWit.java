@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.telecom.Call;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import org.json.JSONArray;
@@ -34,13 +35,16 @@ public class CallWit extends AsyncTask {
 
     private static final String accessToken ="Bearer 7L2SKE6KUZRVDNWSM7XWDNRS4UHUQM4S";
     private static final String header = "Authorization";
-    private Context activityCOntext;
-
+    //private Context activityCOntext;
+    private youtube YouT;
 
 
     public CallWit(Context activityCOntext)
     {
-        this.activityCOntext = activityCOntext;
+       // this.activityCOntext = activityCOntext;
+        YouT = new youtube(Intent.ACTION_SEARCH,activityCOntext);
+        YouT.SetData("com.google.android.youtube");
+        YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
     }
 
@@ -59,9 +63,11 @@ public class CallWit extends AsyncTask {
         Log.d("APPKind",application);
         if (application.equals("Youtube"))
         {
-            youtube.get(activityCOntext, search);
+          YouT.AddExtra("query",search);
+          YouT.TriggerIntent();
+
         }
-        
+
     }
 
     @Override
@@ -103,7 +109,7 @@ public class CallWit extends AsyncTask {
         String result = null;
 
         try {
-             URL urlWit = new URL(url);
+            URL urlWit = new URL(url);
             connection = (HttpURLConnection) urlWit.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept","application/json");

@@ -39,10 +39,8 @@ public class MainActivity extends Activity implements RecognitionListener {
     private ToggleButton btnIput;
     private ProgressBar progressBar;
     private SpeechRecognizer speechRecognizer;
-    private Intent intent, IntentCall;
+    private Intent intent;
     CallWit callWit;
-    SharedPreferences sharedPref;
-    public String text;
     private static final String adress ="https://api.wit.ai/message?v=20171023&q=";
 
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
@@ -103,7 +101,7 @@ public class MainActivity extends Activity implements RecognitionListener {
     protected void onPause() {
         super.onPause();
         //if(speechRecognizer != null)
-            //speechRecognizer.destroy();
+        //speechRecognizer.destroy();
     }
 
     @Override
@@ -138,7 +136,7 @@ public class MainActivity extends Activity implements RecognitionListener {
     public void onEndOfSpeech() {
         progressBar.setVisibility(View.INVISIBLE);
         btnIput.setChecked(false);
-       // speechRecognizer.stopListening();
+        // speechRecognizer.stopListening();
     }
 
     @Override
@@ -217,3 +215,4 @@ public class MainActivity extends Activity implements RecognitionListener {
         }
     }
 }
+
