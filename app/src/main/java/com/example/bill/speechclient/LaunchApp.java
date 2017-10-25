@@ -41,6 +41,7 @@ public abstract class LaunchApp {
     }
     public void SetData(String PackageName){
             IntentApp.setPackage(PackageName);
+
     }
 
     public void TriggerIntent(){
