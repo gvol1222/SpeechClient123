@@ -1,27 +1,35 @@
 package com.example.bill.speechclient;
 
 import android.content.Context;
-import android.content.Intent;
-import android.widget.Toast;
 
 /**
  * Created by gvol on 25/10/2017.
  */
 
-public class youtube {
+public class youtube extends LaunchApp {
 
-    public static void get (Context con, String query){
 
-        try {
-            Intent intent = new Intent(Intent.ACTION_SEARCH);
-            intent.setPackage("com.google.android.youtube");
-            intent.putExtra("query", query);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            con.startActivity(intent);
-        }
-        catch (Exception e){
-            Toast.makeText(con,"OOPS! Something's Bad!", Toast.LENGTH_SHORT).show();
-        }
+    public youtube(String action, Context context) {
+        super(action, context);
+    }
 
+    @Override
+    public void AddFlag(int flag) {
+        super.AddFlag(flag);
+    }
+
+    @Override
+    public void AddExtra(String name, String extra) {
+        super.AddExtra(name, extra);
+    }
+
+    @Override
+    public void SetData(String PackageName) {
+        super.SetData(PackageName);
+    }
+
+    @Override
+    public void TriggerIntent() {
+        super.TriggerIntent();
     }
 }
