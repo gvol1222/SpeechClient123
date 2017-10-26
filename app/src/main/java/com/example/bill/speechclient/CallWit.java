@@ -1,21 +1,16 @@
 package com.example.bill.speechclient;
 
 
-import com.example.bill.speechclient.youtube;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.telecom.Call;
 import android.util.Log;
-import android.widget.Toast;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
-
 import java.util.Map;
 
 /**
@@ -37,6 +31,7 @@ public class CallWit extends AsyncTask {
     private static final String header = "Authorization";
     //private Context activityCOntext;
     private youtube YouT;
+    private CallTel callTel;
 
 
     public CallWit(Context activityCOntext)
@@ -45,7 +40,8 @@ public class CallWit extends AsyncTask {
         YouT = new youtube(Intent.ACTION_SEARCH,activityCOntext);
         YouT.SetData("com.google.android.youtube");
         YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
+        callTel = new CallTel(Intent.ACTION_CALL, activityCOntext);
+        callTel.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     }
 
     @Override
@@ -61,11 +57,19 @@ public class CallWit extends AsyncTask {
         String application = fetchjson.get("application");
         String search = fetchjson.get("app_search");
         Log.d("APPKind",application);
-        if (application.equals("Youtube"))
-        {
-          YouT.AddExtra("query",search);
-          YouT.TriggerIntent();
 
+        switch (application)
+        {
+            case "Youtube":
+                YouT.AddExtra("query", search);
+                YouT.TriggerIntent();
+                break;
+            case "call":
+                callTel.setData(Uri.parse("tel:" + search));
+                callTel.TriggerIntent();
+                break;
+            default:
+                System.out.println("default");
         }
 
     }

@@ -1,54 +1,44 @@
 package com.example.bill.speechclient;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
+import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.jar.Manifest;
 
 public class MainActivity extends Activity implements RecognitionListener {
 
 
-
+    private static final String adress = "https://api.wit.ai/message?v=20171023&q=";
+    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
+    CallWit callWit;
     private TextView response;
     private ToggleButton btnIput;
     private ProgressBar progressBar;
     private SpeechRecognizer speechRecognizer;
     private Intent intent;
-    CallWit callWit;
-    private static final String adress ="https://api.wit.ai/message?v=20171023&q=";
 
-    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        requestAudioPermissions();
+        requestPermissions(android.Manifest.permission.RECORD_AUDIO, MY_PERMISSIONS_RECORD_AUDIO);
+        requestPermissions(android.Manifest.permission.CALL_PHONE, MY_PERMISSIONS_RECORD_AUDIO);
     }
 
 
@@ -165,6 +155,24 @@ public class MainActivity extends Activity implements RecognitionListener {
     }
 
 
+    private void requestPermissions(String permission, int RequestCode) {
+
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
+                ActivityCompat.requestPermissions(this, new String[]{permission}, RequestCode);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{permission}, RequestCode);
+            }
+
+        } else if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+
+            Init();
+
+        }
+
+    }
     private void requestAudioPermissions(){
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.RECORD_AUDIO)
