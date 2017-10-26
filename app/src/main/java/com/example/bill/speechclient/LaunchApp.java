@@ -45,6 +45,7 @@ public abstract class LaunchApp {
     }
 
     public void TriggerIntent(){
+        if (IntentApp.resolveActivity(context.getPackageManager()) != null)
         context.startActivity(IntentApp);
     }
 

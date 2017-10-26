@@ -1,5 +1,6 @@
 package com.example.bill.speechclient;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,7 +10,6 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -25,8 +25,9 @@ public class MainActivity extends Activity implements RecognitionListener {
 
 
     private static final String adress = "https://api.wit.ai/message?v=20171023&q=";
+    private static final int RequestPermissionCode = 7;
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
-    CallWit callWit;
+    private CallWit callWit;
     private TextView response;
     private ToggleButton btnIput;
     private ProgressBar progressBar;
@@ -37,8 +38,11 @@ public class MainActivity extends Activity implements RecognitionListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        requestPermissions(android.Manifest.permission.RECORD_AUDIO, MY_PERMISSIONS_RECORD_AUDIO);
-        requestPermissions(android.Manifest.permission.CALL_PHONE, MY_PERMISSIONS_RECORD_AUDIO);
+
+        requestPermissions();
+
+
+
     }
 
 
@@ -64,7 +68,7 @@ public class MainActivity extends Activity implements RecognitionListener {
 
             }
         });
-        
+
 
     }
 
@@ -127,6 +131,7 @@ public class MainActivity extends Activity implements RecognitionListener {
     public void onEndOfSpeech() {
         progressBar.setVisibility(View.INVISIBLE);
         btnIput.setChecked(false);
+
         // speechRecognizer.stopListening();
     }
 
@@ -139,8 +144,7 @@ public class MainActivity extends Activity implements RecognitionListener {
     public void onResults(Bundle results) {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         response.setText(matches.get(0));
-        callWit = new CallWit(this.getApplicationContext());
-
+        callWit = new CallWit(this.getApplicationContext(), this);
         callWit.execute(adress,matches.get(0));
 
     }
@@ -156,71 +160,38 @@ public class MainActivity extends Activity implements RecognitionListener {
     }
 
 
-    private void requestPermissions(String permission, int RequestCode) {
+    private void requestPermissions() {
 
-        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+        String[] permissions = new String[]{
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.RECORD_AUDIO
+        };
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
-                ActivityCompat.requestPermissions(this, new String[]{permission}, RequestCode);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{permission}, RequestCode);
-            }
-
-        } else if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-
-            Init();
-
-        }
+        ActivityCompat.requestPermissions(this, permissions, RequestPermissionCode);
 
     }
-    private void requestAudioPermissions(){
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
 
-            //When permission is not granted by user, show them message why this permission is needed.
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.RECORD_AUDIO)) {
-                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
-
-                //Give user option to still opt-in the permissions
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.RECORD_AUDIO},
-                        MY_PERMISSIONS_RECORD_AUDIO);
-
-            } else {
-                // Show user dialog to grant permission to record audio
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.RECORD_AUDIO},
-                        MY_PERMISSIONS_RECORD_AUDIO);
-            }
-        }
-        //If permission is granted, then go ahead recording audio
-        else if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.RECORD_AUDIO)
-                == PackageManager.PERMISSION_GRANTED) {
-
-            //Go ahead with recording audio now
-            Init();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         switch (requestCode){
-            case MY_PERMISSIONS_RECORD_AUDIO:{
+            case RequestPermissionCode:
 
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0) {
+                    boolean ReadContacts = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean CallPhone = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean RecordAudio = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    if (ReadContacts && CallPhone && RecordAudio) {
+                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_LONG).show();
+                        Init();
+                    } else {
+                        Toast.makeText(this, "Permission Deinied", Toast.LENGTH_LONG).show();
+                    }
 
-                    Init();
-                }else {
-                    Toast.makeText(this, "Permissions Denied", Toast.LENGTH_SHORT).show();
                 }
-
-            }
-            return;
+                break;
         }
     }
 }

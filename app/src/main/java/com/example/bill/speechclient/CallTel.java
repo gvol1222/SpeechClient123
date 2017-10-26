@@ -9,8 +9,10 @@ import android.net.Uri;
 
 public class CallTel extends LaunchApp {
 
+    private Context context;
     public CallTel(String action, Context context) {
         super(action, context);
+        this.context = context;
     }
 
 
@@ -18,7 +20,6 @@ public class CallTel extends LaunchApp {
     public void AddFlag(int flag) {
         super.AddFlag(flag);
     }
-
 
     @Override
     public void setData(Uri uri) {
@@ -34,4 +35,6 @@ public class CallTel extends LaunchApp {
     public void TriggerIntent() {
         super.TriggerIntent();
     }
+
+
 }
