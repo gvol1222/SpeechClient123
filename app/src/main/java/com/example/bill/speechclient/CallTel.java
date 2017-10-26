@@ -14,19 +14,11 @@ public class CallTel extends LaunchApp {
     }
 
 
-    public CallTel(Context context) {
-        super(context);
-    }
-
     @Override
     public void AddFlag(int flag) {
         super.AddFlag(flag);
     }
 
-    @Override
-    public void AddExtra(String name, String extra) {
-        super.AddExtra(name, extra);
-    }
 
     @Override
     public void setData(Uri uri) {

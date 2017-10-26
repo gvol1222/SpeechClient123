@@ -70,6 +70,7 @@ public class CallWit extends AsyncTask {
                 break;
             default:
                 System.out.println("default");
+                
         }
 
     }
