@@ -76,6 +76,7 @@ public class CallWit extends AsyncTask {
         YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
         callTel = new CallTel(Intent.ACTION_CALL, activityCOntext);
         callTel.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
     }
 
     public static double similarity(String s1, String s2) {
@@ -145,6 +146,7 @@ public class CallWit extends AsyncTask {
         NumberFormat formatter = NumberFormat.getInstance();
         ParsePosition pos = new ParsePosition(0);
         formatter.parse(str, pos);
+
         return str.length() == pos.getIndex();
     }
 
@@ -164,6 +166,7 @@ public class CallWit extends AsyncTask {
         String search = fetchjson.get("app_search");
         Log.d("APPKind",application);
 
+
         switch (application)
         {
             case "Youtube":
@@ -174,8 +177,8 @@ public class CallWit extends AsyncTask {
                 break;
             case "call":
                 Log.i(TAG, "Name: " + search);
+
                 if (isNumeric(search.replace(" ", ""))) {
-                    Log.i(TAG, "Name: " + search);
 
                     callTel.setData(Uri.parse("tel:" + search));
                     WaitAction.setIndeterminate(false);
@@ -198,6 +201,7 @@ public class CallWit extends AsyncTask {
 
     private String SearchContact(String query) {
         String number = null;
+        HashMap<String, String> numbers = new HashMap<>();
         ContentResolver cr = activityCOntext.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -223,15 +227,36 @@ public class CallWit extends AsyncTask {
                         name = removeAccents(name);
                         query = query.toLowerCase();
                         query = removeAccents(query);
-                        Log.i(TAG, "Name: " + query);
+                        Log.i(TAG, "N: " + name + " " + similarity(name, query));
 
                         if (similarity(name, query) > 0.600) {
-                            Log.i(TAG, "Name: " + name);
-                            Log.i(TAG, "Phone Number: " + phoneNo);
-                            number = phoneNo;
+                            //  Log.i(TAG, "Name: " + name);
+                            // Log.i(TAG, "Phone Number: " + phoneNo);
+                            Log.i(TAG, "N: " + name + " " + similarity(name, query));
+
+                            numbers.put(name, phoneNo);
                         }
+
                     }
+
+
                     pCur.close();
+
+                }
+            }
+
+            for (Map.Entry m : numbers.entrySet()) {
+
+                if (numbers.size() > 1) {
+                    Log.i("inf", m.getKey() + " " + m.getValue() + " " + numbers.size() + " " + similarity(m.getKey().toString(), query));
+
+                    if (similarity(m.getKey().toString(), query) > 0.800) {
+                        number = String.valueOf(m.getValue());
+                        Log.i("inf", m.getKey() + " " + m.getValue() + " " + numbers.size());
+
+                    }
+                } else if (similarity(m.getKey().toString(), query) > 0.600) {
+                    number = String.valueOf(m.getValue());
                 }
             }
         }
