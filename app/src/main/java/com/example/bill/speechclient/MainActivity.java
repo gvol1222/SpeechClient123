@@ -2,7 +2,6 @@ package com.example.bill.speechclient;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -54,11 +53,12 @@ public class MainActivity extends Activity implements AssistanListener {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         response.setText("Αναμένω εντολή");
         WaitAction = (ProgressBar) findViewById(R.id.progressBar2);
-        YouT = new youtube(Intent.ACTION_SEARCH, this.getApplicationContext());
+       /* YouT = new youtube(Intent.ACTION_SEARCH, this.getApplicationContext());
         YouT.SetData("com.google.android.youtube");
         YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         callTel = new CallTel(Intent.ACTION_CALL, this.getApplicationContext());
         callTel.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        */
         regognition = new SpeechRegognition(this);
         regognition.setListener(this);
 

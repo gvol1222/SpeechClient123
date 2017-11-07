@@ -30,6 +30,8 @@ public class ContactUtils {
         final String id;
         contentUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri.encode(query));
         ContentResolver cr = con.getContentResolver();
+        Log.i("query:", Uri.encode("210 56 8923 23543"));
+
         Cursor cur = cr.query(contentUri, null, null, null, ContactsContract.Contacts.TIMES_CONTACTED + " DESC");
         // Log.i("query:",cr.);
         if ((cur != null ? cur.getCount() : 0) > 0) {
