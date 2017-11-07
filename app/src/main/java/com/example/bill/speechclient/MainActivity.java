@@ -5,9 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -18,21 +15,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.ArrayList;
-import java.util.Locale;
+import java.util.HashMap;
 
-public class MainActivity extends Activity implements RecognitionListener {
+import Applications.CallTel;
+import Applications.youtube;
+import Recognize.AssistanListener;
+import Recognize.SpeechRegognition;
+import Utils.ApplicationUtils;
+import WitConnection.WitResponse;
+
+public class MainActivity extends Activity implements AssistanListener {
 
 
-    private static final String adress = "https://api.wit.ai/message?v=20171023&q=";
     private static final int RequestPermissionCode = 7;
-    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
-    private CallWit callWit;
+    private WitResponse WitResponse;
     private TextView response;
     private ToggleButton btnIput;
     private ProgressBar progressBar;
-    private SpeechRecognizer speechRecognizer;
-    private Intent intent;
+    private SpeechRegognition regognition;
+    private youtube YouT;
+    private CallTel callTel;
+    private ProgressBar WaitAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,6 @@ public class MainActivity extends Activity implements RecognitionListener {
         requestPermissions();
 
 
-
     }
 
 
@@ -50,13 +52,62 @@ public class MainActivity extends Activity implements RecognitionListener {
         response = (TextView) findViewById(R.id.txtResponse);
         btnIput = (ToggleButton) findViewById(R.id.toggleButton);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        speechRecognizer.setRecognitionListener(this);
-        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        response.setText("Αναμένω εντολή");
+        WaitAction = (ProgressBar) findViewById(R.id.progressBar2);
+        YouT = new youtube(Intent.ACTION_SEARCH, this.getApplicationContext());
+        YouT.SetData("com.google.android.youtube");
+        YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        callTel = new CallTel(Intent.ACTION_CALL, this.getApplicationContext());
+        callTel.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        regognition = new SpeechRegognition(this);
+        regognition.setListener(this);
+
         record();
 
+    }
+
+    private void CreateResponse() {
+        WitResponse = new WitResponse() {
+            @Override
+            protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
+                super.onPostExecute(stringStringHashMap);
+
+                Log.d("APPKind", String.valueOf(stringStringHashMap.entrySet()));
+
+                String application = stringStringHashMap.get("Action");
+
+                String search = stringStringHashMap.get("App_data");
+                Log.d("APPKind", application);
+                ApplicationUtils.Selection(application, search, getApplicationContext());
+               /* if (application == null){
+                    response.setText("Λάθος Εντολή");
+                    cancel(true);
+                    WaitAction.setIndeterminate(false);
+                    WaitAction.setVisibility(View.INVISIBLE);
+                }
+                switch (application)
+                {
+                    case "play_video":
+                        YouT.AddExtra("query", search);
+                        YouT.TriggerIntent();
+                        WaitAction.setIndeterminate(false);
+                        WaitAction.setVisibility(View.INVISIBLE);
+                        break;
+                    case "make_call":
+                        Log.i(TAG, "Name: " + search);
+                              ArrayList<String> tel = ContactUtils.ContactNumber(getApplicationContext(),search);
+                              callTel.setData(Uri.parse("tel:" + tel.get(0)));
+                            WaitAction.setIndeterminate(false);
+                            WaitAction.setVisibility(View.INVISIBLE);
+                            callTel.TriggerIntent();
+
+                        break;
+
+                    default:
+                        break;
+                }*/
+            }
+        };
     }
 
     private void record(){
@@ -78,18 +129,16 @@ public class MainActivity extends Activity implements RecognitionListener {
         if(b){
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
-            speechRecognizer.startListening(intent);
-            Log.d("changed", String.valueOf(b));
+            regognition.StartSpeechRegognize();
 
         }else {
             progressBar.setIndeterminate(false);
             progressBar.setVisibility(View.INVISIBLE);
-            speechRecognizer.stopListening();
+            regognition.CloseSpeechRegognizer();
 
         }
 
     }
-
 
 
     @Override
@@ -102,61 +151,6 @@ public class MainActivity extends Activity implements RecognitionListener {
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public void onReadyForSpeech(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onBeginningOfSpeech() {
-        progressBar.setIndeterminate(false);
-        progressBar.setMax(10);
-        Log.d("starting....","test");
-
-    }
-
-    @Override
-    public void onRmsChanged(float v) {
-        progressBar.setProgress((int) v);
-    }
-
-    @Override
-    public void onBufferReceived(byte[] bytes) {
-
-    }
-
-    @Override
-    public void onEndOfSpeech() {
-        progressBar.setVisibility(View.INVISIBLE);
-        btnIput.setChecked(false);
-
-        // speechRecognizer.stopListening();
-    }
-
-    @Override
-    public void onError(int i) {
-
-    }
-
-    @Override
-    public void onResults(Bundle results) {
-        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        response.setText(matches.get(0));
-        callWit = new CallWit(this.getApplicationContext(), this);
-        callWit.execute(adress,matches.get(0));
-
-    }
-
-    @Override
-    public void onPartialResults(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onEvent(int i, Bundle bundle) {
-
     }
 
 
@@ -194,5 +188,24 @@ public class MainActivity extends Activity implements RecognitionListener {
                 break;
         }
     }
+
+    @Override
+    public void OnSpeechLiveResult(String LiveResult) {
+        response.setText(LiveResult);
+
+    }
+
+    @Override
+    public void OnSpeechResult(String Result) {
+        CreateResponse();
+        WitResponse.execute(Result);
+
+    }
+
+    @Override
+    public void OnSpeechError(String Error) {
+
+    }
+
 }
 

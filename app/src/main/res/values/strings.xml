@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">SpeechClient</string>
-    <string name="text"></string>
+    <string name="Error_Command"></string>
 </resources>

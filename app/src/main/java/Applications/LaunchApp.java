@@ -1,4 +1,4 @@
-package com.example.bill.speechclient;
+package Applications;
 
 import android.content.Context;
 import android.content.Intent;

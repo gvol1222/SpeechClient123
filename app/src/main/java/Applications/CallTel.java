@@ -1,4 +1,4 @@
-package com.example.bill.speechclient;
+package Applications;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,10 +9,8 @@ import android.net.Uri;
 
 public class CallTel extends LaunchApp {
 
-    private Context context;
     public CallTel(String action, Context context) {
         super(action, context);
-        this.context = context;
     }
 
 
