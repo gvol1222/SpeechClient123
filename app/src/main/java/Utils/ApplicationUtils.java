@@ -38,7 +38,6 @@ public class ApplicationUtils {
                 ArrayList<String> tel = ContactUtils.ContactNumber(context.getApplicationContext(), search);
                 callTel.setData(Uri.parse("tel:" + tel.get(0)));
                 callTel.TriggerIntent();
-
                 break;
 
             default:
