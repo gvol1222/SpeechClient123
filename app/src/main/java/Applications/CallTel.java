@@ -22,11 +22,12 @@ public class CallTel {
 
     public static String TriggerCall(final String data, Context context) {
         final ArrayList<String> tel = ContactUtils.ContactNumber(data, context);
+        Log.i("contact size: ", String.valueOf(tel.size()));
         String msg = null;
         if (tel.size() == 1) {
             newCall(Constatns.actionCall, Constatns.flag, tel.get(0), context);
             msg = context.getResources().getString(R.string.make_call_acces_message);
-        } else if (tel.size() < 0) {
+        } else if (tel.size() <= 0) {
             msg = context.getResources().getString(R.string.make_call_error_message);
         } else if (tel.size() > 1) {
             newCallDialog(Constatns.actionCall, Constatns.flag, tel.toArray(new CharSequence[tel.size()]), context);
@@ -47,7 +48,6 @@ public class CallTel {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Επελεξέ αριθμό");
-        Log.i("testdial: ", "test");
 
         builder.setItems(number, new DialogInterface.OnClickListener() {
             @Override
