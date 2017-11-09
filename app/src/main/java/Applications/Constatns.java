@@ -9,7 +9,10 @@ import android.content.Intent;
 public class Constatns {
 
     public static final int flag = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
+
+    public static final String YputubePackage = "com.google.android.MediaIntents";
     //actions
     public static final String actionCall = Intent.ACTION_CALL;
+    public static final String actionSearch = Intent.ACTION_SEARCH;
 
 }

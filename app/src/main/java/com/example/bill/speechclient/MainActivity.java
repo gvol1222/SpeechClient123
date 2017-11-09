@@ -13,8 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import Applications.CallTel;
-import Applications.youtube;
 import Recognize.AssistanListener;
 import Recognize.SpeechRegognition;
 import WitConnection.WitResponse;
@@ -28,8 +26,6 @@ public class MainActivity extends Activity implements AssistanListener {
     private ToggleButton btnIput;
     private ProgressBar progressBar;
     private SpeechRegognition regognition;
-    private youtube YouT;
-    private CallTel callTel;
     private ProgressBar WaitAction;
 
     @Override

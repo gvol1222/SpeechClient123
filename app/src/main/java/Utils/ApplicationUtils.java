@@ -1,10 +1,9 @@
 package Utils;
 
 import android.content.Context;
-import android.content.Intent;
 
 import Applications.CallTel;
-import Applications.youtube;
+import Applications.MediaIntents;
 
 /**
  * Created by bill on 11/7/17.
@@ -18,14 +17,7 @@ public class ApplicationUtils {
 
         switch (application) {
             case "play_video":
-                final youtube YouT;
-                YouT = new youtube(Intent.ACTION_SEARCH, context);
-                YouT.SetData("com.google.android.youtube");
-                YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                YouT.AddExtra("query", search);
-                YouT.TriggerIntent();
-                return "test";
-
+                return MediaIntents.newYoutube(search, context);
             case "make_call":
                 return CallTel.TriggerCall(search, context);
             default:

@@ -1,5 +1,6 @@
 package Applications;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,35 +26,37 @@ public class CallTel {
         Log.i("contact size: ", String.valueOf(tel.size()));
         String msg = null;
         if (tel.size() == 1) {
-            newCall(Constatns.actionCall, Constatns.flag, tel.get(0), context);
+            newCall(tel.get(0), context);
             msg = context.getResources().getString(R.string.make_call_acces_message);
         } else if (tel.size() <= 0) {
             msg = context.getResources().getString(R.string.make_call_error_message);
         } else if (tel.size() > 1) {
-            newCallDialog(Constatns.actionCall, Constatns.flag, tel.toArray(new CharSequence[tel.size()]), context);
+            newCallDialog(tel.toArray(new CharSequence[tel.size()]), context);
             msg = context.getResources().getString(R.string.make_call_acces_message);
         }
         return msg;
     }
 
-    private static void newCall(final String action, final int flag, String number, Context context) {
-        final Intent intent = new Intent(action);
-        intent.setFlags(flag);
+    @SuppressLint("MissingPermission")
+    private static void newCall(String number, Context context) {
+        final Intent intent = new Intent(Constatns.actionCall);
+        intent.setFlags(Constatns.flag);
         intent.setData(Uri.parse("tel:" + number));
         if (intent.resolveActivity(context.getPackageManager()) != null)
             context.startActivity(intent);
     }
 
-    private static void newCallDialog(final String action, final int flag, final CharSequence[] number, final Context context) {
+    private static void newCallDialog(final CharSequence[] number, final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Επελεξέ αριθμό");
 
         builder.setItems(number, new DialogInterface.OnClickListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                final Intent intent = new Intent(action);
-                intent.setFlags(flag);
+                final Intent intent = new Intent(Constatns.actionCall);
+                intent.setFlags(Constatns.flag);
                 intent.setData(Uri.parse("tel:" + number[i]));
                 if (intent.resolveActivity(context.getPackageManager()) != null)
                     context.startActivity(intent);
