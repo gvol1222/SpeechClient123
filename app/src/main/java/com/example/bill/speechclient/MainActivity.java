@@ -40,10 +40,7 @@ public class MainActivity extends Activity implements AssistanListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         requestPermissions();
-
-
     }
 
 
@@ -59,7 +56,7 @@ public class MainActivity extends Activity implements AssistanListener {
         callTel = new CallTel(Intent.ACTION_CALL, this.getApplicationContext());
         callTel.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         */
-        regognition = new SpeechRegognition(this);
+        regognition = new SpeechRegognition(getApplicationContext());
         regognition.setListener(this);
 
         record();
@@ -78,34 +75,8 @@ public class MainActivity extends Activity implements AssistanListener {
 
                 String search = stringStringHashMap.get("App_data");
                 Log.d("APPKind", application);
-                ApplicationUtils.Selection(application, search, getApplicationContext());
-               /* if (application == null){
-                    response.setText("Λάθος Εντολή");
-                    cancel(true);
-                    WaitAction.setIndeterminate(false);
-                    WaitAction.setVisibility(View.INVISIBLE);
-                }
-                switch (application)
-                {
-                    case "play_video":
-                        YouT.AddExtra("query", search);
-                        YouT.TriggerIntent();
-                        WaitAction.setIndeterminate(false);
-                        WaitAction.setVisibility(View.INVISIBLE);
-                        break;
-                    case "make_call":
-                        Log.i(TAG, "Name: " + search);
-                              ArrayList<String> tel = ContactUtils.ContactNumber(getApplicationContext(),search);
-                              callTel.setData(Uri.parse("tel:" + tel.get(0)));
-                            WaitAction.setIndeterminate(false);
-                            WaitAction.setVisibility(View.INVISIBLE);
-                            callTel.TriggerIntent();
+                ApplicationUtils.Selection(application, search, MainActivity.this);
 
-                        break;
-
-                    default:
-                        break;
-                }*/
             }
         };
     }

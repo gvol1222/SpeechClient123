@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SpeechClient</string>
+    <string name="make_call_acces_message">Ξεκινάει το τηλεφώνημα</string>
+    <string name="make_call_error_message">Ξεκινάει το τηλεφώνημα</string>
+
     <string name="Error_Command"></string>
 </resources>

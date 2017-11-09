@@ -1,8 +1,11 @@
 package Applications;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.bill.speechclient.R;
 
@@ -21,14 +24,14 @@ public class CallTel {
         final ArrayList<String> tel = ContactUtils.ContactNumber(data, context);
 
         if (tel.size() == 1) {
-            newCall(Constatns.action, Constatns.flag, tel.get(0), context);
+            newCall(Constatns.actionCall, Constatns.flag, tel.get(0), context);
             return context.getResources().getString(R.string.make_call_acces_message);
         } else if (tel.size() < 0 || tel == null) {
             return context.getResources().getString(R.string.make_call_error_message);
         } else {
-
+            newCallDialog(Constatns.actionCall, Constatns.flag, tel.toArray(new CharSequence[tel.size()]), context);
+            return context.getResources().getString(R.string.make_call_acces_message);
         }
-        return "";
     }
 
     private static void newCall(final String action, final int flag, String number, Context context) {
@@ -37,6 +40,27 @@ public class CallTel {
         intent.setData(Uri.parse("tel:" + number));
         if (intent.resolveActivity(context.getPackageManager()) != null)
             context.startActivity(intent);
+    }
+
+    private static void newCallDialog(final String action, final int flag, final CharSequence[] number, final Context context) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Επελεξέ αριθμό");
+        Log.i("testdial: ", "test");
+
+        builder.setItems(number, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final Intent intent = new Intent(action);
+                intent.setFlags(flag);
+                intent.setData(Uri.parse("tel:" + number[i]));
+                if (intent.resolveActivity(context.getPackageManager()) != null)
+                    context.startActivity(intent);
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 
 

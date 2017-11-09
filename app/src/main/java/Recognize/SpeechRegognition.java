@@ -22,7 +22,6 @@ import WitConnection.CallWitResponse;
 public class SpeechRegognition implements RecognitionListener, CallWitResponse {
 
 
-    private Context context;
     private SpeechRecognizer AssistantSpeechRegnizer;
     private Intent SpeechIntent;
     private Handler restartDroidSpeech = new Handler(), SpeechPartialResult = new Handler();
@@ -31,6 +30,7 @@ public class SpeechRegognition implements RecognitionListener, CallWitResponse {
     private long StartListeningTime, PauseAndSpeakTime;
     private boolean continuousSpeechRecognition = true;
     private AudioManager audioManager;
+    private Context context;
 
     public SpeechRegognition(Context context) {
         this.context = context;
@@ -225,7 +225,7 @@ public class SpeechRegognition implements RecognitionListener, CallWitResponse {
                 listener.OnSpeechLiveResult(partialResult);
             }
 
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 800) {
                 speechResultFound = true;
                 SpeechPartialResult.postDelayed(new Runnable() {
                     @Override
@@ -240,7 +240,7 @@ public class SpeechRegognition implements RecognitionListener, CallWitResponse {
                             StartSpeechRegognize();
                         }
                     }
-                }, 500);
+                }, 800);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();

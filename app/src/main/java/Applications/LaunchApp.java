@@ -23,6 +23,7 @@ public abstract class LaunchApp {
         this.context = context;
         IntentApp = new Intent();
 
+
     }
 
 

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class ContactUtils {
 
 
-    public static ArrayList<String> ContactNumber(Context con, String query) {
+    public static ArrayList<String> ContactNumber(String query, Context context) {
 
         ArrayList<String> tels = new ArrayList<>();
 
@@ -29,8 +29,7 @@ public class ContactUtils {
         Uri contentUri;
         final String id;
         contentUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri.encode(query));
-        ContentResolver cr = con.getContentResolver();
-        Log.i("query:", Uri.encode("210 56 8923 23543"));
+        ContentResolver cr = context.getContentResolver();
 
         Cursor cur = cr.query(contentUri, null, null, null, ContactsContract.Contacts.TIMES_CONTACTED + " DESC");
         // Log.i("query:",cr.);
@@ -59,14 +58,14 @@ public class ContactUtils {
     }
 
 
-    public static ArrayList<String> ContactMail(Context con, String query) {
+    public static ArrayList<String> ContactMail(String query, Context context) {
         String name;
 
         ArrayList<String> emails = new ArrayList<>();
         Uri contentUri;
         final String id;
         contentUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri.encode(query));
-        ContentResolver cr = con.getContentResolver();
+        ContentResolver cr = context.getContentResolver();
         Cursor cur = cr.query(contentUri, null, null, null, ContactsContract.Contacts.TIMES_CONTACTED + " DESC");
         if ((cur != null ? cur.getCount() : 0) > 0) {
             if (cur != null && cur.moveToNext()) {
