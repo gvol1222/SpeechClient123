@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
@@ -14,13 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.HashMap;
-
 import Applications.CallTel;
 import Applications.youtube;
 import Recognize.AssistanListener;
 import Recognize.SpeechRegognition;
-import Utils.ApplicationUtils;
 import WitConnection.WitResponse;
 
 public class MainActivity extends Activity implements AssistanListener {
@@ -50,12 +46,7 @@ public class MainActivity extends Activity implements AssistanListener {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         response.setText("Αναμένω εντολή");
         WaitAction = (ProgressBar) findViewById(R.id.progressBar2);
-       /* YouT = new youtube(Intent.ACTION_SEARCH, this.getApplicationContext());
-        YouT.SetData("com.google.android.youtube");
-        YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        callTel = new CallTel(Intent.ACTION_CALL, this.getApplicationContext());
-        callTel.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        */
+
         regognition = new SpeechRegognition(getApplicationContext());
         regognition.setListener(this);
 
@@ -63,23 +54,6 @@ public class MainActivity extends Activity implements AssistanListener {
 
     }
 
-    private void CreateResponse() {
-        WitResponse = new WitResponse() {
-            @Override
-            protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
-                super.onPostExecute(stringStringHashMap);
-
-                Log.d("APPKind", String.valueOf(stringStringHashMap.entrySet()));
-
-                String application = stringStringHashMap.get("Action");
-
-                String search = stringStringHashMap.get("App_data");
-                Log.d("APPKind", application);
-                ApplicationUtils.Selection(application, search, MainActivity.this);
-
-            }
-        };
-    }
 
     private void record(){
 
@@ -168,7 +142,7 @@ public class MainActivity extends Activity implements AssistanListener {
 
     @Override
     public void OnSpeechResult(String Result) {
-        CreateResponse();
+        WitResponse = new WitResponse(MainActivity.this);
         WitResponse.execute(Result);
 
     }

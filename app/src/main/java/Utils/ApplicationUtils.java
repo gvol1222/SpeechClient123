@@ -13,7 +13,7 @@ import Applications.youtube;
 public class ApplicationUtils {
 
 
-    public static void Selection(String application, String search, Context context) {
+    public static String Selection(String application, String search, Context context) {
 
 
         switch (application) {
@@ -24,12 +24,12 @@ public class ApplicationUtils {
                 YouT.AddFlag(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 YouT.AddExtra("query", search);
                 YouT.TriggerIntent();
-                break;
+                return "test";
+
             case "make_call":
-                CallTel.TriggerCall(search, context);
-                break;
+                return CallTel.TriggerCall(search, context);
             default:
-                break;
+                return "Λάθος εντολή";
         }
     }
 

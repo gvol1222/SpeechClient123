@@ -1,7 +1,9 @@
 package WitConnection;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +19,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
+import Utils.ApplicationUtils;
+
 /**
  * Created by bill on 11/4/17.
  */
@@ -28,7 +32,31 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
     private static final String accessToken = "Bearer NDU3VFL2EU27AYCMGLAUKF3X5TPFSYPN";
     private static final String header = "Authorization";
     private HashMap<String, String> WitResults = null;
+    private Context context;
+    private boolean error = false;
 
+
+    public WitResponse(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    protected void onPostExecute(HashMap<String, String> StringHashMap) {
+        String msg;
+        if (error) {
+            msg = "Λάθος εντολή";
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+            error = false;
+            cancel(true);
+
+        } else {
+            final String application = StringHashMap.get("Action");
+            final String search = StringHashMap.get("App_data");
+            Log.d("APPKind", application);
+            msg = ApplicationUtils.Selection(application, search, context);
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        }
+    }
 
     @Override
     protected HashMap<String, String> doInBackground(String... strings) {
@@ -43,9 +71,6 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
 
         try {
             WitResults = JsontoHash(GetResults(witrequesturl));
-        } catch (JSONException e) {
-            Log.i(TAG, "JSONException: " + e.getMessage());
-
         } catch (IOException e) {
             Log.i(TAG, "IOException: " + e.getMessage());
         }
@@ -105,15 +130,22 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
         return buffer.toString();
     }
 
-    private HashMap<String, String> JsontoHash(String result) throws JSONException {
+    private HashMap<String, String> JsontoHash(String result) {
         Log.d("APPKind", result);
         HashMap<String, String> map = new HashMap<>();
-        JSONObject reader = new JSONObject(result);
-        JSONObject elements = reader.getJSONObject("entities");
-        JSONArray action = elements.getJSONArray("Action");
-        JSONArray App_data = elements.getJSONArray("App_data");
-        map.put("Action", action.getJSONObject(0).getString("value"));
-        map.put("App_data", App_data.getJSONObject(0).getString("value"));
+        JSONObject reader = null;
+        try {
+            reader = new JSONObject(result);
+            JSONObject elements = reader.getJSONObject("entities");
+            JSONArray action = elements.getJSONArray("Action");
+            JSONArray App_data = elements.getJSONArray("App_data");
+            map.put("Action", action.getJSONObject(0).getString("value"));
+            map.put("App_data", App_data.getJSONObject(0).getString("value"));
+        } catch (JSONException e) {
+            error = true;
+
+        }
+
         return map;
     }
 }

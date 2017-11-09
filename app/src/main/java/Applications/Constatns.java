@@ -11,6 +11,5 @@ public class Constatns {
     public static final int flag = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
     //actions
     public static final String actionCall = Intent.ACTION_CALL;
-    public static final String actionDialoge = Intent.ACTION_DIAL;
 
 }

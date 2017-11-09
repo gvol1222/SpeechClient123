@@ -195,8 +195,6 @@ public class SpeechRegognition implements RecognitionListener, CallWitResponse {
                 Log.i("listener: ", "Droid speech null listenr result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
             } else {
                 listener.OnSpeechResult(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-                Log.i("finalresult: ", "Droid speech onresults result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-
                 StartSpeechRegognize();
             }
 
