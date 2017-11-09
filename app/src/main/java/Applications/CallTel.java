@@ -22,16 +22,17 @@ public class CallTel {
 
     public static String TriggerCall(final String data, Context context) {
         final ArrayList<String> tel = ContactUtils.ContactNumber(data, context);
-
+        String msg = null;
         if (tel.size() == 1) {
             newCall(Constatns.actionCall, Constatns.flag, tel.get(0), context);
-            return context.getResources().getString(R.string.make_call_acces_message);
-        } else if (tel.size() < 0 || tel == null) {
-            return context.getResources().getString(R.string.make_call_error_message);
-        } else {
+            msg = context.getResources().getString(R.string.make_call_acces_message);
+        } else if (tel.size() < 0) {
+            msg = context.getResources().getString(R.string.make_call_error_message);
+        } else if (tel.size() > 1) {
             newCallDialog(Constatns.actionCall, Constatns.flag, tel.toArray(new CharSequence[tel.size()]), context);
-            return context.getResources().getString(R.string.make_call_acces_message);
+            msg = context.getResources().getString(R.string.make_call_acces_message);
         }
+        return msg;
     }
 
     private static void newCall(final String action, final int flag, String number, Context context) {
