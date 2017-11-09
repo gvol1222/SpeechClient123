@@ -12,17 +12,20 @@ public class MediaIntents {
 
     public static String newYoutube(final String query, Context context) {
 
+        String msg = null;
         if (query.equals("")) {
-            return "Δεν υπάρχει βίντεο για ανεύρεση";
+            msg = "Δεν υπάρχει βίντεο για ανεύρεση";
         } else {
-            final Intent intent = new Intent(Constatns.actionSearch);
+            Intent intent = new Intent(Constatns.actionSearch);
             intent.setFlags(Constatns.flag);
             intent.setPackage(Constatns.YputubePackage);
             intent.putExtra("query", query);
-            if (intent.resolveActivity(context.getPackageManager()) != null)
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
-            return "Μετάβαση στο YouTube";
+                msg = "Μετάβαση στο YouTube";
+            }
         }
+        return msg;
     }
 
 
