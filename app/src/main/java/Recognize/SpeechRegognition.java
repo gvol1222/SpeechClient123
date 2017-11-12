@@ -13,8 +13,6 @@ import android.util.Log;
 
 import java.util.Locale;
 
-import WitConnection.CallWitResponse;
-
 /**
  * Created by bill on 11/1/17.
  */

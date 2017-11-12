@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SpeechClient.iml" filepath="$PROJECT_DIR$/.idea/SpeechClient.iml" />
+      <module fileurl="file://C:\Users\gvol\AndroidStudioProjects\SpeechClient\.idea\SpeechClient.iml" filepath="C:\Users\gvol\AndroidStudioProjects\SpeechClient\.idea\SpeechClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\gvol\AndroidStudioProjects\SpeechClient\app\app.iml" filepath="C:\Users\gvol\AndroidStudioProjects\SpeechClient\app\app.iml" />
     </modules>
   </component>
 </project>
