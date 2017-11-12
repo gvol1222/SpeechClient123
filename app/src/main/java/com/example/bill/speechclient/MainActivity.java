@@ -3,9 +3,11 @@ package com.example.bill.speechclient;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
@@ -96,7 +98,10 @@ public class MainActivity extends Activity implements AssistanListener {
 
 
     private void requestPermissions() {
-
+    if (Build.VERSION.SDK_INT < 23){
+        Init();
+        Toast.makeText(this, "Permission Granted", Toast.LENGTH_LONG).show();
+    }
         String[] permissions = new String[]{
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.CALL_PHONE,
