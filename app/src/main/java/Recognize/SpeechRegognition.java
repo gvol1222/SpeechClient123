@@ -17,7 +17,7 @@ import java.util.Locale;
  * Created by bill on 11/1/17.
  */
 
-public class SpeechRegognition implements RecognitionListener, CallWitResponse {
+public class SpeechRegognition implements RecognitionListener {
 
 
     private SpeechRecognizer AssistantSpeechRegnizer;
@@ -252,8 +252,4 @@ public class SpeechRegognition implements RecognitionListener, CallWitResponse {
 
     }
 
-    @Override
-    public void ResponseMsg(String msg) {
-
-    }
 }

@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
+import Recognize.Interaction;
 import Utils.ApplicationUtils;
 
 /**
@@ -43,17 +44,21 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
     @Override
     protected void onPostExecute(HashMap<String, String> StringHashMap) {
         String msg;
-        if (error) {
+
+        final String conf = StringHashMap.get("Action_conf");
+
+        if (Float.parseFloat(conf)<  0.85) {
             msg = "Λάθος εντολή";
             Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             error = false;
             cancel(true);
+            Interaction.OnNonValidCommand(context);
 
         } else {
             final String application = StringHashMap.get("Action");
             final String search = StringHashMap.get("App_data");
             Log.d("APPKind", application);
-            msg = ApplicationUtils.Selection(application, search, context);
+            msg = ApplicationUtils.Selection(application, search, conf, context);
             Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
         }
     }
@@ -138,10 +143,19 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
             reader = new JSONObject(result);
             JSONObject elements = reader.getJSONObject("entities");
             JSONArray action = elements.getJSONArray("Action");
-            JSONArray App_data = elements.getJSONArray("App_data");
+            JSONArray App_data = null;
+            try {
+                App_data = elements.getJSONArray("App_data");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Double confid = action.getJSONObject(0).getDouble("confidence");
+            map.put("Action_conf",confid.toString());
             map.put("Action", action.getJSONObject(0).getString("value"));
-            map.put("App_data", App_data.getJSONObject(0).getString("value"));
+
+            map.put("App_data", App_data != null ? App_data.getJSONObject(0).getString("value") : null);
         } catch (JSONException e) {
+            e.printStackTrace();
             error = true;
 
         }
