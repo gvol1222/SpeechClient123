@@ -8,6 +8,9 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bill on 11/5/17.
@@ -26,37 +29,39 @@ public class ContactUtils {
 
         }
         String name;
+        HashMap<String, Double> selname;
         Uri contentUri;
-        final String id;
-        contentUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, Uri.encode(query));
+        String id;
+        List<String> names = new ArrayList<>();
+        contentUri = ContactsContract.Contacts.CONTENT_URI;
         ContentResolver cr = context.getContentResolver();
-
-        Cursor cur = cr.query(contentUri, null, null, null, ContactsContract.Contacts.TIMES_CONTACTED + " DESC");
-        // Log.i("query:",cr.);
+        Cursor cur = cr.query(contentUri, null, null, null, null);
         if ((cur != null ? cur.getCount() : 0) > 0) {
-            if (cur != null && cur.moveToNext()) {
-                name = cur.getString(cur.getColumnIndex(
-                        ContactsContract.Contacts.DISPLAY_NAME));
-                Log.i("query:", name);
+            while (cur != null && cur.moveToNext()) {
+                name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-
-                Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                        new String[]{id}, null);
-                while (pCur != null && pCur.moveToNext()) {
-                    String phone = pCur.getString(
-                            pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    tels.add(phone);
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))>0) {
+                    names.add(name);
                 }
-                if (pCur != null) {
-                    pCur.close();
-                }
-
             }
+
+            cur.close();
+            }
+
+        selname = SearchStringHelper.getBestStringMatch(names,query);
+        Map.Entry<String,Double> selname1 = selname.entrySet().iterator().next();
+
+        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
+                new String[]{selname1.getKey()}, null);
+        while (pCur != null && pCur.moveToNext()) {
+            String phone = pCur.getString(
+                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            tels.add(phone);
         }
+
         return tels;
     }
-
 
     public static ArrayList<String> ContactMail(String query, Context context) {
         String name;

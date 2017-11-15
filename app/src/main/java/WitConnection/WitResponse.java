@@ -26,7 +26,7 @@ import Utils.ApplicationUtils;
  * Created by bill on 11/4/17.
  */
 
-public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>> {
+public class WitResponse extends AsyncTask<String, Void, String> {
 
     private static final String TAG = WitResponse.class.getSimpleName();
     private static final String witurl = "https://api.wit.ai/message?v=20171106&q=";
@@ -42,31 +42,17 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
     }
 
     @Override
-    protected void onPostExecute(HashMap<String, String> StringHashMap) {
-        String msg;
-
-        final String conf = StringHashMap.get("Action_conf");
-
-        if (Float.parseFloat(conf)<  0.85) {
-            msg = "Λάθος εντολή";
+    protected void onPostExecute(String msg) {
             Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-            error = false;
-            cancel(true);
-            Interaction.OnNonValidCommand(context);
-
-        } else {
-            final String application = StringHashMap.get("Action");
-            final String search = StringHashMap.get("App_data");
-            Log.d("APPKind", application);
-            msg = ApplicationUtils.Selection(application, search, conf, context);
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-        }
     }
 
+
+
     @Override
-    protected HashMap<String, String> doInBackground(String... strings) {
+    protected String doInBackground(String... strings) {
         String query = strings[0];
         String queryencoded = null;
+        String msg = null;
         try {
             queryencoded = URLEncoder.encode(query, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -80,8 +66,24 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
             Log.i(TAG, "IOException: " + e.getMessage());
         }
 
-        return WitResults;
+        String conf = WitResults.get("Action_conf");
+
+        if (Float.parseFloat(conf)<  0.85) {
+            msg = "Λάθος εντολή";
+            error = false;
+            cancel(true);
+            Interaction.OnNonValidCommand(context);
+
+        } else {
+            final String application = WitResults.get("Action");
+            final String search = WitResults.get("App_data");
+            Log.d("APPKind", application);
+            msg = ApplicationUtils.Selection(application, search, conf, context);
+
+        }
+        return msg;
     }
+
 
     private String GetResults(String url) throws IOException {
         HttpURLConnection connection = null;
