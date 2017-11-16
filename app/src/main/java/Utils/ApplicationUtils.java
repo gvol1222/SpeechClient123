@@ -2,6 +2,7 @@ package Utils;
 
 import android.content.Context;
 import Applications.CallTel;
+import Applications.LaunchApp;
 import Applications.MapsIntent;
 import Applications.MediaIntents;
 import Recognize.Interaction;
@@ -23,6 +24,8 @@ public class ApplicationUtils {
                     return CallTel.TriggerCall(search, context);
                 case "directions":
                     return MapsIntent.GoogleMaps(search, context);
+                case "open_app":
+                    return LaunchApp.launchapplication(search, context);
                 case "play_music":
                     return MediaIntents.MusicPlayer(search, context);
             }

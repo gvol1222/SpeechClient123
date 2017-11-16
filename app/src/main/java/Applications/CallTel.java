@@ -1,11 +1,13 @@
 package Applications;
 
 import android.annotation.SuppressLint;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.example.bill.speechclient.R;
