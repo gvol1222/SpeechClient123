@@ -203,9 +203,10 @@ public class MainActivity extends Activity implements AssistanListener, WitRespo
     public void Message(String search, String application, String conf) {
 
         if (search != null) {
-
             String msg = ApplicationUtils.Selection(application, search, conf, this);
+
             regognition.CloseSpeechRegognizer();
+            SpeechMessage.cancel();
             SpeechMessage.Talk(this, msg);
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             new Handler().postDelayed(new Runnable() {
