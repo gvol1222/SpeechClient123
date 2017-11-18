@@ -16,7 +16,6 @@ public class ApplicationUtils {
 
     public static String Selection(String application, String search, String confidence,Context context) {
 
-        String msg = null;
             switch (application) {
                 case "open_app":
                     return LaunchApp.launchapplication(search, context);
@@ -26,13 +25,12 @@ public class ApplicationUtils {
                     return CallTel.TriggerCall(search, context);
                 case "directions":
                     return MapsIntent.GoogleMaps(search, context);
-                case "open_app":
-                    return LaunchApp.launchapplication(search, context);
                 case "play_music":
                     return MediaIntents.MusicPlayer(search, context);
+                default:
+                    return "";
             }
 
-    return msg;
 
     }
 
