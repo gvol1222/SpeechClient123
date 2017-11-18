@@ -1,9 +1,7 @@
 package WitConnection;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,40 +17,53 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
-import Recognize.Interaction;
-import Utils.ApplicationUtils;
-
 /**
  * Created by bill on 11/4/17.
  */
 
-public class WitResponse extends AsyncTask<String, Void, String> {
+public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>> {
 
     private static final String TAG = WitResponse.class.getSimpleName();
     private static final String witurl = "https://api.wit.ai/message?v=20171106&q=";
     private static final String accessToken = "Bearer NDU3VFL2EU27AYCMGLAUKF3X5TPFSYPN";
     private static final String header = "Authorization";
     private HashMap<String, String> WitResults = null;
-    private Context context;
-    private boolean error = false;
+    private WitResponseMessage msgListener;
 
 
-    public WitResponse(Context context) {
-        this.context = context;
-    }
+    public WitResponse(WitResponseMessage msgListener) {
+        this.msgListener = msgListener;
 
-    @Override
-    protected void onPostExecute(String msg) {
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
 
+    @Override
+    protected void onPostExecute(HashMap<String, String> StringHashMap) {
+        String msg;
+
+        final String conf = StringHashMap.get("Action_conf");
+        final String application = StringHashMap.get("Action");
+        final String search = StringHashMap.get("App_data");
+
+        if (application == null) {
+            msg = " Η εντολή δεν είναι σωστή προσπαθήστε ξανά";
+            msgListener.ErrorCommand(msg);
+            Log.i("errormesg:", msg);
+        } else if (search == null) {
+            msg = "Λάθος στην εντολή";
+            msgListener.ErrorOnCommand(msg);
+            Log.i("errorOnmesg:", msg);
+        } else {
+            msgListener.Message(search, application, conf);
+
+        }
+
+    }
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected HashMap<String, String> doInBackground(String... strings) {
         String query = strings[0];
         String queryencoded = null;
-        String msg = null;
         try {
             queryencoded = URLEncoder.encode(query, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -66,24 +77,8 @@ public class WitResponse extends AsyncTask<String, Void, String> {
             Log.i(TAG, "IOException: " + e.getMessage());
         }
 
-        String conf = WitResults.get("Action_conf");
-
-        if (Float.parseFloat(conf)<  0.85) {
-            msg = "Λάθος εντολή";
-            error = false;
-            cancel(true);
-            Interaction.OnNonValidCommand(context);
-
-        } else {
-            final String application = WitResults.get("Action");
-            final String search = WitResults.get("App_data");
-            Log.d("APPKind", application);
-            msg = ApplicationUtils.Selection(application, search, conf, context);
-
-        }
-        return msg;
+        return WitResults;
     }
-
 
     private String GetResults(String url) throws IOException {
         HttpURLConnection connection = null;
@@ -140,25 +135,31 @@ public class WitResponse extends AsyncTask<String, Void, String> {
     private HashMap<String, String> JsontoHash(String result) {
         Log.d("APPKind", result);
         HashMap<String, String> map = new HashMap<>();
-        JSONObject reader = null;
+        JSONObject reader;
         try {
             reader = new JSONObject(result);
+            Log.i("reader:", reader.toString());
             JSONObject elements = reader.getJSONObject("entities");
-            JSONArray action = elements.getJSONArray("Action");
-            JSONArray App_data = null;
-            try {
-                App_data = elements.getJSONArray("App_data");
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (elements.has("Action")) {
+                JSONArray action = elements.getJSONArray("Action");
+                map.put("Action", action.getJSONObject(0).getString("value"));
+                Double confid = action.getJSONObject(0).getDouble("confidence");
+                map.put("Action_conf", confid.toString());
+            } else {
+                map.put("Action", null);
             }
-            Double confid = action.getJSONObject(0).getDouble("confidence");
-            map.put("Action_conf",confid.toString());
-            map.put("Action", action.getJSONObject(0).getString("value"));
+            if (elements.has("App_data")) {
+                JSONArray App_data = elements.getJSONArray("App_data");
+                map.put("App_data", App_data.getJSONObject(0).getString("value"));
+            } else {
+                map.put("App_data", null);
 
-            map.put("App_data", App_data != null ? App_data.getJSONObject(0).getString("value") : null);
+            }
+
+
+
         } catch (JSONException e) {
             e.printStackTrace();
-            error = true;
 
         }
 

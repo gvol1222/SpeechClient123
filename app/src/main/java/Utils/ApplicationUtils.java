@@ -1,11 +1,11 @@
 package Utils;
 
 import android.content.Context;
+
 import Applications.CallTel;
 import Applications.LaunchApp;
 import Applications.MapsIntent;
 import Applications.MediaIntents;
-import Recognize.Interaction;
 
 /**
  * Created by bill on 11/7/17.
@@ -18,6 +18,8 @@ public class ApplicationUtils {
 
         String msg = null;
             switch (application) {
+                case "open_app":
+                    return LaunchApp.launchapplication(search, context);
                 case "play_video":
                     return MediaIntents.newYoutube(search, context);
                 case "make_call":

@@ -97,7 +97,7 @@ public class SpeechRegognition implements RecognitionListener {
         AssistantSpeechRegnizer.startListening(SpeechIntent);
     }
 
-    public void CancelSpeechRecognizer() {
+    private void CancelSpeechRecognizer() {
         if (AssistantSpeechRegnizer != null) {
             AssistantSpeechRegnizer.cancel();
         }
@@ -108,6 +108,7 @@ public class SpeechRegognition implements RecognitionListener {
         if (AssistantSpeechRegnizer != null)
             AssistantSpeechRegnizer.destroy();
 
+        SpeechPartialResult.removeCallbacksAndMessages(null);
         MuteAudio(false);
     }
 
@@ -157,18 +158,18 @@ public class SpeechRegognition implements RecognitionListener {
     public void onError(int i) {
         Log.i("error", String.valueOf(i));
 
+        MuteAudio(true);
 
         long duration = System.currentTimeMillis() - StartListeningTime;
         if (duration < 5000 && i == Constants.ErrorNoMatch && !IsReadyForSpeach) return;
 
         if (IsReadyForSpeach && duration < 30000) {
             MuteAudio(true);
-        } else {
-            MuteAudio(false);
         }
 
         if (Constants.ErrorNoMatch == i || Constants.ErrorSpeechTimeOut == i || Constants.ErrorAudio == i) {
             restartSpeechRegognizer();
+
         } else if (listener == null) {
 
         }
@@ -221,7 +222,7 @@ public class SpeechRegognition implements RecognitionListener {
                 listener.OnSpeechLiveResult(partialResult);
             }
 
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 800) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
                 speechResultFound = true;
                 SpeechPartialResult.postDelayed(new Runnable() {
                     @Override
@@ -236,15 +237,15 @@ public class SpeechRegognition implements RecognitionListener {
                             StartSpeechRegognize();
                         }
                     }
-                }, 800);
+                }, 500);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();
-            }
+            }/* */
 
         } else {
             PauseAndSpeakTime = System.currentTimeMillis();
-        }
+        }/**/
     }
 
     @Override

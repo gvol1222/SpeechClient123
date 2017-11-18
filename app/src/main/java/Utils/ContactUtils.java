@@ -19,37 +19,21 @@ import java.util.Map;
 public class ContactUtils {
 
 
-    public static ArrayList<String> ContactNumber(String query, Context context) {
+    {
+        Map.Entry<String, Double> selname1 = selname.entrySet().iterator().next();
 
-        ArrayList<String> tels = new ArrayList<>();
-
-        if (MathUtils.isNumeric(query.replace(" ", ""))) {
-            tels.add(query);
-            return tels;
-
+        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
+                new String[]{selname1.getKey()}, null);
+        while (pCur != null && pCur.moveToNext()) {
+            String phone = pCur.getString(
+                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            tels.add(phone);
+>>>>>>>test
         }
-        String name;
-        HashMap<String, Double> selname;
-        Uri contentUri;
-        String id;
-        List<String> names = new ArrayList<>();
-        contentUri = ContactsContract.Contacts.CONTENT_URI;
-        ContentResolver cr = context.getContentResolver();
-        Cursor cur = cr.query(contentUri, null, null, null, null);
-        if ((cur != null ? cur.getCount() : 0) > 0) {
-            while (cur != null && cur.moveToNext()) {
-                name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))>0) {
-                    names.add(name);
-                }
-            }
 
-            cur.close();
-            }
-
-        selname = SearchStringHelper.getBestStringMatch(names,query);
-        Map.Entry<String,Double> selname1 = selname.entrySet().iterator().next();
+        selname = SearchStringHelper.getBestStringMatch(names, query);
+        Map.Entry<String, Double> selname1 = selname.entrySet().iterator().next();
 
         Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
@@ -61,6 +45,54 @@ public class ContactUtils {
         }
 
         return tels;
+    }
+
+        Log.i("name:",query);
+        Log.i("name:",String.valueOf(names.size()));
+
+    selname =SearchStringHelper.getBestStringMatch(names,query);
+        Log.i("selfname:",String.valueOf(selname));
+
+        if(!selname.containsKey("no_contact"))
+    public static ArrayList<String> ContactNumber(String query, Context context) {
+
+        ArrayList<String> tels = new ArrayList<>();
+
+        if (MathUtils.isNumeric(query.replace(" ", ""))) {
+            tels.add(query);
+            return tels;
+
+        }
+<<<<<<<HEAD
+        String name;
+=======
+        String name = null;
+>>>>>>>test
+        HashMap<String, Double> selname;
+        Uri contentUri;
+        String id;
+        List<String> names = new ArrayList<>();
+        contentUri = ContactsContract.Contacts.CONTENT_URI;
+        ContentResolver cr = context.getContentResolver();
+        Cursor cur = cr.query(contentUri, null, null, null, null);
+        if ((cur != null ? cur.getCount() : 0) > 0) {
+            while (cur != null && cur.moveToNext()) {
+                name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+<<<<<<<HEAD
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))>0) {
+                    names.add(name);
+                }
+            }
+
+            cur.close();
+=======
+            if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                names.add(name);
+            }
+        }
+
+        cur.close();
     }
 
     public static ArrayList<String> ContactMail(String query, Context context) {
