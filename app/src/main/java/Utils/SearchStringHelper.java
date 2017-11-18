@@ -30,7 +30,7 @@ public class SearchStringHelper {
             }
         }
         HashMap<String, Double> result = new HashMap<>();
-        if (max_match < 0.85) {
+        if (max_match < 0.9) {
             result.put("no_contact", max_match);
 
         } else {
