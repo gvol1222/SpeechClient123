@@ -37,6 +37,8 @@ public class SearchStringHelper {
             result.put(bestmatch, max_match);
 
         }
+        //  result.put(bestmatch, max_match);
+
         return result;
     }
 

@@ -1,28 +1,22 @@
 package com.example.bill.speechclient;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -104,6 +98,8 @@ public class GuiActivity extends AppCompatActivity
         WaitAction = (ProgressBar) findViewById(R.id.progressBar2);
         regognition = new SpeechRegognition(getApplicationContext());
         regognition.setListener(this);
+
+
         talkengine = new SpeechMessage(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -111,7 +107,7 @@ public class GuiActivity extends AppCompatActivity
                     talkengine.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                         @Override
                         public void onDone(String utteranceId) {
-                        regognition.StartSpeechRegognize();
+                            runThread();
                         }
 
                         @Override
@@ -129,10 +125,25 @@ public class GuiActivity extends AppCompatActivity
         });
 
 
+
         record();
 
     }
 
+    private void runThread() {
+
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        regognition.StartSpeechRegognize();
+                    }
+                });
+            }
+        }.start();
+    }
     private void record(){
 
         btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -152,12 +163,12 @@ public class GuiActivity extends AppCompatActivity
             talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
-            new Handler().postDelayed(new Runnable() {
+            /*new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     regognition.StartSpeechRegognize();
                 }
-            }, 3000);
+            }, 3000);*/
 
         }else {
             progressBar.setIndeterminate(false);
