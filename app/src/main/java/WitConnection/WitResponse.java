@@ -36,7 +36,6 @@ public class WitResponse extends AsyncTask<String, Void, HashMap<String, String>
 
     }
 
-
     @Override
     protected void onPostExecute(HashMap<String, String> StringHashMap) {
         String msg;

@@ -47,14 +47,11 @@ public class MainActivity extends Activity implements AssistanListener, WitRespo
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         response.setText("Αναμένω εντολή");
         WaitAction = (ProgressBar) findViewById(R.id.progressBar2);
-
         regognition = new SpeechRegognition(getApplicationContext());
         regognition.setListener(this);
-
         record();
 
     }
-
 
     private void record(){
 
@@ -68,7 +65,6 @@ public class MainActivity extends Activity implements AssistanListener, WitRespo
 
 
     }
-
 
     private void startRecord(boolean b){
 
@@ -91,7 +87,6 @@ public class MainActivity extends Activity implements AssistanListener, WitRespo
         }
 
     }
-
 
     @Override
     protected void onPause() {
@@ -129,7 +124,6 @@ public class MainActivity extends Activity implements AssistanListener, WitRespo
         ActivityCompat.requestPermissions(this, permissions, RequestPermissionCode);
 
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
