@@ -1,4 +1,4 @@
-package ApplicationSettingsCheck;
+package Settings;
 
 /**
  * Created by gvol on 19/11/2017.

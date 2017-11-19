@@ -4,4 +4,10 @@
     <string name="make_call_error_message">Η επαφη δεν υπάρχει</string>
 
     <string name="Error_Command"></string>
+    <string name="title_activity_gui">Χρύσα</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
