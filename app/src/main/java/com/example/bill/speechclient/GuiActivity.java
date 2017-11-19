@@ -1,14 +1,19 @@
 package com.example.bill.speechclient;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -41,6 +46,7 @@ public class GuiActivity extends AppCompatActivity
     private ProgressBar progressBar;
     private SpeechRegognition regognition;
     private ProgressBar WaitAction;
+    private SpeechMessage talkengine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,45 +77,17 @@ public class GuiActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.gui, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_action) {
 
-        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
@@ -126,6 +104,31 @@ public class GuiActivity extends AppCompatActivity
         WaitAction = (ProgressBar) findViewById(R.id.progressBar2);
         regognition = new SpeechRegognition(getApplicationContext());
         regognition.setListener(this);
+        talkengine = new SpeechMessage(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    talkengine.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onDone(String utteranceId) {
+                        regognition.StartSpeechRegognize();
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                        }
+
+                        @Override
+                        public void onStart(String utteranceId) {
+                        }
+                    });
+                } else {
+                    Log.e("MainActivity", "Initilization Failed!");
+                }
+            }
+        });
+
+
         record();
 
     }
@@ -146,7 +149,7 @@ public class GuiActivity extends AppCompatActivity
     private void startRecord(boolean b){
 
         if(b){
-            SpeechMessage.Talk(this, "Περιμένω εκφώνηση εντολής");
+            talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
             new Handler().postDelayed(new Runnable() {
@@ -181,7 +184,7 @@ public class GuiActivity extends AppCompatActivity
             regognition.CloseSpeechRegognizer();
             regognition = null;
         }
-        SpeechMessage.cancel();
+        talkengine.cancel();
         super.onDestroy();
 
 
@@ -208,28 +211,16 @@ public class GuiActivity extends AppCompatActivity
     @Override
     public void ErrorOnCommand(String msg) {
         regognition.CloseSpeechRegognizer();
-        SpeechMessage.Talk(this, msg);
+        talkengine.talk(msg);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                regognition.StartSpeechRegognize();
-            }
-        }, 3000);
 
     }
 
     @Override
     public void ErrorCommand(String msg) {
         regognition.CloseSpeechRegognizer();
-        SpeechMessage.Talk(this, msg);
+        talkengine.talk(msg);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                regognition.StartSpeechRegognize();
-            }
-        }, 3000);
 
     }
 
@@ -240,15 +231,9 @@ public class GuiActivity extends AppCompatActivity
             String msg = ApplicationUtils.Selection(application, search, conf, this);
 
             regognition.CloseSpeechRegognizer();
-            SpeechMessage.cancel();
-            SpeechMessage.Talk(this, msg);
+
+            talkengine.talk(msg);
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    regognition.StartSpeechRegognize();
-                }
-            }, 3000);
         }
     }
 
