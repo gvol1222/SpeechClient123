@@ -9,7 +9,7 @@ public interface AssistanListener {
 
     void OnSpeechResult(String Result);
 
-    void OnSpeechError(String Error);
+    void OnSpeechError(int Error);
 
 
 }

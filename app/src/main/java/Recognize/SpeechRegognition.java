@@ -26,7 +26,7 @@ public class SpeechRegognition implements RecognitionListener {
     private Boolean IsReadyForSpeach = false, speechResultFound = false;
     private AssistanListener listener;
     private long StartListeningTime, PauseAndSpeakTime;
-    private boolean continuousSpeechRecognition = true;
+    private boolean continuousSpeechRecognition;
     private AudioManager audioManager;
     private Context context;
 
@@ -44,6 +44,7 @@ public class SpeechRegognition implements RecognitionListener {
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         AssistantSpeechRegnizer = SpeechRecognizer.createSpeechRecognizer(context);
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
     }
 
 
@@ -157,7 +158,7 @@ public class SpeechRegognition implements RecognitionListener {
     @Override
     public void onError(int i) {
         Log.i("error", String.valueOf(i));
-
+        listener.OnSpeechError(i);
         MuteAudio(true);
 
         long duration = System.currentTimeMillis() - StartListeningTime;
@@ -168,7 +169,8 @@ public class SpeechRegognition implements RecognitionListener {
         }
 
         if (Constants.ErrorNoMatch == i || Constants.ErrorSpeechTimeOut == i || Constants.ErrorAudio == i) {
-            restartSpeechRegognizer();
+            if (continuousSpeechRecognition)
+                restartSpeechRegognizer();
 
         } else if (listener == null) {
 
@@ -194,7 +196,11 @@ public class SpeechRegognition implements RecognitionListener {
                 Log.i("listener: ", "Droid speech null listenr result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
             } else {
                 listener.OnSpeechResult(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
+            }
+            if (continuousSpeechRecognition) {
                 StartSpeechRegognize();
+            } else {
+                CloseSpeechRegognizer();
             }
 
 
@@ -234,8 +240,13 @@ public class SpeechRegognition implements RecognitionListener {
                         } else {
                             Log.i("listener: ", "Droid 34 speech  partital result = " + partialResult);
                             listener.OnSpeechResult(partialResult);
-                            StartSpeechRegognize();
                         }
+                        if (continuousSpeechRecognition) {
+                            StartSpeechRegognize();
+                        } else {
+                            CloseSpeechRegognizer();
+                        }
+
                     }
                 }, 500);
 

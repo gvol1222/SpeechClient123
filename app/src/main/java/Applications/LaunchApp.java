@@ -15,11 +15,10 @@ public class LaunchApp {
 
     public static String launchapplication(String qry, Context con){
         String packagename = AppPackagesUtils.getpackagename(qry,con);
-        Intent i = new Intent();
         PackageManager manager;
         manager = con.getPackageManager();
         try {
-            i = manager.getLaunchIntentForPackage(packagename);
+            Intent i = manager.getLaunchIntentForPackage(packagename);
             if (i == null)
                 throw new PackageManager.NameNotFoundException();
             if (!packagename.equals("no_contact")) {
