@@ -26,10 +26,8 @@ public class SpeechMessage extends TextToSpeech {
 
     public void cancel() {
 
-        if (this != null) {
-            this.stop();
-            this.shutdown();
-        }
+        this.stop();
+        this.shutdown();
 
     }
 }
