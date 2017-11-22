@@ -107,7 +107,7 @@ public class SpeechRegognition implements RecognitionListener {
         AssistantSpeechRegnizer.startListening(SpeechIntent);
     }
 
-    private void CancelSpeechRecognizer() {
+    public void CancelSpeechRecognizer() {
         if (AssistantSpeechRegnizer != null) {
             Log.i(TAG, "cancel speech recognize");
 
