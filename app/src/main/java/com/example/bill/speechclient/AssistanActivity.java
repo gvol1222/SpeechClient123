@@ -16,7 +16,6 @@ import android.widget.ToggleButton;
 
 import Permission.PermissionActivity;
 import Recognize.AssistanListener;
-import Recognize.Constants;
 import Recognize.SpeechRegognition;
 import TTS.SpeechMessage;
 import Utils.ApplicationUtils;
@@ -36,7 +35,7 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
     private ProgressBar WaitAction;
     private SpeechMessage talkengine;
     private boolean first;
-    private boolean isActivated;
+    private boolean isActivated, detected = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +69,7 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
                         @Override
                         public void onDone(String utteranceId) {
                             runThread();
+
                         }
 
                         @Override
@@ -78,6 +78,21 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
 
                         @Override
                         public void onStart(String utteranceId) {
+                            new Thread() {
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+
+                                            regognition.CancelSpeechRecognizer();
+
+                                        }
+                                    });
+
+                                }
+                            }.start();
+
                         }
                     });
                 } else {
@@ -107,6 +122,7 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
                         }
                     }
                 });
+
             }
         }.start();
     }
@@ -140,9 +156,11 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
         } else {
+            WaitAction.setIndeterminate(false);
+            WaitAction.setVisibility(View.INVISIBLE);
             progressBar.setIndeterminate(false);
             progressBar.setVisibility(View.INVISIBLE);
-            regognition.CloseSpeechRegognizer();
+            regognition.CancelSpeechRecognizer();
 
         }
 
@@ -186,6 +204,7 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
 
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
+        Log.i("detected", " " + detected + " activated: " + isActivated);
         if (isActivated)
             response.setText(LiveResult);
 
@@ -216,14 +235,17 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
             witResponse.execute(Result);
 
         } else if (Result.equals("Χρύσα")) {
-            isActivated = true;
-            regognition.CloseSpeechRegognizer();
-            talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
+            // regognition.CloseSpeechRegognizer();
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
-            //   btnIput.setChecked(true);
+
+            talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
+            /*Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();*/
+            // btnIput.setChecked(true);
 
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
+            isActivated = true;
+
         }
 
     }
@@ -238,25 +260,25 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
     }
 
     private void startInteraction(String msg) {
-        regognition.CloseSpeechRegognizer();
         talkengine.talk(msg);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         response.setText("");
         isActivated = false;
-        btnIput.setChecked(false);
-        WaitAction.setIndeterminate(false);
-        WaitAction.setVisibility(View.INVISIBLE);
+        // btnIput.setChecked(false);
+
     }
 
     @Override
     public void OnSpeechError(int Error) {
-        if ((Constants.ErrorNoMatch == Error || Constants.ErrorSpeechTimeOut == Error || Constants.ErrorAudio == Error)) {
-            isActivated = false;
+
+
+        isActivated = false;
             response.setText("");
-            btnIput.setChecked(false);
-            WaitAction.setIndeterminate(false);
-            WaitAction.setVisibility(View.INVISIBLE);
-        }
+        WaitAction.setIndeterminate(false);
+        WaitAction.setVisibility(View.INVISIBLE);
+        progressBar.setIndeterminate(false);
+        progressBar.setVisibility(View.INVISIBLE);
+
 
     }
 
