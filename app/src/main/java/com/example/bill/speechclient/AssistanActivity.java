@@ -83,7 +83,7 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
                                     runOnUiThread(new Runnable() {
 
                                         @Override
-                                        public void run() {
+                                        public synchronized void run() {
 
                                             regognition.CancelSpeechRecognizer();
 
