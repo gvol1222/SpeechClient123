@@ -7,12 +7,7 @@ import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import Permission.PermissionActivity;
 import Recognize.AssistanListener;
@@ -28,11 +23,7 @@ import WitConnection.WitResponseMessage;
 
 public abstract class AssistanActivity extends PermissionActivity implements AssistanListener, WitResponseMessage {
 
-    private TextView response;
-    private ToggleButton btnIput;
-    private ProgressBar progressBar;
     private SpeechRegognition regognition;
-    private ProgressBar WaitAction;
     private SpeechMessage talkengine;
     private boolean first;
     private boolean isActivated, detected = false;
@@ -45,17 +36,11 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
     }
 
     private void Init() {
-        response = (TextView) findViewById(R.id.textView2);
-        btnIput = (ToggleButton) findViewById(R.id.toggleButton2);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar3);
-        response.setText("");
-        WaitAction = (ProgressBar) findViewById(R.id.progressBar4);
+
         regognition = new SpeechRegognition(getApplicationContext());
         regognition.setListener(this);
         regognition.setContinuousSpeechRecognition(true);
-        setContinousRecognize();
         setTalkEngine();
-        record();
 
     }
 
@@ -127,20 +112,8 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
         }.start();
     }
 
-    private void record() {
 
-        btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                startRecord(b);
-
-            }
-        });
-
-
-    }
-
-    private void startRecord(boolean b) {
+    public void startRecord(boolean b) {
 
         if (b) {
             if (!regognition.isContinuousSpeechRecognition()) {
@@ -153,33 +126,15 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
             talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
 
-            progressBar.setIndeterminate(true);
-            progressBar.setVisibility(View.VISIBLE);
+
         } else {
-            WaitAction.setIndeterminate(false);
-            WaitAction.setVisibility(View.INVISIBLE);
-            progressBar.setIndeterminate(false);
-            progressBar.setVisibility(View.INVISIBLE);
+
             regognition.CancelSpeechRecognizer();
 
         }
 
     }
 
-    private void setContinousRecognize() {
-        ToggleButton continous = (ToggleButton) findViewById(R.id.buttonContinous);
-        continous.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    regognition.setContinuousSpeechRecognition(false);
-                } else {
-                    regognition.setContinuousSpeechRecognition(true);
-
-                }
-            }
-        });
-    }
 
     @Override
     protected void onDestroy() {
@@ -205,8 +160,6 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
         Log.i("detected", " " + detected + " activated: " + isActivated);
-        if (isActivated)
-            response.setText(LiveResult);
 
     }
 
@@ -229,21 +182,14 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
 
 
         if (isActivated) {
-            WaitAction.setIndeterminate(true);
-            WaitAction.setVisibility(View.VISIBLE);
             WitConnection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
 
         } else if (Result.equals("Χρύσα")) {
-            // regognition.CloseSpeechRegognizer();
+
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
-
             talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
-            /*Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();*/
-            // btnIput.setChecked(true);
 
-            progressBar.setIndeterminate(true);
-            progressBar.setVisibility(View.VISIBLE);
             isActivated = true;
 
         }
@@ -262,23 +208,13 @@ public abstract class AssistanActivity extends PermissionActivity implements Ass
     private void startInteraction(String msg) {
         talkengine.talk(msg);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        response.setText("");
         isActivated = false;
-        // btnIput.setChecked(false);
 
     }
 
     @Override
     public void OnSpeechError(int Error) {
-
-
         isActivated = false;
-            response.setText("");
-        WaitAction.setIndeterminate(false);
-        WaitAction.setVisibility(View.INVISIBLE);
-        progressBar.setIndeterminate(false);
-        progressBar.setVisibility(View.INVISIBLE);
-
 
     }
 

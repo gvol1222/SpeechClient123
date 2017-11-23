@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -25,7 +23,7 @@ import android.widget.ToggleButton;
 import Permission.PermissionActivity;
 import Recognize.AssistanListener;
 import Recognize.SpeechRegognition;
-import TTS.SpeechMessage;
+import TTS.SpeecHelper;
 import Utils.ApplicationUtils;
 import WitConnection.WitResponse;
 import WitConnection.WitResponseMessage;
@@ -36,172 +34,24 @@ import WitConnection.WitResponseMessage;
 
 @SuppressLint("Registered")
 public class MainActivity extends PermissionActivity implements NavigationView.OnNavigationItemSelectedListener, AssistanListener, WitResponseMessage {
+
     private TextView response;
     private ToggleButton btnIput;
     private ProgressBar progressBar;
-    private SpeechRegognition regognition;
     private ProgressBar WaitAction;
-    private SpeechMessage talkengine;
-    private boolean first;
-    private boolean isActivated, detected = false;
+    private ToggleButton continous;
+    private Toolbar toolbar;
+
+    private boolean isActivated;
+
+    private SpeecHelper talkengine;
+    private SpeechRegognition recognition;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gui);
-        if (Build.VERSION.SDK_INT < 23) {
-            Init();
-
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
-
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
-
-
-        }
-    }
-
-    private void Init() {
-        response = (TextView) findViewById(R.id.textView2);
-        btnIput = (ToggleButton) findViewById(R.id.toggleButton2);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar3);
-        response.setText("");
-        WaitAction = (ProgressBar) findViewById(R.id.progressBar4);
-        regognition = new SpeechRegognition(getApplicationContext());
-        regognition.setListener(this);
-        regognition.setContinuousSpeechRecognition(true);
-        setContinousRecognize();
-        setTalkEngine();
-        record();
-
-    }
-
-    private void setTalkEngine() {
-
-        talkengine = new SpeechMessage(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    talkengine.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                        @Override
-                        public void onDone(String utteranceId) {
-                            runThread();
-
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                        }
-
-                        @Override
-                        public void onStart(String utteranceId) {
-                            new Thread() {
-                                public void run() {
-                                    runOnUiThread(new Runnable() {
-
-                                        @Override
-                                        public synchronized void run() {
-
-                                            regognition.CancelSpeechRecognizer();
-
-                                        }
-                                    });
-
-                                }
-                            }.start();
-
-                        }
-                    });
-                } else {
-                    Log.e("MainActivity", "Initilization Failed!");
-                }
-            }
-        });
-    }
-
-    private void runThread() {
-
-        new Thread() {
-            public void run() {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (!regognition.isContinuousSpeechRecognition()) {
-                            if (first) {
-                                first = false;
-                                regognition.StartSpeechRegognize();
-
-                            }
-                        } else {
-                            regognition.StartSpeechRegognize();
-
-                        }
-                    }
-                });
-
-            }
-        }.start();
-    }
-
-    private void record() {
-
-        btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                startRecord(b);
-
-            }
-        });
-
-
-    }
-
-    private void startRecord(boolean b) {
-
-        if (b) {
-            if (!regognition.isContinuousSpeechRecognition()) {
-                first = true;
-                isActivated = true;
-            } else {
-                isActivated = true;
-            }
-
-            talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
-            Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
-
-            progressBar.setIndeterminate(true);
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            WaitAction.setIndeterminate(false);
-            WaitAction.setVisibility(View.INVISIBLE);
-            progressBar.setIndeterminate(false);
-            progressBar.setVisibility(View.INVISIBLE);
-            regognition.CancelSpeechRecognizer();
-
-        }
-
-    }
-
-    private void setContinousRecognize() {
-        ToggleButton continous = (ToggleButton) findViewById(R.id.buttonContinous);
-        continous.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    regognition.setContinuousSpeechRecognition(false);
-                } else {
-                    regognition.setContinuousSpeechRecognition(true);
-
-                }
-            }
-        });
+        if (Build.VERSION.SDK_INT < 23) Init();
     }
 
     @Override
@@ -228,17 +78,124 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             startActivity(new Intent(this, SettingsActivity.class));
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    private void Init() {
+        setButtons();
+        setProgress();
+        setText();
+        setToolbar();
+        setDrawerLayout();
+        setNavigation();
+        setContinousRecognize();
+        setRecognition();
+        talkengine = new SpeecHelper(this, recognition);
+        record();
+    }
+
+    //set gui functions
+    private void setNavigation() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void setDrawerLayout() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void setToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void setButtons() {
+        btnIput = (ToggleButton) findViewById(R.id.toggleButton2);
+        continous = (ToggleButton) findViewById(R.id.buttonContinous);
+    }
+
+    private void setProgress() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar3);
+        WaitAction = (ProgressBar) findViewById(R.id.progressBar4);
+    }
+
+    private void setText() {
+        response = (TextView) findViewById(R.id.textView2);
+        response.setText("");
+    }
+
+    //set recognition
+    private void setRecognition() {
+        recognition = new SpeechRegognition(getApplicationContext());
+        recognition.setListener(this);
+        recognition.setContinuousSpeechRecognition(true);
+    }
+
+    private void record() {
+
+        btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                startRecord(b);
+
+            }
+        });
+
+
+    }
+
+    private void startRecord(boolean b) {
+
+        if (b) {
+            if (!recognition.isContinuousSpeechRecognition()) {
+                talkengine.setFirst(true);
+                isActivated = true;
+            } else {
+                isActivated = true;
+            }
+
+            talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
+            Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
+
+            progressBar.setIndeterminate(true);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            WaitAction.setIndeterminate(false);
+            WaitAction.setVisibility(View.INVISIBLE);
+            progressBar.setIndeterminate(false);
+            progressBar.setVisibility(View.INVISIBLE);
+            recognition.CancelSpeechRecognizer();
+
+        }
+
+    }
+
+    private void setContinousRecognize() {
+        continous.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    recognition.setContinuousSpeechRecognition(false);
+                } else {
+                    recognition.setContinuousSpeechRecognition(true);
+
+                }
+            }
+        });
+    }
+
+
     @Override
     protected void onDestroy() {
-        if (regognition != null) {
-            regognition.CloseSpeechRegognizer();
-            regognition = null;
+        if (recognition != null) {
+            recognition.CloseSpeechRegognizer();
+            recognition = null;
         }
         talkengine.cancel();
         super.onDestroy();
@@ -257,7 +214,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
-        Log.i("detected", " " + detected + " activated: " + isActivated);
         if (isActivated)
             response.setText(LiveResult);
 
@@ -288,13 +244,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             witResponse.execute(Result);
 
         } else if (Result.equals("Χρύσα")) {
-            // regognition.CloseSpeechRegognizer();
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
 
-            talkengine.talk("Πείτε μου πως μπορώ να βοηθήσω");
-            /*Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();*/
-            // btnIput.setChecked(true);
-
+            talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
             progressBar.setIndeterminate(true);
             progressBar.setVisibility(View.VISIBLE);
             isActivated = true;
@@ -313,12 +265,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void startInteraction(String msg) {
-        talkengine.talk(msg);
+        talkengine.speak(msg);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         response.setText("");
         isActivated = false;
-        // btnIput.setChecked(false);
-
     }
 
     @Override
@@ -340,20 +290,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 7) {
             Init();
-
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
-
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
-
-
         }
     }
 
