@@ -22,7 +22,7 @@ import android.widget.ToggleButton;
 
 import com.example.bill.Activities.R;
 
-import Permission.PermissionActivity;
+import Activities.Permission.PermissionActivity;
 import Recognize.AssistanListener;
 import Recognize.SpeechRegognition;
 import TTS.SpeecHelper;
