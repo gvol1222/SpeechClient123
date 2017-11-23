@@ -3,6 +3,7 @@ package TTS;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.util.Log;
 
 import com.example.bill.speechclient.MainActivity;
 
@@ -19,8 +20,7 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
     private static final HashMap<String, String> map = new HashMap<String, String>();
     private TextToSpeech tts;
     private MainActivity activity;
-    private boolean first = false;
-    private boolean readyToSpeak = false;
+    private boolean first = true;
     private SpeechRegognition recognition;
 
 
@@ -70,6 +70,7 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
     }
 
     public void speak(String msg) {
+        Log.d("tag", "startRecord: ");
 
         tts.setLanguage(Locale.getDefault());
         tts.setPitch(1.3f);
@@ -81,8 +82,6 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
     public void onInit(int status) {
 
         if (status == TextToSpeech.SUCCESS) {
-
-            readyToSpeak = true;
             tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                 @Override
                 public void onStart(String s) {

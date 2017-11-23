@@ -84,6 +84,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void Init() {
+        setRecognition();
+        talkengine = new SpeecHelper(this, recognition);
         setButtons();
         setProgress();
         setText();
@@ -91,8 +93,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         setDrawerLayout();
         setNavigation();
         setContinousRecognize();
-        setRecognition();
-        talkengine = new SpeecHelper(this, recognition);
         record();
     }
 
@@ -179,7 +179,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             } else {
                 isActivated = true;
             }
-
             talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
             showProgressBar();
@@ -280,6 +279,11 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         talkengine.speak(msg);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         response.setText("");
+        clearWaitBar();
+        if (!recognition.isContinuousSpeechRecognition()) {
+            btnIput.setChecked(false);
+        }
+
         isActivated = false;
     }
 
@@ -289,6 +293,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         response.setText("");
         clearProgressBar();
         clearWaitBar();
+        if (!recognition.isContinuousSpeechRecognition()) {
+            btnIput.setChecked(false);
+        }
+
     }
 
     @Override
