@@ -150,6 +150,26 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     }
 
+    private void clearProgressBar() {
+        progressBar.setIndeterminate(false);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void clearWaitBar() {
+        WaitAction.setIndeterminate(false);
+        WaitAction.setVisibility(View.INVISIBLE);
+    }
+
+    private void showProgressBar() {
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showWaitBar() {
+        WaitAction.setIndeterminate(true);
+        WaitAction.setVisibility(View.VISIBLE);
+    }
+
     private void startRecord(boolean b) {
 
         if (b) {
@@ -162,16 +182,11 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
             talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
-
-            progressBar.setIndeterminate(true);
-            progressBar.setVisibility(View.VISIBLE);
+            showProgressBar();
         } else {
-            WaitAction.setIndeterminate(false);
-            WaitAction.setVisibility(View.INVISIBLE);
-            progressBar.setIndeterminate(false);
-            progressBar.setVisibility(View.INVISIBLE);
+            clearProgressBar();
+            clearWaitBar();
             recognition.CancelSpeechRecognizer();
-
         }
 
     }
@@ -238,17 +253,14 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
 
         if (isActivated) {
-            WaitAction.setIndeterminate(true);
-            WaitAction.setVisibility(View.VISIBLE);
+            showWaitBar();
             WitConnection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
 
         } else if (Result.equals("Χρύσα")) {
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
-
             talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
-            progressBar.setIndeterminate(true);
-            progressBar.setVisibility(View.VISIBLE);
+            showProgressBar();
             isActivated = true;
 
         }
@@ -273,16 +285,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     @Override
     public void OnSpeechError(int Error) {
-
-
         isActivated = false;
         response.setText("");
-        WaitAction.setIndeterminate(false);
-        WaitAction.setVisibility(View.INVISIBLE);
-        progressBar.setIndeterminate(false);
-        progressBar.setVisibility(View.INVISIBLE);
-
-
+        clearProgressBar();
+        clearWaitBar();
     }
 
     @Override
