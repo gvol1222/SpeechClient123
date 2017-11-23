@@ -7,7 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.example.bill.speechclient.R;
+import com.example.bill.Activities.R;
 
 import java.util.ArrayList;
 

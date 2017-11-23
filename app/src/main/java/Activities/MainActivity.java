@@ -1,4 +1,4 @@
-package com.example.bill.speechclient;
+package Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.example.bill.Activities.R;
 
 import Permission.PermissionActivity;
 import Recognize.AssistanListener;

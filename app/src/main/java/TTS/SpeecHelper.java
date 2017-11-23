@@ -5,11 +5,10 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
-import com.example.bill.speechclient.MainActivity;
-
 import java.util.HashMap;
 import java.util.Locale;
 
+import Activities.MainActivity;
 import Recognize.SpeechRegognition;
 
 /**
