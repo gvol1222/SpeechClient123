@@ -1,4 +1,4 @@
-package Activities;
+package activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -22,13 +22,14 @@ import android.widget.ToggleButton;
 
 import com.example.bill.Activities.R;
 
-import Activities.Permission.PermissionActivity;
-import Recognize.AssistanListener;
-import Recognize.SpeechRegognition;
-import TTS.SpeecHelper;
-import Utils.ApplicationUtils;
-import WitConnection.WitResponse;
-import WitConnection.WitResponseMessage;
+import activities.permission.PermissionActivity;
+import activities.settings.SettingsActivity;
+import recognize.AssistanListener;
+import recognize.SpeechRegognition;
+import tts.SpeecHelper;
+import utils.ApplicationUtils;
+import wit_connection.WitResponse;
+import wit_connection.WitResponseMessage;
 
 /**
  * Created by bill on 11/20/17.
@@ -255,7 +256,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
         if (isActivated) {
             showWaitBar();
-            WitConnection.WitResponse witResponse = new WitResponse(this);
+            wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
 
         } else if (Result.equals("Χρύσα")) {

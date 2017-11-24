@@ -1,4 +1,4 @@
-package RegognitonService;
+package regogniton_service;
 
 import android.app.Service;
 import android.content.Intent;

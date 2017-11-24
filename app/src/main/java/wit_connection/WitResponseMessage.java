@@ -1,4 +1,4 @@
-package WitConnection;
+package wit_connection;
 
 /**
  * Created by bill on 11/16/17.

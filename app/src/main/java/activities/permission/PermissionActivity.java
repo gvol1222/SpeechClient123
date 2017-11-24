@@ -1,4 +1,4 @@
-package Activities.Permission;
+package activities.permission;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

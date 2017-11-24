@@ -1,4 +1,4 @@
-package Recognize;
+package recognize;
 
 import android.speech.SpeechRecognizer;
 

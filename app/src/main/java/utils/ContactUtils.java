@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 import android.content.ContentResolver;
 import android.content.Context;

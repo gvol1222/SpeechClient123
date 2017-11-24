@@ -1,4 +1,4 @@
-package WitConnection;
+package wit_connection;
 
 import android.os.AsyncTask;
 import android.util.Log;

@@ -1,11 +1,11 @@
-package Utils;
+package utils;
 
 import android.content.Context;
 
-import Applications.CallTel;
-import Applications.LaunchApp;
-import Applications.MapsIntent;
-import Applications.MediaIntents;
+import applications.CallTel;
+import applications.LaunchApp;
+import applications.MapsIntent;
+import applications.MediaIntents;
 
 /**
  * Created by bill on 11/7/17.

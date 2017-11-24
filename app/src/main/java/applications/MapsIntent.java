@@ -1,4 +1,4 @@
-package Applications;
+package applications;
 
 
 import android.content.Context;

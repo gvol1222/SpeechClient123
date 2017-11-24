@@ -1,4 +1,4 @@
-package Applications;
+package applications;
 
 import android.app.SearchManager;
 import android.content.Context;

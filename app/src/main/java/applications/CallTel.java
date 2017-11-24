@@ -1,4 +1,4 @@
-package Applications;
+package applications;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -11,7 +11,7 @@ import com.example.bill.Activities.R;
 
 import java.util.ArrayList;
 
-import Utils.ContactUtils;
+import utils.ContactUtils;
 
 /**
  * Created by bill on 10/26/17.

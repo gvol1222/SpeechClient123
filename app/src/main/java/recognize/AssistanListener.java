@@ -1,4 +1,4 @@
-package Recognize;
+package recognize;
 
 /**
  * Created by bill on 11/2/17.

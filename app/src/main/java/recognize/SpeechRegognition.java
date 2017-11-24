@@ -1,4 +1,4 @@
-package Recognize;
+package recognize;
 
 import android.content.Context;
 import android.content.Intent;

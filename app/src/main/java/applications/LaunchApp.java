@@ -1,11 +1,11 @@
-package Applications;
+package applications;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
-import Utils.AppPackagesUtils;
+import utils.AppPackagesUtils;
 
 /**
  * Created by gvol on 11/16/17.

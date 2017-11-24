@@ -1,4 +1,4 @@
-package Applications;
+package applications;
 
 import android.content.Intent;
 import android.provider.MediaStore;

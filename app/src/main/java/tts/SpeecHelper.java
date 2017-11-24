@@ -1,4 +1,4 @@
-package TTS;
+package tts;
 
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
@@ -8,8 +8,8 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Locale;
 
-import Activities.MainActivity;
-import Recognize.SpeechRegognition;
+import activities.MainActivity;
+import recognize.SpeechRegognition;
 
 /**
  * Created by bill on 11/23/17.
