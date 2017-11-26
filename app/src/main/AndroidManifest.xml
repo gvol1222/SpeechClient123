@@ -32,6 +32,8 @@
 
 
         </activity>
+
+        <service android:name="applications.AppIntentService" />
     </application>
 
 </manifest>

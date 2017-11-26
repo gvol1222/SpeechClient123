@@ -1,12 +1,16 @@
 package activities;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,10 +28,10 @@ import com.example.bill.Activities.R;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
+import applications.AppIntentService;
 import recognize.AssistanListener;
 import recognize.SpeechRegognition;
 import tts.SpeecHelper;
-import utils.ApplicationUtils;
 import wit_connection.WitResponse;
 import wit_connection.WitResponseMessage;
 
@@ -44,6 +48,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private ProgressBar WaitAction;
     private ToggleButton continous;
     private Toolbar toolbar;
+    private ResponseReceiver receiver;
 
     private boolean isActivated;
 
@@ -81,7 +86,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             startActivity(new Intent(this, SettingsActivity.class));
 
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -101,12 +106,12 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     //set gui functions
     private void setNavigation() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void setDrawerLayout() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -114,22 +119,22 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void setToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
     private void setButtons() {
-        btnIput = (ToggleButton) findViewById(R.id.toggleButton2);
-        continous = (ToggleButton) findViewById(R.id.buttonContinous);
+        btnIput = findViewById(R.id.toggleButton2);
+        continous = findViewById(R.id.buttonContinous);
     }
 
     private void setProgress() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar3);
-        WaitAction = (ProgressBar) findViewById(R.id.progressBar4);
+        progressBar = findViewById(R.id.progressBar3);
+        WaitAction = findViewById(R.id.progressBar4);
     }
 
     private void setText() {
-        response = (TextView) findViewById(R.id.textView2);
+        response = findViewById(R.id.textView2);
         response.setText("");
     }
 
@@ -221,6 +226,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
+        receiver = new ResponseReceiver();
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager.registerReceiver(receiver,broadcastFilter);
     }
 
     @Override
@@ -238,16 +247,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     @Override
     public void ErrorOnCommand(String msg) {
-        if (isActivated)
-            startInteraction(msg);
+        if (isActivated){
+
+        }
 
     }
 
     @Override
     public void ErrorCommand(String msg) {
-        if (isActivated)
-            startInteraction(msg);
+        if (isActivated) {
 
+        }
     }
 
     @Override
@@ -259,7 +269,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
 
-        } else if (Result.equals("Χρύσα")) {
+        } else if (Result.equals("Γιάννη")) {
             Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
             talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
             showProgressBar();
@@ -271,23 +281,31 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     @Override
     public void Message(String search, String application, String conf) {
-        Log.i("res", search);
-        if (search != null) {
-            String msg = ApplicationUtils.Selection(application, search, conf, this);
-            startInteraction(msg);
-        }
+        Intent newint = new Intent(MainActivity.this,AppIntentService.class);
+        Log.d("ATTENTION",search);
+        Log.d("ATTENTION",application);
+        newint.putExtra(AppIntentService.APP_KIND,application);
+        newint.putExtra(AppIntentService.QUERY,search);
+        startService(newint);
     }
 
-    private void startInteraction(String msg) {
-        talkengine.speak(msg);
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        response.setText("");
-        clearWaitBar();
-        if (!recognition.isContinuousSpeechRecognition()) {
-            btnIput.setChecked(false);
-        }
+    public class ResponseReceiver extends BroadcastReceiver {
+        public static final String LOCAL_ACTION =
+                "com.example.bill.speechclient.applications.appintentservice.COMMAND_DONE";
 
-        isActivated = false;
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String appresp = intent.getStringExtra(AppIntentService.RESULT);
+            talkengine.speak(appresp);
+            Toast.makeText(context, appresp, Toast.LENGTH_LONG).show();
+            response.setText("");
+            if (!recognition.isContinuousSpeechRecognition()) {
+                btnIput.setChecked(false);
+            }
+
+            isActivated = false;
+
+        }
     }
 
     @Override

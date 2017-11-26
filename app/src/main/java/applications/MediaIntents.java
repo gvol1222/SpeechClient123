@@ -36,6 +36,7 @@ public class MediaIntents {
             msg = "Αγνωστο Τραγούδι";
         } else {
             Intent intent = new Intent(Constatns.MusicSearch);
+            intent.setFlags(Constatns.flag);
             intent.putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/*");
             intent.putExtra(SearchManager.QUERY, query);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
