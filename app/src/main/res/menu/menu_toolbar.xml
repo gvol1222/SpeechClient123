@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="activities.MainActivity">
-
-
     <item
-        android:id="@+id/action_user"
-        android:icon="@mipmap/ic_launcher"
-        android:orderInCategory="300"
-        android:title="test"></item>
+        android:id="@+id/action_settings"
+        android:icon="@mipmap/power_on"
+        android:title="sdgf"
+        app:showAsAction="ifRoom" />
 
 </menu>

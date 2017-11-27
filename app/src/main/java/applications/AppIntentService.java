@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import activities.MainActivity;
+import recogniton_service.SpeechService;
 
 /**
  * Created by gvol on 11/26/17.
@@ -55,7 +55,7 @@ public class AppIntentService extends IntentService {
                 break;
         }
                 Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(MainActivity.ResponseReceiver.LOCAL_ACTION);
+        broadcastIntent.setAction(SpeechService.ResponseReceiver.LOCAL_ACTION);
                 broadcastIntent.putExtra(RESULT, result);
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
                 localBroadcastManager.sendBroadcast(broadcastIntent);

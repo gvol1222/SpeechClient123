@@ -2,20 +2,24 @@ package activities;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -28,38 +32,113 @@ import com.example.bill.Activities.R;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
-import applications.AppIntentService;
-import recognize.AssistanListener;
+import recogniton_service.SpeechService;
 import recognize.SpeechRegognition;
 import tts.SpeecHelper;
-import wit_connection.WitResponse;
-import wit_connection.WitResponseMessage;
 
 /**
  * Created by bill on 11/20/17.
  */
 
 @SuppressLint("Registered")
-public class MainActivity extends PermissionActivity implements NavigationView.OnNavigationItemSelectedListener, AssistanListener, WitResponseMessage {
+public class MainActivity extends PermissionActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    // private ResponseReceiver receiver;
+    private static final String TAG = "BtroadCast";
     private TextView response;
     private ToggleButton btnIput;
     private ProgressBar progressBar;
     private ProgressBar WaitAction;
     private ToggleButton continous;
     private Toolbar toolbar;
-    private ResponseReceiver receiver;
-
+    private SpeechService speechService;
+    private Intent speechintent;
+    private boolean assistantBound;
+    private String result;
+    private boolean mIsaved;
     private boolean isActivated;
+
 
     private SpeecHelper talkengine;
     private SpeechRegognition recognition;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, intent.getStringExtra("result"));
+            response.setText(intent.getStringExtra("result"));
+        }
+    };
+    private ServiceConnection speechConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            SpeechService.AssistantBinder binder = (SpeechService.AssistantBinder) service;
+            speechService = binder.getService();
+            assistantBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            assistantBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gui);
         if (Build.VERSION.SDK_INT < 23) Init();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (speechService == null) {
+            speechintent = new Intent(this, SpeechService.class);
+            bindService(speechintent, speechConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean result = true;
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                if (mIsaved) {
+                    mIsaved = false;
+                    Toast.makeText(this, "Θα τερματίσει στη έξοδο", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Θα είναι πάντα ενεργό", Toast.LENGTH_LONG).show();
+
+                    mIsaved = true;
+                }
+                invalidateOptionsMenu();
+                break;
+            default:
+                result = super.onOptionsItemSelected(item);
+        }
+
+        return result;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mIsaved) {
+            menu.findItem(R.id.action_settings)
+                    .setIcon(R.mipmap.power_off);
+        } else {
+            menu.findItem(R.id.action_settings)
+                    .setIcon(R.mipmap.power_on);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -92,8 +171,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void Init() {
-        setRecognition();
-        talkengine = new SpeecHelper(this, recognition);
+
         setButtons();
         setProgress();
         setText();
@@ -138,13 +216,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         response.setText("");
     }
 
-    //set recognition
-    private void setRecognition() {
-        recognition = new SpeechRegognition(getApplicationContext());
-        recognition.setListener(this);
-        recognition.setContinuousSpeechRecognition(true);
-    }
-
     private void record() {
 
         btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -181,20 +252,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private void startRecord(boolean b) {
 
         if (b) {
-            if (!recognition.isContinuousSpeechRecognition()) {
-                talkengine.setFirst(true);
-                isActivated = true;
-            } else {
-                isActivated = true;
-            }
-            talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
-            Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
+            speechService.starIneract();
+        } else {
+
+        }
+
+       /* if (b) {
             showProgressBar();
         } else {
             clearProgressBar();
             clearWaitBar();
-            recognition.CancelSpeechRecognizer();
-        }
+        }*/
 
     }
 
@@ -215,111 +283,54 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     @Override
     protected void onDestroy() {
-        if (recognition != null) {
-            recognition.CloseSpeechRegognizer();
-            recognition = null;
-        }
-        talkengine.cancel();
         super.onDestroy();
+        stopService(speechintent);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
-        receiver = new ResponseReceiver();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.registerReceiver(receiver,broadcastFilter);
+        registerReceiver(broadcastReceiver, new IntentFilter(SpeechService.BroadcastAction));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 
+    /*
+        @Override
+        public void OnSpeechResult(String Result) {
 
-    @Override
-    public void OnSpeechLiveResult(String LiveResult) {
-        if (isActivated)
-            response.setText(LiveResult);
 
-    }
+            if (isActivated) {
+                showWaitBar();
 
-    @Override
-    public void ErrorOnCommand(String msg) {
-        if (isActivated){
+
+            } else if (Result.equals("Γιάννη")) {
+
+                showProgressBar();
+                isActivated = true;
+
+            }
 
         }
 
-    }
-
-    @Override
-    public void ErrorCommand(String msg) {
-        if (isActivated) {
-
-        }
-    }
-
-    @Override
-    public void OnSpeechResult(String Result) {
-
-
-        if (isActivated) {
-            showWaitBar();
-            wit_connection.WitResponse witResponse = new WitResponse(this);
-            witResponse.execute(Result);
-
-        } else if (Result.equals("Γιάννη")) {
-            Toast.makeText(this, "Πείτε μου πως μπορώ να βοηθήσω", Toast.LENGTH_LONG).show();
-            talkengine.speak("Πείτε μου πως μπορώ να βοηθήσω");
-            showProgressBar();
-            isActivated = true;
-
-        }
-
-    }
-
-    @Override
-    public void Message(String search, String application, String conf) {
-        Intent newint = new Intent(MainActivity.this,AppIntentService.class);
-        Log.d("ATTENTION",search);
-        Log.d("ATTENTION",application);
-        newint.putExtra(AppIntentService.APP_KIND,application);
-        newint.putExtra(AppIntentService.QUERY,search);
-        startService(newint);
-    }
-
-    public class ResponseReceiver extends BroadcastReceiver {
-        public static final String LOCAL_ACTION =
-                "com.example.bill.speechclient.applications.appintentservice.COMMAND_DONE";
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            String appresp = intent.getStringExtra(AppIntentService.RESULT);
-            talkengine.speak(appresp);
-            Toast.makeText(context, appresp, Toast.LENGTH_LONG).show();
+        public void OnSpeechError(int Error) {
+            isActivated = false;
             response.setText("");
+            clearProgressBar();
+            clearWaitBar();
             if (!recognition.isContinuousSpeechRecognition()) {
                 btnIput.setChecked(false);
             }
 
-            isActivated = false;
-
         }
-    }
-
-    @Override
-    public void OnSpeechError(int Error) {
-        isActivated = false;
-        response.setText("");
-        clearProgressBar();
-        clearWaitBar();
-        if (!recognition.isContinuousSpeechRecognition()) {
-            btnIput.setChecked(false);
-        }
-
-    }
-
+    */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
