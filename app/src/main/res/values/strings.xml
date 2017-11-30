@@ -6,6 +6,9 @@
     <string name="Error_Command"></string>
     <string name="title_activity_gui">Χρύσα</string>
 
+    <string name="StartMessage">Πείτε μου πως μπορώ να βοηθήσω</string>
+
+    <string name="WaitMessage">Παρακαλώ περιμένετε</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

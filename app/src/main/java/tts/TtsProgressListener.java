@@ -9,6 +9,4 @@ public interface TtsProgressListener {
     void onEndTalk();
 
     void onStartTalk();
-
-    void onInitTts(int status, int result);
 }

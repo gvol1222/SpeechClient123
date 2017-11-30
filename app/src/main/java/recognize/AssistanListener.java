@@ -11,5 +11,7 @@ public interface AssistanListener {
 
     void OnSpeechError(int Error);
 
+    void onEndOfSpeech();
+
 
 }

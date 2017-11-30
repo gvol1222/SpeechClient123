@@ -172,7 +172,7 @@ public class SpeechRegognition implements RecognitionListener {
     @Override
     public void onEndOfSpeech() {
         Log.i(TAG, "end of speeking");
-
+        listener.onEndOfSpeech();
     }
 
     @Override

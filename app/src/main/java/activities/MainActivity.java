@@ -17,7 +17,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,8 +32,6 @@ import com.example.bill.Activities.R;
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
 import recogniton_service.SpeechService;
-import recognize.SpeechRegognition;
-import tts.SpeecHelper;
 
 /**
  * Created by bill on 11/20/17.
@@ -53,19 +50,22 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private Toolbar toolbar;
     private SpeechService speechService;
     private Intent speechintent;
-    private boolean assistantBound;
-    private String result;
-    private boolean mIsaved;
-    private boolean isActivated;
+    private boolean mIsaved, assistantBound;
 
-
-    private SpeecHelper talkengine;
-    private SpeechRegognition recognition;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, intent.getStringExtra("result"));
-            response.setText(intent.getStringExtra("result"));
+
+            String result = intent.getStringExtra("result");
+
+            if (!result.equals("")) {
+                response.setText(result);
+            } else {
+                response.setText("");
+            }
+
+
+
         }
     };
     private ServiceConnection speechConnection = new ServiceConnection() {
@@ -252,17 +252,12 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private void startRecord(boolean b) {
 
         if (b) {
-            speechService.starIneract();
-        } else {
-
-        }
-
-       /* if (b) {
+            speechService.StartInteract();
             showProgressBar();
         } else {
             clearProgressBar();
-            clearWaitBar();
-        }*/
+            speechService.StopSrecognition();
+        }
 
     }
 
@@ -271,9 +266,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    recognition.setContinuousSpeechRecognition(false);
+                    // recognition.setContinuousSpeechRecognition(false);
                 } else {
-                    recognition.setContinuousSpeechRecognition(true);
+                    //recognition.setContinuousSpeechRecognition(true);
 
                 }
             }
@@ -300,37 +295,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         unregisterReceiver(broadcastReceiver);
     }
 
-    /*
-        @Override
-        public void OnSpeechResult(String Result) {
-
-
-            if (isActivated) {
-                showWaitBar();
-
-
-            } else if (Result.equals("Γιάννη")) {
-
-                showProgressBar();
-                isActivated = true;
-
-            }
-
-        }
-
-
-        @Override
-        public void OnSpeechError(int Error) {
-            isActivated = false;
-            response.setText("");
-            clearProgressBar();
-            clearWaitBar();
-            if (!recognition.isContinuousSpeechRecognition()) {
-                btnIput.setChecked(false);
-            }
-
-        }
-    */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
