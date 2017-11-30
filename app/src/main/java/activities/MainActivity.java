@@ -31,6 +31,7 @@ import com.example.bill.Activities.R;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
+import recogniton_service.ForeGroundRecognition;
 import recogniton_service.SpeechService;
 
 /**
@@ -48,7 +49,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private ProgressBar WaitAction;
     private ToggleButton continous;
     private Toolbar toolbar;
-    private SpeechService speechService;
+    private ForeGroundRecognition speechService;
     private Intent speechintent;
     private boolean mIsaved, assistantBound;
 
@@ -71,7 +72,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private ServiceConnection speechConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            SpeechService.AssistantBinder binder = (SpeechService.AssistantBinder) service;
+            ForeGroundRecognition.AssistantBinder binder = (ForeGroundRecognition.AssistantBinder) service;
             speechService = binder.getService();
             assistantBound = true;
         }
@@ -93,7 +94,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onStart() {
         super.onStart();
         if (speechService == null) {
-            speechintent = new Intent(this, SpeechService.class);
+            speechintent = new Intent(this, ForeGroundRecognition.class);
             bindService(speechintent, speechConnection, Context.BIND_AUTO_CREATE);
         }
     }

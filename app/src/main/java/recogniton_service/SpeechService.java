@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,11 +18,10 @@ import wit_connection.WitResponseMessage;
  * Created by bill on 11/14/17.
  */
 
-public class SpeechService extends ServiceHelper implements WitResponseMessage {
+public abstract class SpeechService extends ServiceHelper implements WitResponseMessage {
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private static final String TAG = "BtroadCast";
-    private final IBinder assistantBinder = new AssistantBinder();
     private Intent broadcastIntent;
 
     @Override
@@ -31,18 +29,16 @@ public class SpeechService extends ServiceHelper implements WitResponseMessage {
         super.onCreate();
 
         broadcastIntent = new Intent(BroadcastAction);
-
         IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
         ResponseReceiver receiver = new ResponseReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.registerReceiver(receiver, broadcastFilter);
     }
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return assistantBinder;
+        return super.onBind(intent);
     }
 
     @Override
@@ -130,15 +126,9 @@ public class SpeechService extends ServiceHelper implements WitResponseMessage {
             String appResp = intent.getStringExtra(AppIntentService.RESULT);
             StartMessage(appResp);
             CancelOnNotContinous();
-            broadcastIntent.putExtra("showProgress", false);
-            sendBroadcast(broadcastIntent);
             setActivated(false);
         }
     }
 
-    public class AssistantBinder extends Binder {
-        public SpeechService getService() {
-            return SpeechService.this;
-        }
-    }
+
 }

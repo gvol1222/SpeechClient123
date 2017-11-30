@@ -34,7 +34,7 @@
         </activity>
 
         <service android:name="applications.AppIntentService" />
-        <service android:name="recogniton_service.SpeechService" />
+        <service android:name="recogniton_service.ForeGroundRecognition" />
 
     </application>
 
