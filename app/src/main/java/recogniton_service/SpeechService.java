@@ -48,6 +48,7 @@ public class SpeechService extends ServiceHelper implements WitResponseMessage {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
     }
 
     @Override
