@@ -4,8 +4,7 @@
     tools:context="activities.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:icon="@mipmap/power_on"
-        android:title="sdgf"
+        android:title=""
         app:showAsAction="ifRoom" />
 
 </menu>

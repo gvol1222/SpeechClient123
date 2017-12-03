@@ -34,7 +34,6 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
         waitMessage = getApplicationContext().getResources().getString(R.string.WaitMessage);
         SetListener(this);
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -82,7 +81,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void onEndOfSpeech() {
-        //   StartMessage(waitMessage);
+        Toast.makeText(this, waitMessage, Toast.LENGTH_SHORT).show();
     }
 
     public void StartInteract() {

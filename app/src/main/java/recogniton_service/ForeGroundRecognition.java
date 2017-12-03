@@ -2,14 +2,15 @@ package recogniton_service;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.example.bill.Activities.R;
-
-import activities.MainActivity;
 
 /**
  * Created by bill on 11/30/17.
@@ -19,31 +20,39 @@ public class ForeGroundRecognition extends SpeechService {
 
     private static final int NOTIFY_ID = 1;
     private final IBinder assistantBinder = new AssistantBinder();
+    Notification not;
 
     @Override
-    public void StartInteract() {
-        super.StartInteract();
-        Intent notIntent = new Intent(this, MainActivity.class);
-        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendInt = PendingIntent.getActivity(this, 0,
-                notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Notification.Builder builder = new Notification.Builder(this);
+        Intent ConIntent = new Intent("notification.action");
+        PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        CreateNotification(ActionIntent);
 
-        builder.setContentIntent(pendInt)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setTicker("testNotify")
-                .setOngoing(true)
-                .setContentTitle("Playing")
-                .setContentText("testNotify");
-        Notification not = builder.build();
-        startForeground(NOTIFY_ID, not);
-
+        return Service.START_STICKY;
     }
 
+
+    private void CreateNotification(PendingIntent ActionIntent) {
+        Notification.Builder builder = new Notification.Builder(this);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_stat_name);
+        builder.setContentIntent(ActionIntent)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setLargeIcon(bitmap)
+                .setTicker("Η προσωπική σας βοηθός")
+                .setOngoing(true)
+                .setContentTitle("Ίριδα")
+                .setContentText("Η προσωπική σας βοηθός");
+        not = builder.build();
+        startForeground(NOTIFY_ID,
+                not);
+
+    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+
         return assistantBinder;
     }
 

@@ -15,7 +15,7 @@ import recognize.SpeechRegognition;
  * Created by bill on 11/30/17.
  */
 
-public class RecognitionService extends Service {
+public abstract class RecognitionService extends Service {
 
     private SpeechRegognition recognition;
     private Handler startHandler;
@@ -43,6 +43,7 @@ public class RecognitionService extends Service {
             recognition = null;
         }
     }
+
 
     @Override
     public boolean onUnbind(Intent intent) {

@@ -79,6 +79,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+
             assistantBound = false;
         }
     };
@@ -94,7 +95,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onStart() {
         super.onStart();
         if (speechService == null) {
-            speechintent = new Intent(this, ForeGroundRecognition.class);
+            speechintent = new Intent(MainActivity.this, ForeGroundRecognition.class);
+            speechintent.setAction("com.marothiatechs.foregroundservice.action.startforeground");
+            startService(speechintent);
             bindService(speechintent, speechConnection, Context.BIND_AUTO_CREATE);
         }
     }
@@ -118,7 +121,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
                     Toast.makeText(this, "Θα τερματίσει στη έξοδο", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(this, "Θα είναι πάντα ενεργό", Toast.LENGTH_LONG).show();
-
                     mIsaved = true;
                 }
                 invalidateOptionsMenu();
@@ -280,7 +282,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService(speechintent);
+        //  stopService(speechintent);
 
     }
 

@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.bill.Activities.R;
 
@@ -22,7 +23,21 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private static final String TAG = "BtroadCast";
+    private final BroadcastReceiver NotAction = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+
+            Log.i("activated:", String.valueOf(isActivated()));
+            if (isActivated()) {
+                StopSrecognition();
+                setActivated(false);
+            } else
+                StartInteract();
+        }
+    };
     private Intent broadcastIntent;
+    private ResponseReceiver receiver;
 
     @Override
     public void onCreate() {
@@ -30,9 +45,11 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
         broadcastIntent = new Intent(BroadcastAction);
         IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
-        ResponseReceiver receiver = new ResponseReceiver();
+        receiver = new ResponseReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.registerReceiver(receiver, broadcastFilter);
+
+        registerReceiver(NotAction, new IntentFilter("notification.action"));
     }
 
     @Nullable
@@ -90,6 +107,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void ErrorOnCommand(String msg) {
         if (isActivated()) {
+            SendMessage("");
             StartMessage(msg);
         }
     }
@@ -97,6 +115,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void ErrorCommand(String msg) {
         if (isActivated()) {
+            SendMessage("");
             StartMessage(msg);
         }
     }
@@ -110,8 +129,9 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         startService(newint);
     }
 
+
     //send message to activity
-    private void SendMessage(String msg) {
+    protected void SendMessage(String msg) {
         broadcastIntent.putExtra("result", msg);
         sendBroadcast(broadcastIntent);
     }
@@ -123,10 +143,13 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
         @Override
         public void onReceive(Context context, Intent intent) {
+
             String appResp = intent.getStringExtra(AppIntentService.RESULT);
             StartMessage(appResp);
             CancelOnNotContinous();
             setActivated(false);
+
+
         }
     }
 
