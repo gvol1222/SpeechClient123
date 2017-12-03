@@ -49,6 +49,14 @@ public class ForeGroundRecognition extends SpeechService {
                 not);
 
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopForeground(true);
+        stopSelf();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

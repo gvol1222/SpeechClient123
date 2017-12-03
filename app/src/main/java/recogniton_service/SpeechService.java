@@ -22,11 +22,11 @@ import wit_connection.WitResponseMessage;
 public abstract class SpeechService extends ServiceHelper implements WitResponseMessage {
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
-    private static final String TAG = "BtroadCast";
+    private final String TAG = this.getClass().getSimpleName();
+
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
 
             Log.i("activated:", String.valueOf(isActivated()));
             if (isActivated()) {
@@ -42,13 +42,11 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void onCreate() {
         super.onCreate();
-
         broadcastIntent = new Intent(BroadcastAction);
         IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
         receiver = new ResponseReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.registerReceiver(receiver, broadcastFilter);
-
         registerReceiver(NotAction, new IntentFilter("notification.action"));
     }
 
@@ -61,6 +59,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(NotAction);
 
     }
 
@@ -90,7 +89,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         if (isActivated()) {
             wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
-        } else if (Result.equals("Γιάννη")) {
+        } else if (Result.equals("Ίριδα")) {
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
             setActivated(true);
 
@@ -135,6 +134,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         broadcastIntent.putExtra("result", msg);
         sendBroadcast(broadcastIntent);
     }
+
 
     //create receiver for run app
     public class ResponseReceiver extends BroadcastReceiver {

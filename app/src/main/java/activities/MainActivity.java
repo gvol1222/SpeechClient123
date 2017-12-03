@@ -282,8 +282,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //  stopService(speechintent);
-
+        unbindService(speechConnection);
+        if (!mIsaved) {
+            stopService(speechintent);
+        }
     }
 
     @Override
