@@ -17,11 +17,11 @@ import recognize.SpeechRegognition;
 
 public abstract class RecognitionService extends Service {
 
+    private final String TAG = this.getClass().getSimpleName();
     private SpeechRegognition recognition;
     private Handler startHandler;
     private Handler closeHandler;
     private boolean isFirst;
-
 
     @Override
     public void onCreate() {
@@ -38,6 +38,7 @@ public abstract class RecognitionService extends Service {
     }
 
     private void free() {
+        Log.i(TAG, "Free resources");
         if (recognition != null) {
             recognition.CloseSpeechRegognizer();
             recognition = null;
@@ -58,21 +59,22 @@ public abstract class RecognitionService extends Service {
     }
 
     private void InitHandler() {
+        Log.i(TAG, "Initialization of handlers");
         startHandler = new Handler(Looper.getMainLooper());
         closeHandler = new Handler(Looper.getMainLooper());
     }
 
     private void setRecognition() {
+        Log.i(TAG, "Recognition created");
         recognition = new SpeechRegognition(getApplicationContext());
         recognition.setContinuousSpeechRecognition(true);
     }
 
     protected void SetListener(AssistanListener listener) {
         recognition.setListener(listener);
-
     }
 
-    public void CancelOnNotContinous() {
+    public void CancelOnNotContinuous() {
         if (!recognition.isContinuousSpeechRecognition())
             StopSrecognition();
     }
@@ -92,7 +94,7 @@ public abstract class RecognitionService extends Service {
             @Override
             public void run() {
                 StopSrecognition();
-                Log.i("close: ", "closed");
+                Log.i(TAG, "recognition closed");
             }
         });
     }
@@ -102,7 +104,7 @@ public abstract class RecognitionService extends Service {
         startHandler.post(new Runnable() {
             @Override
             public void run() {
-
+                Log.i(TAG, "recognition started");
                 if (!recognition.isContinuousSpeechRecognition()) {
                     if (isFirst) {
                         isFirst = false;

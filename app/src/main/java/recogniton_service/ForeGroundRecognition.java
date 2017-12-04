@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.example.bill.Activities.R;
 
@@ -19,6 +20,7 @@ import com.example.bill.Activities.R;
 public class ForeGroundRecognition extends SpeechService {
 
     private static final int NOTIFY_ID = 1;
+    private final String TAG = this.getClass().getSimpleName();
     private final IBinder assistantBinder = new AssistantBinder();
     Notification not;
 
@@ -28,6 +30,7 @@ public class ForeGroundRecognition extends SpeechService {
         Intent ConIntent = new Intent("notification.action");
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         CreateNotification(ActionIntent);
+        Log.i(TAG, "foreground started!!");
 
         return Service.START_STICKY;
     }
@@ -47,6 +50,8 @@ public class ForeGroundRecognition extends SpeechService {
         not = builder.build();
         startForeground(NOTIFY_ID,
                 not);
+        Log.i(TAG, "notification created!!");
+
 
     }
 
@@ -60,7 +65,6 @@ public class ForeGroundRecognition extends SpeechService {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
         return assistantBinder;
     }
 

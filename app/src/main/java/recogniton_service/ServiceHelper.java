@@ -1,6 +1,7 @@
 package recogniton_service;
 
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.bill.Activities.R;
@@ -15,12 +16,11 @@ import tts.TtsProgressListener;
 
 public abstract class ServiceHelper extends RecognitionService implements AssistanListener, TtsProgressListener {
 
+    private final String TAG = this.getClass().getSimpleName();
     private SpeecHelper talkengine;
-
     private String startMessage = "";
     private String waitMessage = "";
     private boolean isActivated;
-
 
     @Override
     public void onCreate() {
@@ -29,6 +29,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     }
 
     private void Init() {
+        Log.i(TAG, "Initialization object and messages");
         talkengine = new SpeecHelper(getApplicationContext(), this);
         startMessage = getApplicationContext().getResources().getString(R.string.StartMessage);
         waitMessage = getApplicationContext().getResources().getString(R.string.WaitMessage);
@@ -55,7 +56,9 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void onEndTalk() {
+
         runStartSpeech();
+
     }
 
 
@@ -75,18 +78,21 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void OnSpeechError(int Error) {
+        if (isActivated)
+            Toast.makeText(this, "Η ναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
+
         isActivated = false;
-        CancelOnNotContinous();
+        CancelOnNotContinuous();
     }
 
     @Override
     public void onEndOfSpeech() {
-        Toast.makeText(this, waitMessage, Toast.LENGTH_SHORT).show();
+
     }
 
     public void StartInteract() {
+        Log.i(TAG, "Assistant starting speaking");
         isActivated = true;
-
         if (!isContinuousSpeechRecognition()) {
             setFirst(false);
         }
@@ -101,6 +107,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     //free resources
     private void free() {
+        Log.i(TAG, "Resources is free");
         if (talkengine != null)
             talkengine.cancel();
     }

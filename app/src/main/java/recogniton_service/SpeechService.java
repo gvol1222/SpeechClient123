@@ -27,24 +27,24 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Log.i("activated:", String.valueOf(isActivated()));
+            Log.i(TAG, "activated is " + isActivated());
             if (isActivated()) {
                 StopSrecognition();
                 setActivated(false);
-            } else
+            } else {
                 StartInteract();
+
+            }
         }
     };
     private Intent broadcastIntent;
-    private ResponseReceiver receiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
         broadcastIntent = new Intent(BroadcastAction);
         IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
-        receiver = new ResponseReceiver();
+        ResponseReceiver receiver = new ResponseReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.registerReceiver(receiver, broadcastFilter);
         registerReceiver(NotAction, new IntentFilter("notification.action"));
@@ -59,12 +59,16 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "unregisterReceiver ");
         unregisterReceiver(NotAction);
 
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.i(TAG, "unregisterReceiver ");
+
+        // unregisterReceiver(NotAction);
         return false;
     }
 
@@ -76,7 +80,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     //speech listener methods
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
-
+        Log.i(TAG, "activated is " + isActivated() + " live result is " + LiveResult);
         if (isActivated()) {
             SendMessage(LiveResult);
         } else {
@@ -86,13 +90,14 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     @Override
     public void OnSpeechResult(String Result) {
+        Log.i(TAG, "activated is " + isActivated() + " final result is " + Result);
+
         if (isActivated()) {
             wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
         } else if (Result.equals("Ίριδα")) {
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
             setActivated(true);
-
 
         }
     }
@@ -105,6 +110,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     //wit response methods
     @Override
     public void ErrorOnCommand(String msg) {
+        Log.i(TAG, "Error on command message is " + msg);
         if (isActivated()) {
             SendMessage("");
             StartMessage(msg);
@@ -113,6 +119,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     @Override
     public void ErrorCommand(String msg) {
+        Log.i(TAG, "Error command message is " + msg);
         if (isActivated()) {
             SendMessage("");
             StartMessage(msg);
@@ -121,6 +128,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     @Override
     public void Message(String search, String application, String conf) {
+        Log.i(TAG, "Search parameter is  " + search + " application kind is" + application);
         SendMessage("");
         Intent newint = new Intent(this, AppIntentService.class);
         newint.putExtra(AppIntentService.APP_KIND, application);
@@ -143,11 +151,12 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             String appResp = intent.getStringExtra(AppIntentService.RESULT);
             StartMessage(appResp);
-            CancelOnNotContinous();
+            CancelOnNotContinuous();
             setActivated(false);
+            Log.i(TAG, "Response from command is " + appResp);
+
 
 
         }
