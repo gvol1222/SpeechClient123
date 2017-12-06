@@ -66,9 +66,6 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i(TAG, "unregisterReceiver ");
-
-        // unregisterReceiver(NotAction);
         return false;
     }
 

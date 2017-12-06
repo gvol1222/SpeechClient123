@@ -79,7 +79,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     @Override
     public void OnSpeechError(int Error) {
         if (isActivated)
-            Toast.makeText(this, "Η ναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Η αΩΑγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
 
         isActivated = false;
         CancelOnNotContinuous();

@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -89,6 +91,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gui);
         if (Build.VERSION.SDK_INT < 23) Init();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+// then you use
+
     }
 
     @Override
