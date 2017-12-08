@@ -1,5 +1,6 @@
 package utils;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,7 +27,6 @@ public class ContactUtils {
         if (MathUtils.isNumeric(query.replace(" ", ""))) {
             tels.add(query);
             return tels;
-
         }
         String name = null;
         HashMap<String, Double> selname;
@@ -45,7 +45,8 @@ public class ContactUtils {
                 }
             }
 
-            cur.close();
+            if (cur != null)
+                cur.close();
         }
 
         Log.i("name:", query);
@@ -57,7 +58,7 @@ public class ContactUtils {
         if (!selname.containsKey("no_contact")) {
             Map.Entry<String, Double> selname1 = selname.entrySet().iterator().next();
 
-            Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+            @SuppressLint("Recycle") Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
                     new String[]{selname1.getKey()}, null);
             while (pCur != null && pCur.moveToNext()) {
@@ -65,6 +66,8 @@ public class ContactUtils {
                         pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 tels.add(phone);
             }
+            if (pCur != null)
+                pCur.close();
         }
 
         return tels;

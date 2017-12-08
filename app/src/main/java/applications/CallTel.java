@@ -18,25 +18,29 @@ import utils.ContactUtils;
  */
 
 public class CallTel {
+    public static String telephone;
 
 
     public static String TriggerCall(final String data, Context context) {
+
         final ArrayList<String> tel = ContactUtils.ContactNumber(data, context);
         String msg = null;
         if (tel.size() == 1) {
-            newCall(tel.get(0), context);
-            return context.getResources().getString(R.string.make_call_acces_message);
+            telephone = tel.get(0);
+            msg = data;
+            /*newCall(tel.get(0), context);
+            return context.getResources().getString(R.string.make_call_acces_message);*/
         } else if (tel.size() <= 0) {
             msg = context.getResources().getString(R.string.make_call_error_message);
-        } else if (tel.size() > 1) {
+        }/* else if (tel.size() > 1) {
             newCallDialog(tel.toArray(new CharSequence[tel.size()]), context);
             msg = context.getResources().getString(R.string.make_call_acces_message);
-        }
+        }*/
         return msg;
     }
 
     @SuppressLint("MissingPermission")
-    private static void newCall(String number, Context context) {
+    public static void newCall(String number, Context context) {
         final Intent intent = new Intent(Constatns.actionCall);
         intent.setFlags(Constatns.flag);
         intent.setData(Uri.parse("tel:" + number));

@@ -19,7 +19,7 @@ public class AppIntentService extends IntentService {
     public static final String QUERY = "qry";
     public static final String CONFIDENCE = "confidence";
     public static final String RESULT = "msg";
-
+    public static String tel;
 
     public AppIntentService() {
         super("AppIntentService");
@@ -43,6 +43,7 @@ public class AppIntentService extends IntentService {
                 break;
             case "make_call":
                 result = CallTel.TriggerCall(search, context);
+                tel = CallTel.telephone;
                 break;
             case "directions":
                 result = MapsIntent.GoogleMaps(search, context);

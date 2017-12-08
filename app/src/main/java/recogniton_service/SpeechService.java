@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.bill.Activities.R;
 
 import applications.AppIntentService;
+import applications.CallTel;
 import wit_connection.WitResponse;
 import wit_connection.WitResponseMessage;
 
@@ -23,7 +24,6 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private final String TAG = this.getClass().getSimpleName();
-
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -37,6 +37,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
             }
         }
     };
+    boolean isinteractive = false;
     private Intent broadcastIntent;
 
     @Override
@@ -78,7 +79,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
         Log.i(TAG, "activated is " + isActivated() + " live result is " + LiveResult);
-        if (isActivated()) {
+        if (isActivated() && !isinteractive) {
             SendMessage(LiveResult);
         } else {
             SendMessage("");
@@ -89,7 +90,16 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public void OnSpeechResult(String Result) {
         Log.i(TAG, "activated is " + isActivated() + " final result is " + Result);
 
-        if (isActivated()) {
+        if (isinteractive) {
+            if (Result.equals("ναι")) {
+                // StopSrecognition();
+                CallTel.newCall(AppIntentService.tel, this);
+            } else {
+                StartMessage("όπως επιθυμείτε.");
+            }
+        }
+
+        if (isActivated() && !isinteractive) {
             wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
         } else if (Result.equals("Ίριδα")) {
@@ -102,13 +112,15 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void OnSpeechError(int Error) {
         super.OnSpeechError(Error);
+        isinteractive = false;
+
     }
 
     //wit response methods
     @Override
     public void ErrorOnCommand(String msg) {
         Log.i(TAG, "Error on command message is " + msg);
-        if (isActivated()) {
+        if (!isinteractive && isActivated()) {
             SendMessage("");
             StartMessage(msg);
         }
@@ -117,7 +129,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void ErrorCommand(String msg) {
         Log.i(TAG, "Error command message is " + msg);
-        if (isActivated()) {
+        if (!isinteractive && isActivated()) {
             SendMessage("");
             StartMessage(msg);
         }
@@ -127,10 +139,12 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public void Message(String search, String application, String conf) {
         Log.i(TAG, "Search parameter is  " + search + " application kind is" + application);
         SendMessage("");
-        Intent newint = new Intent(this.getApplicationContext(), AppIntentService.class);
-        newint.putExtra(AppIntentService.APP_KIND, application);
-        newint.putExtra(AppIntentService.QUERY, search);
-        startService(newint);
+        if (!isinteractive) {
+            Intent newint = new Intent(this, AppIntentService.class);
+            newint.putExtra(AppIntentService.APP_KIND, application);
+            newint.putExtra(AppIntentService.QUERY, search);
+            startService(newint);
+        }
     }
 
 
@@ -149,9 +163,20 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         @Override
         public void onReceive(Context context, Intent intent) {
             String appResp = intent.getStringExtra(AppIntentService.RESULT);
-            StartMessage(appResp);
-//            CancelOnNotContinuous();
-            setActivated(false);
+            if (!appResp.equals(context.getResources().getString(R.string.make_call_error_message))) {
+                StartMessage("Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι");
+                isinteractive = true;
+                setFirst(true);
+            } else if (appResp.equals(context.getResources().getString(R.string.make_call_error_message))) {
+                StartMessage(appResp);
+                isinteractive = false;
+                setActivated(false);
+            } else {
+                StartMessage(appResp);
+                isinteractive = false;
+                setActivated(false);
+
+            }
             Log.i(TAG, "Response from command is " + appResp);
 
 
