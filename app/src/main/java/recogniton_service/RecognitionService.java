@@ -73,6 +73,7 @@ public abstract class RecognitionService extends Service {
     private void setRecognition() {
         Log.i(TAG, "Recognition created");
         recognition = new SpeechRegognition(getApplicationContext());
+
     }
 
     protected void SetListener(AssistanListener listener) {

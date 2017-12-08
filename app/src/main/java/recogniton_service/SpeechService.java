@@ -127,7 +127,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public void Message(String search, String application, String conf) {
         Log.i(TAG, "Search parameter is  " + search + " application kind is" + application);
         SendMessage("");
-        Intent newint = new Intent(this, AppIntentService.class);
+        Intent newint = new Intent(this.getApplicationContext(), AppIntentService.class);
         newint.putExtra(AppIntentService.APP_KIND, application);
         newint.putExtra(AppIntentService.QUERY, search);
         startService(newint);
@@ -150,7 +150,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         public void onReceive(Context context, Intent intent) {
             String appResp = intent.getStringExtra(AppIntentService.RESULT);
             StartMessage(appResp);
-            CancelOnNotContinuous();
+//            CancelOnNotContinuous();
             setActivated(false);
             Log.i(TAG, "Response from command is " + appResp);
 

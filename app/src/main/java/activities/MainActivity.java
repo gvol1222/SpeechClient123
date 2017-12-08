@@ -45,6 +45,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     // private ResponseReceiver receiver;
     private static final String TAG = "BtroadCast";
+    SharedPreferences sharedPref;
     private TextView response;
     private ToggleButton btnIput;
     private ProgressBar progressBar;
@@ -52,8 +53,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private Toolbar toolbar;
     private ForeGroundRecognition speechService;
     private Intent speechintent;
-    private boolean mIsaved, assistantBound;
-
+    private boolean exit, assistantBound;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -89,9 +89,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gui);
-
+        sharedPref = getPreferences(Context.MODE_PRIVATE);
+        exit = sharedPref.getBoolean("exit", false);
         if (Build.VERSION.SDK_INT < 23) Init();
-        // PreferenceManager.setDefaultValues(this, R.xml.app_preferences, false);
 
     }
 
@@ -118,14 +118,21 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean result = true;
 
+
         switch (item.getItemId()) {
             case R.id.action_settings:
-                if (mIsaved) {
-                    mIsaved = false;
+                if (exit) {
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("exit", false);
+                    editor.apply();
+                    exit = false;
                     Toast.makeText(this, "Θα τερματίσει στη έξοδο", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(this, "Θα είναι πάντα ενεργό", Toast.LENGTH_LONG).show();
-                    mIsaved = true;
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("exit", true);
+                    editor.apply();
+                    exit = true;
                 }
                 invalidateOptionsMenu();
                 break;
@@ -138,7 +145,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (mIsaved) {
+
+
+        if (exit) {
             menu.findItem(R.id.action_settings)
                     .setIcon(R.mipmap.power_off);
         } else {
@@ -256,7 +265,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     private void startRecord(boolean b) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
+        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), true);
         speechService.setContinuous(btn);
         if (b) {
             speechService.StartInteract();
@@ -274,7 +283,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onDestroy() {
         super.onDestroy();
         unbindService(speechConnection);
-        if (!mIsaved) {
+        if (!exit) {
             stopService(speechintent);
         }
     }
