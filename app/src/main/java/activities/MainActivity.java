@@ -49,7 +49,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private ToggleButton btnIput;
     private ProgressBar progressBar;
     private ProgressBar WaitAction;
-    private ToggleButton continous;
     private Toolbar toolbar;
     private ForeGroundRecognition speechService;
     private Intent speechintent;
@@ -90,9 +89,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gui);
+
         if (Build.VERSION.SDK_INT < 23) Init();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-// then you use
+        // PreferenceManager.setDefaultValues(this, R.xml.app_preferences, false);
 
     }
 
@@ -186,7 +185,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         setToolbar();
         setDrawerLayout();
         setNavigation();
-        setContinousRecognize();
         record();
     }
 
@@ -211,7 +209,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     private void setButtons() {
         btnIput = findViewById(R.id.toggleButton2);
-        continous = findViewById(R.id.buttonContinous);
     }
 
     private void setProgress() {
@@ -258,7 +255,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void startRecord(boolean b) {
-
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
+        speechService.setContinuous(btn);
         if (b) {
             speechService.StartInteract();
             showProgressBar();
@@ -269,19 +268,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     }
 
-    private void setContinousRecognize() {
-        continous.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    // recognition.setContinuousSpeechRecognition(false);
-                } else {
-                    //recognition.setContinuousSpeechRecognition(true);
-
-                }
-            }
-        });
-    }
 
 
     @Override
@@ -297,6 +283,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onResume() {
         super.onResume();
         registerReceiver(broadcastReceiver, new IntentFilter(SpeechService.BroadcastAction));
+
+
     }
 
     @Override

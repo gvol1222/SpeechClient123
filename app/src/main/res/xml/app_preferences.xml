@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.preference.PreferenceCategory android:title="Category 1">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Επιλογές Φωνής">
 
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:id="@+id/test"
+        <SwitchPreference
             android:defaultValue="true"
-            android:key="key1"
-            android:summary="Switch Summary"
+            android:key="@string/switch_continuous"
             android:title="@string/continuous_setting" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </PreferenceCategory>
 
-</android.support.v7.preference.PreferenceScreen>
+</PreferenceScreen>

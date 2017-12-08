@@ -23,6 +23,7 @@ public abstract class RecognitionService extends Service {
     private Handler closeHandler;
     private boolean isFirst;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -58,6 +59,11 @@ public abstract class RecognitionService extends Service {
         return null;
     }
 
+    public void setContinuous(boolean continuous) {
+        recognition.setContinuousSpeechRecognition(continuous);
+
+    }
+
     private void InitHandler() {
         Log.i(TAG, "Initialization of handlers");
         startHandler = new Handler(Looper.getMainLooper());
@@ -67,7 +73,6 @@ public abstract class RecognitionService extends Service {
     private void setRecognition() {
         Log.i(TAG, "Recognition created");
         recognition = new SpeechRegognition(getApplicationContext());
-        recognition.setContinuousSpeechRecognition(true);
     }
 
     protected void SetListener(AssistanListener listener) {
@@ -75,13 +80,16 @@ public abstract class RecognitionService extends Service {
     }
 
     public void CancelOnNotContinuous() {
-        if (!recognition.isContinuousSpeechRecognition())
+        if (!recognition.isContinuousSpeechRecognition()) {
             StopSrecognition();
+        }
     }
 
     public void StopSrecognition() {
         if (recognition != null)
             recognition.CancelSpeechRecognizer();
+
+
     }
 
     public void StartRecognition() {
@@ -104,7 +112,8 @@ public abstract class RecognitionService extends Service {
         startHandler.post(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "recognition started");
+                Log.i(TAG, "recognition started first: " + isFirst);
+
                 if (!recognition.isContinuousSpeechRecognition()) {
                     if (isFirst) {
                         isFirst = false;

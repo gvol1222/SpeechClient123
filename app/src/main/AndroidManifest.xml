@@ -25,7 +25,13 @@
         <activity
             android:name="activities.settings.SettingsActivity"
             android:label="@string/settings_title"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName="activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="activities.MainActivity" />
+
+        </activity>
 
         <service android:name="applications.AppIntentService" />
         <service android:name="recogniton_service.ForeGroundRecognition" />

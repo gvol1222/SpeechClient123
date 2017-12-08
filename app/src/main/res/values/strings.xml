@@ -21,4 +21,6 @@
     <!-- Example General settings -->
     <string name="settings_title">Ρυθμίσεις</string>
     <string name="continuous_setting"> Συνεχής αναγνώριση</string>
+    <string name="switch_continuous">switch_continuous</string>
+
 </resources>

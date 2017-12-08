@@ -61,12 +61,6 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     }
 
-
-    @Override
-    public void setFirst(boolean first) {
-        super.setFirst(first);
-    }
-
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
     }
@@ -93,10 +87,10 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     public void StartInteract() {
         Log.i(TAG, "Assistant starting speaking");
         isActivated = true;
-        if (!isContinuousSpeechRecognition()) {
-            setFirst(false);
-        }
+
         StartMessage(startMessage);
+        if (!isContinuousSpeechRecognition())
+            setFirst(true);
     }
 
     public void StartMessage(String msg) {
