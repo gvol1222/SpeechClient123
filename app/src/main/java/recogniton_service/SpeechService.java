@@ -92,7 +92,6 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
         if (isinteractive) {
             if (Result.equals("ναι")) {
-                // StopSrecognition();
                 CallTel.newCall(AppIntentService.tel, this);
             } else {
                 StartMessage("όπως επιθυμείτε.");
