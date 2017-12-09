@@ -162,7 +162,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         @Override
         public void onReceive(Context context, Intent intent) {
             String appResp = intent.getStringExtra(AppIntentService.RESULT);
-            if (!appResp.equals(context.getResources().getString(R.string.make_call_error_message))) {
+            if (appResp.equals("contact_find")) {
                 StartMessage("Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι");
                 isinteractive = true;
                 setFirst(true);

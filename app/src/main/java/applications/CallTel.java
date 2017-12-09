@@ -27,7 +27,7 @@ public class CallTel {
         String msg = null;
         if (tel.size() == 1) {
             telephone = tel.get(0);
-            msg = data;
+            msg = "contact_find";
             /*newCall(tel.get(0), context);
             return context.getResources().getString(R.string.make_call_acces_message);*/
         } else if (tel.size() <= 0) {
