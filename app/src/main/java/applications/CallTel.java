@@ -18,20 +18,19 @@ import utils.ContactUtils;
  */
 
 public class CallTel {
-    public static String telephone;
 
 
-    public static String TriggerCall(final String data, Context context) {
+    public static String[] TriggerCall(final String data, Context context) {
 
         final ArrayList<String> tel = ContactUtils.ContactNumber(data, context);
-        String msg = null;
+        String[] msg = new String[2];
         if (tel.size() == 1) {
-            telephone = tel.get(0);
-            msg = "contact_find";
+            msg[0] = "contact_find";
+            msg[1] = tel.get(0);
             /*newCall(tel.get(0), context);
             return context.getResources().getString(R.string.make_call_acces_message);*/
         } else if (tel.size() <= 0) {
-            msg = context.getResources().getString(R.string.make_call_error_message);
+            msg[0] = context.getResources().getString(R.string.make_call_error_message);
         }/* else if (tel.size() > 1) {
             newCallDialog(tel.toArray(new CharSequence[tel.size()]), context);
             msg = context.getResources().getString(R.string.make_call_acces_message);

@@ -20,22 +20,30 @@ import java.util.Map;
 public class ContactUtils {
 
 
+    private static final String TAG = "ContactUtils";
     public static ArrayList<String> ContactNumber(String query, Context context) {
-
+        Log.i(TAG, "the text from user is " + query);
         ArrayList<String> tels = new ArrayList<>();
 
         if (MathUtils.isNumeric(query.replace(" ", ""))) {
+            Log.i(TAG, "the user told a number");
             tels.add(query);
             return tels;
         }
-        String name = null;
+        //String for temporary name
+        String name;
+        //hash map for matched name;
         HashMap<String, Double> selname;
-        Uri contentUri;
+        //String for  id of contact
         String id;
+        //list with strings of all contact names
         List<String> names = new ArrayList<>();
-        contentUri = ContactsContract.Contacts.CONTENT_URI;
+
+        Uri contentUri = ContactsContract.Contacts.CONTENT_URI;
         ContentResolver cr = context.getContentResolver();
+
         Cursor cur = cr.query(contentUri, null, null, null, null);
+
         if ((cur != null ? cur.getCount() : 0) > 0) {
             while (cur != null && cur.moveToNext()) {
                 name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
@@ -48,24 +56,32 @@ public class ContactUtils {
             if (cur != null)
                 cur.close();
         }
+        Log.i(TAG, "list's size of contact names " + names.size());
 
-        Log.i("name:", query);
-        Log.i("name:", String.valueOf(names.size()));
 
         selname = SearchStringHelper.getBestStringMatch(names, query);
-        Log.i("selfname:", String.valueOf(selname));
+        Log.i(TAG, "matched contact is " + selname);
 
+
+        //if the contact name has phone number get all existed phone numbers
         if (!selname.containsKey("no_contact")) {
-            Map.Entry<String, Double> selname1 = selname.entrySet().iterator().next();
+            Map.Entry<String, Double> matchedName = selname.entrySet().iterator().next();
+            Log.i(TAG, String.valueOf(matchedName));
 
-            @SuppressLint("Recycle") Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+            @SuppressLint("Recycle")
+            Cursor pCur = cr.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
-                    new String[]{selname1.getKey()}, null);
+                    new String[]{matchedName.getKey()}, null
+            );
+
             while (pCur != null && pCur.moveToNext()) {
+
                 String phone = pCur.getString(
-                        pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                );
                 tels.add(phone);
-                Log.i("tag", "number is " + phone);
+                Log.i(TAG, "phone number is " + phone);
             }
             if (pCur != null)
                 pCur.close();

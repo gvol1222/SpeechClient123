@@ -27,6 +27,7 @@ public class SearchStringHelper {
 
         for (String elem : list) {
 
+            //for greek names
             if (jr.similarity(greeknorm(query), greeknorm(elem)) > max_match) {
                 max_match = jr.similarity(greeknorm(query), greeknorm(elem));
                 bestmatch = elem;
@@ -34,6 +35,7 @@ public class SearchStringHelper {
                 Log.i(TAG, "best match is: " + bestmatch);
 
             }
+            //for english names
             if (jr.similarity(greeknorm(elem), greeklishnorm(query)) > max_match) {
                 max_match = jr.similarity(greeknorm(elem), greeklishnorm(query));
                 bestmatch = elem;
@@ -46,7 +48,10 @@ public class SearchStringHelper {
             }
         }
 
+        //if the  result is more than one
+        //choose the string with better confidence
         if (result.size() > 1) {
+
             for (Map.Entry<String, Double> entry : result.entrySet()) {
                 if (entry.getValue() > 0.9) {
                     result.put(entry.getKey(), entry.getValue());

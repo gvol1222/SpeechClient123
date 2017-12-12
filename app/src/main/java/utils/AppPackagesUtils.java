@@ -17,10 +17,10 @@ public class AppPackagesUtils {
 
 
     public static final String NO_MATCH = "no_match";
+    private static final String TAG = "AppPackagesUtils";
 
     public static String getpackagename(String query,Context context){
         HashMap<String,String> packages = getInstalledPackages(context);
-        String TAG = "AppPackagesUtils";
         Log.d(TAG, "Installed packages is: " + packages.toString());
         List<String> pkglist =new ArrayList<>(packages.keySet());
         String matched;
