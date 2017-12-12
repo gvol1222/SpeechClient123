@@ -17,7 +17,7 @@ import com.example.bill.Activities.R;
  * Created by bill on 11/30/17.
  */
 
-public class ForeGroundRecognition extends SpeechService {
+public class ForeGroundRecognition extends Interact {
 
     private static final int NOTIFY_ID = 1;
     private final String TAG = this.getClass().getSimpleName();

@@ -4,48 +4,71 @@ package utils;
  * Created by bill on 11/17/17.
  */
 
+import android.util.Log;
+
 import org.apache.commons.text.StrBuilder;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import info.debatty.java.stringsimilarity.JaroWinkler;
 
 public class SearchStringHelper {
 
+    private static final String TAG = "SearchStringHelper";
 
-    public static HashMap<String, Double> getBestStringMatch(List<String> list, String query) {
+    static HashMap<String, Double> getBestStringMatch(List<String> list, String query) {
         JaroWinkler jr = new JaroWinkler();
         String bestmatch = null;
         double max_match = 0.0;
+
+        HashMap<String, Double> result = new HashMap<>();
+
         for (String elem : list) {
 
             if (jr.similarity(greeknorm(query), greeknorm(elem)) > max_match) {
                 max_match = jr.similarity(greeknorm(query), greeknorm(elem));
                 bestmatch = elem;
+                Log.i(TAG, "max match is: " + max_match);
+                Log.i(TAG, "best match is: " + bestmatch);
+
             }
             if (jr.similarity(greeknorm(elem), greeklishnorm(query)) > max_match) {
                 max_match = jr.similarity(greeknorm(elem), greeklishnorm(query));
                 bestmatch = elem;
+                Log.i(TAG, "max match is: " + max_match);
+                Log.i(TAG, "best match is: " + bestmatch);
+            }
+
+            if (max_match > 0.75) {
+                result.put(bestmatch, max_match);
             }
         }
-        HashMap<String, Double> result = new HashMap<>();
-        if (max_match < 0.9) {
-            result.put("no_contact", max_match);
 
+        if (result.size() > 1) {
+            for (Map.Entry<String, Double> entry : result.entrySet()) {
+                if (entry.getValue() > 0.9) {
+                    result.put(entry.getKey(), entry.getValue());
+                }
+            }
         } else {
-            result.put(bestmatch, max_match);
+            if (max_match < 0.75) {
+                result.put("no_match", max_match);
 
+            } else {
+                result.put(bestmatch, max_match);
+
+            }
         }
-        //  result.put(bestmatch, max_match);
 
         return result;
     }
 
     public static double getContactSimilairty(String name, String query) {
         JaroWinkler jr = new JaroWinkler();
-        String bestmatch = null;
         double max_match = 0.0;
+        String bestmatch = null;
 
         if (jr.similarity(greeknorm(query), greeknorm(name)) > max_match) {
             max_match = jr.similarity(greeknorm(query), greeknorm(name));

@@ -7,10 +7,10 @@ import java.text.ParsePosition;
  * Created by bill on 11/6/17.
  */
 
-public class MathUtils {
+class MathUtils {
 
 
-    public static boolean isNumeric(String str) {
+    static boolean isNumeric(String str) {
 
         NumberFormat formatter = NumberFormat.getInstance();
         ParsePosition pos = new ParsePosition(0);

@@ -15,19 +15,26 @@ import java.util.List;
 
 public class AppPackagesUtils {
 
+
+    public static final String NO_MATCH = "no_match";
+
     public static String getpackagename(String query,Context context){
         HashMap<String,String> packages = getInstalledPackages(context);
-        Log.d("Packages",packages.toString());
+        String TAG = "AppPackagesUtils";
+        Log.d(TAG, "Installed packages is: " + packages.toString());
         List<String> pkglist =new ArrayList<>(packages.keySet());
         String matched;
         matched = SearchStringHelper.getBestStringMatch(pkglist,query).keySet().iterator().next();
-        return packages.get(matched);
-
+        Log.d(TAG, "Matched app package is: " + matched);
+        if (matched.equals(NO_MATCH)) {
+            return NO_MATCH;
+        } else {
+            return packages.get(matched);
+        }
     }
 
-    public static HashMap<String,String> getInstalledPackages(Context context){
+    private static HashMap<String, String> getInstalledPackages(Context context) {
         HashMap<String,String> list = new HashMap<String,String>();
-        String TAG = "LIST";
         final PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
         for (ApplicationInfo packageInfo : packages) {

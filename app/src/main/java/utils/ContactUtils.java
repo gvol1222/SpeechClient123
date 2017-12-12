@@ -65,6 +65,7 @@ public class ContactUtils {
                 String phone = pCur.getString(
                         pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 tels.add(phone);
+                Log.i("tag", "number is " + phone);
             }
             if (pCur != null)
                 pCur.close();

@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.bill.Activities.R;
 
 import applications.AppIntentService;
-import applications.CallTel;
 import wit_connection.WitResponse;
 import wit_connection.WitResponseMessage;
 
@@ -24,6 +22,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private final String TAG = this.getClass().getSimpleName();
+
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -37,17 +36,21 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
             }
         }
     };
-    boolean isinteractive = false;
+    private boolean isinteractive = false;
     private Intent broadcastIntent;
+
+    public boolean isIsinteractive() {
+        return isinteractive;
+    }
+
+    public void setIsinteractive(boolean isinteractive) {
+        this.isinteractive = isinteractive;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         broadcastIntent = new Intent(BroadcastAction);
-        IntentFilter broadcastFilter = new IntentFilter(ResponseReceiver.LOCAL_ACTION);
-        ResponseReceiver receiver = new ResponseReceiver();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.registerReceiver(receiver, broadcastFilter);
         registerReceiver(NotAction, new IntentFilter("notification.action"));
     }
 
@@ -89,14 +92,8 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void OnSpeechResult(String Result) {
         Log.i(TAG, "activated is " + isActivated() + " final result is " + Result);
+        Log.i(TAG, "Interactive boolean is  " + isinteractive);
 
-        if (isinteractive) {
-            if (Result.equals("ναι")) {
-                CallTel.newCall(AppIntentService.tel, this);
-            } else {
-                StartMessage("όπως επιθυμείτε.");
-            }
-        }
 
         if (isActivated() && !isinteractive) {
             wit_connection.WitResponse witResponse = new WitResponse(this);
@@ -138,6 +135,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public void Message(String search, String application, String conf) {
         Log.i(TAG, "Search parameter is  " + search + " application kind is" + application);
         SendMessage("");
+        Log.i(TAG, "Interactive boolean is  " + isinteractive);
         if (!isinteractive) {
             Intent newint = new Intent(this, AppIntentService.class);
             newint.putExtra(AppIntentService.APP_KIND, application);
@@ -151,36 +149,6 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     protected void SendMessage(String msg) {
         broadcastIntent.putExtra("result", msg);
         sendBroadcast(broadcastIntent);
-    }
-
-
-    //create receiver for run app
-    public class ResponseReceiver extends BroadcastReceiver {
-        public static final String LOCAL_ACTION =
-                "com.example.bill.speechclient.applications.appintentservice.COMMAND_DONE";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String appResp = intent.getStringExtra(AppIntentService.RESULT);
-            if (appResp.equals("contact_find")) {
-                StartMessage("Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι");
-                isinteractive = true;
-                setFirst(true);
-            } else if (appResp.equals(context.getResources().getString(R.string.make_call_error_message))) {
-                StartMessage(appResp);
-                isinteractive = false;
-                setActivated(false);
-            } else {
-                StartMessage(appResp);
-                isinteractive = false;
-                setActivated(false);
-
-            }
-            Log.i(TAG, "Response from command is " + appResp);
-
-
-
-        }
     }
 
 

@@ -16,6 +16,10 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings_helper">Settings</string>
 
+
+    <!-- Strings for open apps -->
+    <string name="success_open">Ανοίγει η εφαρμογή: </string>
+    <string name="no_success_open">Η εφαρμογή δεν είναι εγκατεστημένη</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
