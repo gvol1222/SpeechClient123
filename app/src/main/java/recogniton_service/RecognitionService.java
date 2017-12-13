@@ -28,8 +28,6 @@ public abstract class RecognitionService extends Service {
     public void onCreate() {
         super.onCreate();
         InitHandler();
-        setRecognition();
-
     }
 
     @Override
@@ -70,14 +68,10 @@ public abstract class RecognitionService extends Service {
         closeHandler = new Handler(Looper.getMainLooper());
     }
 
-    private void setRecognition() {
+    public void setRecognition(AssistanListener listener) {
         Log.i(TAG, "Recognition created");
-        recognition = new SpeechRegognition(getApplicationContext());
+        recognition = new SpeechRegognition(getApplicationContext(), listener);
 
-    }
-
-    protected void SetListener(AssistanListener listener) {
-        recognition.setListener(listener);
     }
 
     public void CancelOnNotContinuous() {

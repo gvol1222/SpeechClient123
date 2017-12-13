@@ -20,6 +20,7 @@ public abstract class Interact extends SpeechService {
 
     private final String TAG = this.getClass().getSimpleName();
 
+    private String tel;
 
     @Override
     public void onCreate() {
@@ -37,11 +38,17 @@ public abstract class Interact extends SpeechService {
         if (isIsinteractive()) {
             setIsinteractive(false);
             if (Result.equals("ναι")) {
-                CallTel.newCall(AppIntentService.tel, this);
+                CallTel.newCall(tel, this);
             } else {
                 StartMessage("όπως επιθυμείτε.");
             }
         }
+
+    }
+
+    @Override
+    public void onEndOfSpeech() {
+        super.onEndOfSpeech();
 
     }
 
@@ -57,7 +64,8 @@ public abstract class Interact extends SpeechService {
             Log.i(TAG, "Response from command is " + appResp[0]);
 
             if (appResp[0].equals("contact_find")) {
-                StartMessage("Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι");
+                StartMessage(getResources().getString(R.string.make_call_question));
+                tel = appResp[1];
                 setIsinteractive(true);
                 setFirst(true);
             } else if (appResp[0].equals(context.getResources().getString(R.string.make_call_error_message))) {

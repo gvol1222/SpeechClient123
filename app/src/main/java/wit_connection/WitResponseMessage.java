@@ -6,9 +6,7 @@ package wit_connection;
 
 public interface WitResponseMessage {
 
-    void ErrorOnCommand(String msg);
-
-    void ErrorCommand(String msg);
+    void ErrorCommand(int msg);
 
     void Message(String search, String application, String conf);
 }

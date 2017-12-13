@@ -33,7 +33,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
         talkengine = new SpeecHelper(getApplicationContext(), this);
         startMessage = getApplicationContext().getResources().getString(R.string.StartMessage);
         waitMessage = getApplicationContext().getResources().getString(R.string.WaitMessage);
-        SetListener(this);
+        setRecognition(this);
     }
     @Override
     public void onDestroy() {

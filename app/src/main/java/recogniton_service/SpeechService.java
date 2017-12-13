@@ -112,22 +112,13 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
     }
 
-    //wit response methods
-    @Override
-    public void ErrorOnCommand(String msg) {
-        Log.i(TAG, "Error on command message is " + msg);
-        if (!isinteractive && isActivated()) {
-            SendMessage("");
-            StartMessage(msg);
-        }
-    }
 
     @Override
-    public void ErrorCommand(String msg) {
-        Log.i(TAG, "Error command message is " + msg);
+    public void ErrorCommand(int msg) {
+        Log.i(TAG, "Error command status is " + msg);
         if (!isinteractive && isActivated()) {
             SendMessage("");
-            StartMessage(msg);
+            StartMessage(this.getResources().getString(R.string.Error_Command));
         }
     }
 
