@@ -15,6 +15,7 @@ import recognize.SpeechRegognition;
  * Created by bill on 11/30/17.
  */
 
+//this class contains functions of speech recognizer
 public abstract class RecognitionService extends Service {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -36,6 +37,7 @@ public abstract class RecognitionService extends Service {
         free();
     }
 
+    //close and destroy speech recognition
     private void free() {
         Log.i(TAG, "Free resources");
         if (recognition != null) {
@@ -57,11 +59,14 @@ public abstract class RecognitionService extends Service {
         return null;
     }
 
+    //set speech recognition for continuous recognition o not continuous
     public void setContinuous(boolean continuous) {
+        Log.i(TAG, "continuous parameter is " + continuous);
         recognition.setContinuousSpeechRecognition(continuous);
 
     }
 
+    //initiate handler for running on main thread
     private void InitHandler() {
         Log.i(TAG, "Initialization of handlers");
         startHandler = new Handler(Looper.getMainLooper());
@@ -92,6 +97,13 @@ public abstract class RecognitionService extends Service {
             recognition.StartSpeechRegognize();
     }
 
+    //mute and unmute beep sound
+    public void Mute(Boolean mute) {
+        recognition.MuteAudio(mute);
+
+    }
+
+    //this functions that start and close the speech recognition must run on the main thread
     public void runCloseSpeech() {
         closeHandler.post(new Runnable() {
             @Override
@@ -108,7 +120,6 @@ public abstract class RecognitionService extends Service {
             @Override
             public void run() {
                 Log.i(TAG, "recognition started first: " + isFirst);
-
                 if (!recognition.isContinuousSpeechRecognition()) {
                     if (isFirst) {
                         isFirst = false;
@@ -125,7 +136,9 @@ public abstract class RecognitionService extends Service {
         return recognition.isContinuousSpeechRecognition();
     }
 
+    //this function is usefull for not continuous recognition
     public void setFirst(boolean first) {
+        Log.i(TAG, "first parameter is " + first);
         isFirst = first;
     }
 

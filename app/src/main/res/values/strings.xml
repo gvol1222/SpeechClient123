@@ -8,6 +8,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings_helper">Settings</string>
 
+    <!--Notification strings -->
+    <string name="Notification_Title">"Η προσωπική σας βοηθός</string>
 
     <!--String for interactive  messages -->
     <string name="Error_Command">"Η εντολή δεν είναι σωστή προσπαθήστε ξανά"</string>

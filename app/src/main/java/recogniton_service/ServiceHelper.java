@@ -50,6 +50,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void onStartTalk() {
+        Mute(false);
         runCloseSpeech();
     }
 
@@ -72,11 +73,12 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void OnSpeechError(int Error) {
-        if (isActivated)
+        if (isActivated) {
             Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
-
+        }
         isActivated = false;
         CancelOnNotContinuous();
+        Mute(true);
     }
 
     @Override

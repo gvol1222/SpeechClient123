@@ -99,6 +99,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
             wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
         } else if (Result.equals("Ίριδα")) {
+            Mute(false);
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
             setActivated(true);
 

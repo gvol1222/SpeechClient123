@@ -22,11 +22,12 @@ public class ForeGroundRecognition extends Interact {
     private static final int NOTIFY_ID = 1;
     private final String TAG = this.getClass().getSimpleName();
     private final IBinder assistantBinder = new AssistantBinder();
-    Notification not;
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        //return start sticky because we dont want to close on exit of app
         Intent ConIntent = new Intent("notification.action");
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         CreateNotification(ActionIntent);
@@ -36,6 +37,7 @@ public class ForeGroundRecognition extends Interact {
     }
 
 
+    //create notification load image and start service
     private void CreateNotification(PendingIntent ActionIntent) {
         Notification.Builder builder = new Notification.Builder(this);
 
@@ -43,11 +45,11 @@ public class ForeGroundRecognition extends Interact {
         builder.setContentIntent(ActionIntent)
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setLargeIcon(bitmap)
-                .setTicker("Η προσωπική σας βοηθός")
+                .setTicker(getResources().getString(R.string.Notification_Title))
                 .setOngoing(true)
-                .setContentTitle("Ίριδα")
-                .setContentText("Η προσωπική σας βοηθός");
-        not = builder.build();
+                .setContentTitle(getResources().getString(R.string.title_activity_gui))
+                .setContentText(getResources().getString(R.string.Notification_Title));
+        Notification not = builder.build();
         startForeground(NOTIFY_ID,
                 not);
         Log.i(TAG, "notification created!!");
@@ -58,6 +60,7 @@ public class ForeGroundRecognition extends Interact {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //close notification and foreground service
         stopForeground(true);
         stopSelf();
     }

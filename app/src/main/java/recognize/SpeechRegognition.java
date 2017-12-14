@@ -66,7 +66,7 @@ public class SpeechRegognition implements RecognitionListener {
     }
 
     //function for mute and unmute audio
-    private void MuteAudio(Boolean mute) {
+    public void MuteAudio(Boolean mute) {
         Log.i(TAG, "mute parameter is " + mute);
 
         try {
@@ -118,7 +118,7 @@ public class SpeechRegognition implements RecognitionListener {
             Log.i(TAG, "cancel speech recognize");
             AssistantSpeechRegnizer.cancel();
         }
-        MuteAudio(false);
+        //  MuteAudio(false);
 
     }
 
@@ -129,7 +129,7 @@ public class SpeechRegognition implements RecognitionListener {
             AssistantSpeechRegnizer.destroy();
         }
         SpeechPartialResult.removeCallbacksAndMessages(null);
-        MuteAudio(false);
+        // MuteAudio(false);
     }
 
 
@@ -153,7 +153,7 @@ public class SpeechRegognition implements RecognitionListener {
     public void onReadyForSpeech(Bundle bundle) {
         Log.i(TAG, "ready for speaking");
 
-        MuteAudio(false);
+        // MuteAudio(false);
         IsReadyForSpeach = true;
 
     }
@@ -186,7 +186,7 @@ public class SpeechRegognition implements RecognitionListener {
         Log.i(TAG, "error code: " + i);
 
         listener.OnSpeechError(i);
-        MuteAudio(true);
+        // MuteAudio(true);
 
         // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
         long duration = System.currentTimeMillis() - StartListeningTime;
@@ -216,7 +216,7 @@ public class SpeechRegognition implements RecognitionListener {
 
         if (speechResultFound) {
             Log.i(TAG, "If results found returning");
-            MuteAudio(true);
+            //  MuteAudio(true);
             return;
         }
 
@@ -262,7 +262,7 @@ public class SpeechRegognition implements RecognitionListener {
     public void onPartialResults(Bundle results) {
         if (speechResultFound) {
             Log.i(TAG, "If partial results found returning");
-            MuteAudio(true);
+            //  MuteAudio(true);
             return;
         }
         Boolean valid = (
