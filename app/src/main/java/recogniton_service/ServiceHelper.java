@@ -50,6 +50,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void onStartTalk() {
+        //on start talking assistant close recognition and enable beep
         Mute(false);
         runCloseSpeech();
     }
@@ -57,7 +58,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void onEndTalk() {
-
+        //on end talking assistant start recognition
         runStartSpeech();
 
     }
@@ -73,19 +74,24 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     @Override
     public void OnSpeechError(int Error) {
+        //if recognition is listening user and reach speech time out time show message
         if (isActivated) {
             Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
         }
         isActivated = false;
+        //close recognition if not continuous
         CancelOnNotContinuous();
+        //mute audio beep
         Mute(true);
     }
 
     @Override
     public void onEndOfSpeech() {
+        Log.i(TAG, "user ends speaking");
 
     }
 
+    //function for starting tts speaking
     public void StartInteract() {
         Log.i(TAG, "Assistant starting speaking");
         isActivated = true;

@@ -23,6 +23,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private final String TAG = this.getClass().getSimpleName();
 
+    //broadcast for actions on clicking notification
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -36,8 +37,10 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
             }
         }
     };
-    private boolean isinteractive = false;
     private Intent broadcastIntent;
+
+    //this boolean helps to know if a command wait one respond from user or more
+    private boolean isinteractive = false;
 
     public boolean isIsinteractive() {
         return isinteractive;
@@ -50,6 +53,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void onCreate() {
         super.onCreate();
+        //intent to communicate with foreground service
         broadcastIntent = new Intent(BroadcastAction);
         registerReceiver(NotAction, new IntentFilter("notification.action"));
     }
@@ -82,6 +86,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void OnSpeechLiveResult(String LiveResult) {
         Log.i(TAG, "activated is " + isActivated() + " live result is " + LiveResult);
+        //send the text from speech of user on main activity
         if (isActivated() && !isinteractive) {
             SendMessage(LiveResult);
         } else {
@@ -96,13 +101,13 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
 
         if (isActivated() && !isinteractive) {
+            //connect to wit and get message
             wit_connection.WitResponse witResponse = new WitResponse(this);
             witResponse.execute(Result);
-        } else if (Result.equals("Ίριδα")) {
+        } else if (Result.equals(getResources().getString(R.string.title_activity_gui))) {
             Mute(false);
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
             setActivated(true);
-
         }
     }
 
@@ -114,6 +119,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     }
 
 
+    //methods of WitResponseMessage listener
     @Override
     public void ErrorCommand(int msg) {
         Log.i(TAG, "Error command status is " + msg);
