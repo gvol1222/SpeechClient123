@@ -51,8 +51,7 @@ public class AppIntentService extends IntentService {
                     result[0] = MediaIntents.newYoutube(search, context);
                     break;
                 case "make_call":
-                    String[] rslt = CallTel.TriggerCall(search, context);
-                    result = rslt;
+                    result = CallTel.TriggerCall(search, context);
                     break;
                 case "directions":
                     result[0] = MapsIntent.GoogleMaps(search, context);

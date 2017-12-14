@@ -44,9 +44,9 @@ public abstract class PermissionActivity extends AppCompatActivity {
                     boolean CallPhone = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     boolean RecordAudio = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     if (ReadContacts && CallPhone && RecordAudio) {
-                        Toast.makeText(this, "Activities.Permission Granted", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Activities.Permission Granted", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(this, "Activities.Permission Deinied", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Activities.Permission Deinied", Toast.LENGTH_SHORT).show();
                     }
 
                 }

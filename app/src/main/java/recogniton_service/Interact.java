@@ -35,6 +35,7 @@ public abstract class Interact extends SpeechService {
     @Override
     public void OnSpeechResult(String Result) {
         super.OnSpeechResult(Result);
+
         if (isIsinteractive()) {
             setIsinteractive(false);
             if (Result.equals("ναι")) {
@@ -63,6 +64,7 @@ public abstract class Interact extends SpeechService {
 
             Log.i(TAG, "Response from command is " + appResp[0]);
 
+            //check the type of command  for selecting correct actions
             if (appResp[0].equals("contact_find")) {
                 StartMessage(getResources().getString(R.string.make_call_question));
                 tel = appResp[1];
