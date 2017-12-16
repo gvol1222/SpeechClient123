@@ -20,7 +20,8 @@ public abstract class PermissionActivity extends AppCompatActivity {
     private static final String[] permissions = new String[]{
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.CALL_PHONE,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.SEND_SMS
     };
 
 
@@ -43,7 +44,9 @@ public abstract class PermissionActivity extends AppCompatActivity {
                     boolean ReadContacts = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     boolean CallPhone = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     boolean RecordAudio = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                    if (ReadContacts && CallPhone && RecordAudio) {
+                    boolean SendSms = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+
+                    if (ReadContacts && CallPhone && RecordAudio && SendSms) {
                         Toast.makeText(this, "Activities.Permission Granted", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "Activities.Permission Deinied", Toast.LENGTH_SHORT).show();

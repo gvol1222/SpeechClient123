@@ -11,6 +11,7 @@ import com.example.bill.Activities.R;
 
 import applications.AppIntentService;
 import applications.CallTel;
+import applications.Sms;
 
 /**
  * Created by bill on 12/12/17.
@@ -19,7 +20,7 @@ import applications.CallTel;
 public abstract class Interact extends SpeechService {
 
     private final String TAG = this.getClass().getSimpleName();
-
+    private String[] appResp;
     private String tel;
 
     @Override
@@ -29,6 +30,7 @@ public abstract class Interact extends SpeechService {
         ResponseReceiver receiver = new ResponseReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.registerReceiver(receiver, broadcastFilter);
+
     }
 
 
@@ -38,10 +40,13 @@ public abstract class Interact extends SpeechService {
 
         if (isIsinteractive()) {
             setIsinteractive(false);
-            if (Result.equals("ναι")) {
+            if (appResp[0].equals("contact_find") && Result.equals("ναι")) {
                 CallTel.newCall(tel, this);
-            } else {
+            } else if (appResp[0].equals("contact_find")) {
                 StartMessage("όπως επιθυμείτε.");
+            }
+            if (appResp[0].equals("contact_find_sms")) {
+                Sms.SendMessage(Result, this.getApplicationContext(), tel);
             }
         }
 
@@ -60,7 +65,7 @@ public abstract class Interact extends SpeechService {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String[] appResp = intent.getExtras().getStringArray(AppIntentService.RESULT);
+            appResp = intent.getExtras().getStringArray(AppIntentService.RESULT);
 
             Log.i(TAG, "Response from command is " + appResp[0]);
 
@@ -70,7 +75,12 @@ public abstract class Interact extends SpeechService {
                 tel = appResp[1];
                 setIsinteractive(true);
                 setFirst(true);
-            } else if (appResp[0].equals(context.getResources().getString(R.string.make_call_error_message))) {
+            } else if (appResp[0].equals("contact_find_sms")) {
+                StartMessage(getResources().getString(R.string.send_sms_question));
+                tel = appResp[1];
+                setIsinteractive(true);
+                setFirst(true);
+            } else if (appResp[0].equals(context.getResources().getString(R.string.make_call_error_message)) && (appResp[0].equals("contact_find_sms") || appResp[0].equals("contact_find"))) {
                 StartMessage(appResp[0]);
                 setIsinteractive(false);
                 setActivated(false);

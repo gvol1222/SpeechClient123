@@ -17,10 +17,13 @@
     <string name="StartMessage">Πείτε μου πως μπορώ να βοηθήσω</string>
     <string name="WaitMessage">Παρακαλώ περιμένετε</string>
 
+    <!--Strings for calls -->
     <string name="make_call_acces_message">Ξεκινάει το τηλεφώνημα</string>
     <string name="make_call_error_message">Η επαφη δεν υπάρχει</string>
-    <string name="make_call_question">"Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι"</string>
+    <string name="make_call_question">Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι</string>
 
+    <!-- Strings for sending sms -->
+    <string name="send_sms_question">Πείτε μου το κείμενο που επιθυμείτε να στείλετε </string>
     <!-- Strings for open apps -->
     <string name="success_open">Ανοίγει η εφαρμογή: </string>
     <string name="no_success_open">Η εφαρμογή δεν είναι εγκατεστημένη</string>

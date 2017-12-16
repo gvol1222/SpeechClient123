@@ -59,6 +59,10 @@ public class AppIntentService extends IntentService {
                 case "play_music":
                     result[0] = MediaIntents.MusicPlayer(search, context);
                     break;
+                case "send sms":
+                    result = CallTel.TriggerCall(search, context);
+                    result[0] = result[0] + "_sms";
+                    break;
                 default:
                     result[0] = "Δεν βρέθηκε η εντολή. Πείτε μου ξανά.";
                     break;
