@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SpeechClient.iml" filepath="$PROJECT_DIR$/SpeechClient.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/SpeechClient.iml" filepath="$PROJECT_DIR$/.idea/SpeechClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

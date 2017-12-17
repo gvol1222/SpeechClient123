@@ -61,10 +61,12 @@ public class SearchStringHelper {
 
             for (Map.Entry<String, Double> entry : result.entrySet()) {
                 if (entry.getValue() > 0.9) {
+                    result.clear();
                     result.put(entry.getKey(), entry.getValue());
                 }
             }
         } else {
+            result.clear();
             if (max_match < 0.75) {
                 result.put("no_match", max_match);
 

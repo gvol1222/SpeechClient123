@@ -61,7 +61,7 @@ public class AppIntentService extends IntentService {
                     break;
                 case "send sms":
                     result = CallTel.TriggerCall(search, context);
-                    result[0] = result[0] + "_sms";
+                    result[3] = "sms";
                     break;
                 default:
                     result[0] = "Δεν βρέθηκε η εντολή. Πείτε μου ξανά.";

@@ -26,6 +26,7 @@ public class AppPackagesUtils {
         String matched;
         matched = SearchStringHelper.getBestStringMatch(pkglist,query).keySet().iterator().next();
         Log.d(TAG, "Matched app package is: " + matched);
+
         if (matched.equals(NO_MATCH)) {
             return NO_MATCH;
         } else {

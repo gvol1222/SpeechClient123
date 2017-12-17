@@ -11,7 +11,6 @@ import com.example.bill.Activities.R;
 
 import applications.AppIntentService;
 import applications.CallTel;
-import applications.Sms;
 
 /**
  * Created by bill on 12/12/17.
@@ -81,6 +80,7 @@ public abstract class Interact extends SpeechService {
                 setIsinteractive(true);
                 setFirst(true);
             } else if (appResp[0].equals(context.getResources().getString(R.string.make_call_error_message)) && (appResp[0].equals("contact_find_sms") || appResp[0].equals("contact_find"))) {
+                appResp[0].replace( "_sms","");
                 StartMessage(appResp[0]);
                 setIsinteractive(false);
                 setActivated(false);

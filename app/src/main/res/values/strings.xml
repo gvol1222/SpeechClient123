@@ -24,6 +24,14 @@
 
     <!-- Strings for sending sms -->
     <string name="send_sms_question">Πείτε μου το κείμενο που επιθυμείτε να στείλετε </string>
+   <string name="sms_successfully_sented">Tο μήνυμα σταλθηκε με επυτηχία</string>
+    <string name="sms_not_sented">Tο μήνυμα δεν μπορεί να σταλθεί</string>
+    <string name="sms_service_not_available">Η υπηρεσία δεν είναι διαθέσιμη</string>
+    <string name="sms_radio_off">Το ραδιόφωνο πρέπει να κλείσει</string>
+    <string name="sms_delivered">Το μήνυμα ελήφθη</string>
+    <string name="sms_not_delivered">Το μήνυμα δεν ελήφθη</string>
+
+
     <!-- Strings for open apps -->
     <string name="success_open">Ανοίγει η εφαρμογή: </string>
     <string name="no_success_open">Η εφαρμογή δεν είναι εγκατεστημένη</string>
