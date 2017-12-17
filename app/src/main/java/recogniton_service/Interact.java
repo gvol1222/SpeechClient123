@@ -39,6 +39,7 @@ public abstract class Interact extends SpeechService {
 
         if (isIsinteractive()) {
             setIsinteractive(false);
+            setActivated(false);
             if (appResp[0].equals("contact_find") && Result.equals("ναι")) {
                 CallTel.newCall(tel, this);
             } else if (appResp[0].equals("contact_find")) {

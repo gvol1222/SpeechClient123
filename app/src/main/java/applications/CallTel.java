@@ -49,7 +49,7 @@ public class CallTel {
 
     }
 
-    private static void newCallDialog(final CharSequence[] number, final Context context) {
+    /*private static void newCallDialog(final CharSequence[] number, final Context context) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Επελεξέ αριθμό");
@@ -68,7 +68,7 @@ public class CallTel {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
-    }
+    }*/
 
 
 }

@@ -35,6 +35,7 @@ import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
 import recogniton_service.ForeGroundRecognition;
 import recogniton_service.SpeechService;
+import utils.AppPackagesUtils;
 
 /**
  * Created by bill on 11/20/17.
@@ -267,13 +268,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), true);
         speechService.setContinuous(btn);
-        if (b) {
-            speechService.StartInteract();
-            showProgressBar();
-        } else {
-            clearProgressBar();
-            speechService.StopSrecognition();
-        }
+       if (AppPackagesUtils.isNetworkAvailable(this)) {
+           if (b) {
+               speechService.StartInteract();
+               showProgressBar();
+           } else {
+               clearProgressBar();
+               speechService.StopSrecognition();
+           }
+       }else {
+           Toast.makeText(this,getResources().getString(R.string.network_error),Toast.LENGTH_LONG).show();
+       }
 
     }
 
