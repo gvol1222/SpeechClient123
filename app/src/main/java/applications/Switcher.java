@@ -67,13 +67,13 @@ public class Switcher {
             if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
                 Log.i(TAG,"found number ");
                 app.data.put("contact", query);
-                app.Stage = "multifromStart";
+                app.Stage = Constatns.MULTI_COMMAND_FROM_START;
                 app.Current_Key ="SMS";
                 app.data_requests.put("SMS","Πείτε μου το κείμενο που επιθυμείτε να στείλετε");
 
             }else if (ContactUtils.ContactNumber(query,con).size() > 0 ) {
                 app.data.put("contact", ContactUtils.ContactNumber(app.data.get("contact"), con).get(0));
-                app.Stage = "multifromStart";
+                app.Stage = Constatns.MULTI_COMMAND_FROM_START;
                 app.Current_Key ="SMS";
                 app.data_requests.put("SMS","Πείτε μου το κείμενο που επιθυμείτε να στείλετε");
             }
