@@ -25,11 +25,6 @@ public class ContactUtils {
         Log.i(TAG, "the text from user is " + query);
         ArrayList<String> tels = new ArrayList<>();
 
-        if (MathUtils.isNumeric(query.replace(" ", ""))) {
-            Log.i(TAG, "the user told a number");
-            tels.add(query);
-            return tels;
-        }
         //String for temporary name
         String name;
         //hash map for matched name;
@@ -90,6 +85,33 @@ public class ContactUtils {
         return tels;
     }
 
+    public static boolean IsNumber(String query){
+
+        if(query !=null) {
+            Log.i(TAG, "phone number is " + query);
+            query = query.replace(" ", "");
+            if (MathUtils.isNumeric(query)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean IsCorrectNumber(String number){
+
+        int count =0 ;
+        int len  = number.length();
+        for(int i= 0;i<len;i++){
+            if(Character.isDigit(number.charAt(i)) )
+                count++;
+        }
+        if(count == 10){
+            return true;
+        }
+
+        return false;
+    }
+
     public static ArrayList<String> ContactMail(String query, Context context) {
         String name;
 
@@ -136,4 +158,3 @@ public class ContactUtils {
 
 
 }
-

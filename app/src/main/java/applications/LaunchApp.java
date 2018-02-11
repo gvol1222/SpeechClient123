@@ -25,7 +25,7 @@ class LaunchApp {
             Log.i(TAG, "opening app successful " + qry);
             Intent i = manager.getLaunchIntentForPackage(packagename);
             if (i != null) {
-                i.setFlags(Constatns.flag);
+                i.setFlags(Constatns.FLAGS);
                 i.addCategory(Intent.CATEGORY_LAUNCHER);
             } else {
                 Log.i(TAG, "something goes wrong " + qry);

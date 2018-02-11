@@ -119,6 +119,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     }
 
     public void setActivated(boolean activated) {
+        Log.i(TAG,"boolean activated is "+activated);
         isActivated = activated;
     }
 }

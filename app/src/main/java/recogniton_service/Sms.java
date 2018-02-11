@@ -17,10 +17,10 @@ import java.util.ArrayList;
  * Created by bill on 12/16/17.
  */
 
-class Sms {
+public class Sms {
 
 
-    static String SendMessage(String result, Context context, String tel) {
+    public static String SendMessage(String result, Context context, String tel) {
 
         String SMS_SENT = "SMS_SENT";
         String SMS_DELIVERED = "SMS_DELIVERED";

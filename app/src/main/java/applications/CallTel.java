@@ -23,7 +23,7 @@ public class CallTel {
     public static String[] TriggerCall(final String data, Context context) {
 
         final ArrayList<String> tel = ContactUtils.ContactNumber(data, context);
-        String[] msg = new String[2];
+        String[] msg = new String[6];
         if (tel.size() == 1) {
             msg[0] = "contact_find";
             msg[1] = tel.get(0);
@@ -31,7 +31,11 @@ public class CallTel {
             return context.getResources().getString(R.string.make_call_acces_message);*/
         } else if (tel.size() <= 0) {
             msg[0] = context.getResources().getString(R.string.make_call_error_message);
-        }/* else if (tel.size() > 1) {
+        } /*else if (tel.size() > 1) {
+            msg[0] = "contact_find";
+            for (int i=0;i< tel.size();i++){
+                msg[i+1]=tel.get(i);
+            }
             newCallDialog(tel.toArray(new CharSequence[tel.size()]), context);
             msg = context.getResources().getString(R.string.make_call_acces_message);
         }*/
@@ -40,8 +44,8 @@ public class CallTel {
 
     @SuppressLint("MissingPermission")
     public static void newCall(String number, Context context) {
-        final Intent intent = new Intent(Constatns.actionCall);
-        intent.setFlags(Constatns.flag);
+        final Intent intent = new Intent(Constatns.ACTION_CALL);
+        intent.setFlags(Constatns.FLAGS);
         intent.setData(Uri.parse("tel:" + number));
         if (intent.resolveActivity(context.getPackageManager()) != null)
             context.startActivity(intent);

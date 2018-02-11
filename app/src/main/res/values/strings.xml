@@ -21,11 +21,11 @@
     <!--Strings for calls -->
     <string name="make_call_acces_message">Ξεκινάει το τηλεφώνημα</string>
     <string name="make_call_error_message">Η επαφη δεν υπάρχει</string>
-    <string name="make_call_question">Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα ναί ή όχι</string>
+    <string name="make_call_question">Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα</string>
 
     <!-- Strings for sending sms -->
     <string name="send_sms_question">Πείτε μου το κείμενο που επιθυμείτε να στείλετε </string>
-   <string name="sms_successfully_sented">Tο μήνυμα σταλθηκε με επυτηχία</string>
+    <string name="sms_successfully_sented">Tο μήνυμα σταλθηκε με επυτηχία</string>
     <string name="sms_not_sented">Tο μήνυμα δεν μπορεί να σταλθεί</string>
     <string name="sms_service_not_available">Η υπηρεσία δεν είναι διαθέσιμη</string>
     <string name="sms_radio_off">Το ραδιόφωνο πρέπει να κλείσει</string>
@@ -42,5 +42,8 @@
     <string name="settings_title">Ρυθμίσεις</string>
     <string name="continuous_setting"> Συνεχής αναγνώριση</string>
     <string name="switch_continuous">switch_continuous</string>
+    <string name="command_repeat">Παρακαλώ, επαναλάβετε.</string>
+    <string name="retry_silent_stop">Προσπαθήστε ξανά κάπου πιό ήσυχα.</string>
+    <string name="helper_prompt">Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω</string>
 
 </resources>

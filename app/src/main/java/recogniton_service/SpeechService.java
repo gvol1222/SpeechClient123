@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.bill.Activities.R;
 
@@ -18,11 +19,13 @@ import wit_connection.WitResponseMessage;
  * Created by bill on 11/14/17.
  */
 
-public abstract class SpeechService extends ServiceHelper implements WitResponseMessage {
+public abstract class SpeechService extends ServiceHelper  {
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private final String TAG = this.getClass().getSimpleName();
-
+    public static final String HAS_WIT = "hasWit";
+    private String msg ="";
+    private boolean hasWit;
     //broadcast for actions on clicking notification
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
@@ -36,11 +39,11 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
 
             }
         }
-    };
+    };/**/
     private Intent broadcastIntent;
 
     //this boolean helps to know if a command wait one respond from user or more
-    private boolean isinteractive = false;
+    /*private boolean isinteractive = false;
 
     public boolean isIsinteractive() {
         return isinteractive;
@@ -49,13 +52,13 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public void setIsinteractive(boolean isinteractive) {
         this.isinteractive = isinteractive;
     }
-
+    */
     @Override
     public void onCreate() {
         super.onCreate();
         //intent to communicate with foreground service
         broadcastIntent = new Intent(BroadcastAction);
-        registerReceiver(NotAction, new IntentFilter("notification.action"));
+        registerReceiver(NotAction, new IntentFilter("notification.action"));/**/
     }
 
     @Nullable
@@ -87,7 +90,7 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     public void OnSpeechLiveResult(String LiveResult) {
         Log.i(TAG, "activated is " + isActivated() + " live result is " + LiveResult);
         //send the text from speech of user on main activity
-        if (isActivated() && !isinteractive) {
+        if (isActivated() ) {
             SendMessage(LiveResult);
         } else {
             SendMessage("");
@@ -97,13 +100,14 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
     @Override
     public void OnSpeechResult(String Result) {
         Log.i(TAG, "activated is " + isActivated() + " final result is " + Result);
-        Log.i(TAG, "Interactive boolean is  " + isinteractive);
 
 
-        if (isActivated() && !isinteractive) {
+
+        if (isActivated() ) {
             //connect to wit and get message
-            wit_connection.WitResponse witResponse = new WitResponse(this);
-            witResponse.execute(Result);
+            //wit_connection.WitResponse witResponse = new WitResponse(this);
+            //witResponse.execute(Result);
+            new WitResponse(getApplicationContext()).execute(Result);
         } else if (Result.equals(getResources().getString(R.string.title_activity_gui))) {
             Mute(false);
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
@@ -111,15 +115,11 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         }
     }
 
-    @Override
-    public void OnSpeechError(int Error) {
-        super.OnSpeechError(Error);
-        isinteractive = false;
 
-    }
 
 
     //methods of WitResponseMessage listener
+   /*
     @Override
     public void ErrorCommand(int msg) {
         Log.i(TAG, "Error command status is " + msg);
@@ -142,9 +142,10 @@ public abstract class SpeechService extends ServiceHelper implements WitResponse
         }
     }
 
-
+*/
     //send message to activity
     protected void SendMessage(String msg) {
+        Log.i(TAG, "message of sendmessage method  is   " + msg);
         broadcastIntent.putExtra("result", msg);
         sendBroadcast(broadcastIntent);
     }

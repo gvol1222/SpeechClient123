@@ -19,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,6 +62,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
             String result = intent.getStringExtra("result");
 
+            Log.d(TAG, "onReceive msg : "+ result);
             if (!result.equals("")) {
                 response.setText(result);
             } else {
@@ -269,6 +271,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), true);
         speechService.setContinuous(btn);
        if (AppPackagesUtils.isNetworkAvailable(this)) {
+           Log.i(TAG,"boolean is"+b);
            if (b) {
                speechService.StartInteract();
                showProgressBar();

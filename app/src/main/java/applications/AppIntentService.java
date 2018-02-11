@@ -40,7 +40,7 @@ public class AppIntentService extends IntentService {
             double confidence = intent.getDoubleExtra(CONFIDENCE, 0.0);
         }
         Log.d("ATTENTION", application + " : " + search);
-        String[] result = new String[2];
+        String[] result = new String[6];
 
         if (application != null) {
             switch (application) {
@@ -63,6 +63,9 @@ public class AppIntentService extends IntentService {
                     result = CallTel.TriggerCall(search, context);
                     result[0] = result[0] + "_sms";
                     break;
+                case "take_self":
+                   result[0]= MediaIntents.TakeSelfie(context);
+                   break;
                 default:
                     result[0] = "Δεν βρέθηκε η εντολή. Πείτε μου ξανά.";
                     break;
@@ -70,7 +73,7 @@ public class AppIntentService extends IntentService {
         }
 
         Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(Interact.ResponseReceiver.LOCAL_ACTION);
+      //  broadcastIntent.setAction(Interact.ResponseReceiver.LOCAL_ACTION);
         broadcastIntent.putExtra(RESULT, result);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.sendBroadcast(broadcastIntent);
