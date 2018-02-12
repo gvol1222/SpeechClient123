@@ -20,23 +20,30 @@ class LaunchApp {
         String TAG = "LaunchApp";
         PackageManager manager;
         manager = con.getPackageManager();
+        Intent i;
 
         if (!packagename.equals(AppPackagesUtils.NO_MATCH)) {
             Log.i(TAG, "opening app successful " + qry);
-            Intent i = manager.getLaunchIntentForPackage(packagename);
-            if (i != null) {
-                i.setFlags(Constatns.FLAGS);
-                i.addCategory(Intent.CATEGORY_LAUNCHER);
-            } else {
-                Log.i(TAG, "something goes wrong " + qry);
+            try {
+                i = manager.getLaunchIntentForPackage(packagename);
+                if (i != null) {
+                    i.setFlags(Constatns.FLAGS);
+                    i.addCategory(Intent.CATEGORY_LAUNCHER);
+                    con.startActivity(i);
+                } else {
+                    throw new PackageManager.NameNotFoundException();
+
+                }
+            }catch (PackageManager.NameNotFoundException e){
+                Log.i(TAG, "something goes wrong " + e);
 
             }
 
-            con.startActivity(i);
-            return con.getResources().getString(R.string.success_open) + qry;
+
+            return Constatns.CP_STAGE;
         } else {
             Log.i(TAG, "app does not exist " + qry);
-            return con.getResources().getString(R.string.no_success_open);
+            return Constatns.NF_STAGE;
 
         }
 

@@ -235,12 +235,14 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     private void record() {
 
+
         btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 startRecord(b);
 
             }
+
         });
 
 
@@ -272,12 +274,18 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         speechService.setContinuous(btn);
        if (AppPackagesUtils.isNetworkAvailable(this)) {
            Log.i(TAG,"boolean is"+b);
-           if (b) {
+           if( speechService.isFinishedTts()) {
+
+               if (b) {
                speechService.StartInteract();
                showProgressBar();
-           } else {
-               clearProgressBar();
-               speechService.StopSrecognition();
+                } else {
+
+                   clearProgressBar();
+                   speechService.StopSrecognition();
+
+                }
+
            }
        }else {
            Toast.makeText(this,getResources().getString(R.string.network_error),Toast.LENGTH_LONG).show();

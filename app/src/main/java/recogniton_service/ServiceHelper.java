@@ -21,6 +21,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     private String startMessage = "";
     private String waitMessage = "";
     private boolean isActivated;
+    private boolean isFinishedTts;
 
     @Override
     public void onCreate() {
@@ -30,6 +31,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
 
     private void Init() {
         Log.i(TAG, "Initialization object and messages");
+        isFinishedTts =true;
         talkengine = new SpeecHelper(getApplicationContext(), this);
         startMessage = getApplicationContext().getResources().getString(R.string.StartMessage);
         waitMessage = getApplicationContext().getResources().getString(R.string.WaitMessage);
@@ -51,6 +53,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     @Override
     public void onStartTalk() {
         //on start talking assistant close recognition and enable beep
+        isFinishedTts =false;
         Mute(false);
         runCloseSpeech();
     }
@@ -59,6 +62,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     @Override
     public void onEndTalk() {
         //on end talking assistant start recognition
+        isFinishedTts =true;
         runStartSpeech();
 
     }
@@ -67,12 +71,8 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     public void OnSpeechLiveResult(String LiveResult) {
     }
 
-    @Override
-    public void OnSpeechResult(String Result) {
 
-    }
-
-    @Override
+    /*@Override
     public void OnSpeechError(int Error) {
         //if recognition is listening user and reach speech time out time show message
         if (isActivated) {
@@ -83,7 +83,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
         CancelOnNotContinuous();
         //mute audio beep
         Mute(true);
-    }
+    }*/
 
     @Override
     public void onEndOfSpeech() {
@@ -102,6 +102,7 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     }
 
     public void StartMessage(String msg) {
+
         talkengine.speak(msg);
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
@@ -121,5 +122,14 @@ public abstract class ServiceHelper extends RecognitionService implements Assist
     public void setActivated(boolean activated) {
         Log.i(TAG,"boolean activated is "+activated);
         isActivated = activated;
+
+    }
+
+    public boolean isFinishedTts() {
+        return isFinishedTts;
+    }
+
+    public void setFinishedTts(boolean finishedTts) {
+        isFinishedTts = finishedTts;
     }
 }

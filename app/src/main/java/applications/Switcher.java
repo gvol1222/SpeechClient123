@@ -2,9 +2,11 @@ package applications;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
+import utils.AppPackagesUtils;
 import utils.ContactUtils;
 
 /**
@@ -32,6 +34,14 @@ public class Switcher {
                     "Πείτε μου το όνομα της επαφής ή αριθμό τηλεφώνου","",
                     false,
                     "Η επαφή δεν βρέθηκε.",Constatns.CH_STAGE,"Επιθυμείτε να αποσταλεί το μήνυμα"
+            );
+        }else if(type.equals(Constatns.OPEN_APP)){
+            Log.i(TAG,"open app");
+            app = InitActionObj(
+                    app,type,Intent.CATEGORY_LAUNCHER,false,"app_query",
+                    "Πείτε μου το όνομα της εφαρμογής","",
+                    false,
+                    "Η εφαρμογη δεν βρέθηκε",Constatns.CH_STAGE,""
             );
         }
         return app;
@@ -81,6 +91,11 @@ public class Switcher {
                 Log.i(TAG,"not found tel ");
                 app.Stage = Constatns.NF_STAGE;
             }
+        }else if(app.type.equals(Constatns.OPEN_APP)){
+
+            String query = app.data.get(app.Current_Key);
+            app.Stage = LaunchApp.launchapplication(query, con);
+
         }
 
         return app;

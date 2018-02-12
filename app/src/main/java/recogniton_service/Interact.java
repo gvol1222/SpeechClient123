@@ -16,6 +16,7 @@ import applications.AppIntentService;
 import applications.CallTel;
 import applications.Constatns;
 import applications.Switcher;
+import recognize.AssistanListener;
 import recognize.Constants;
 import utils.jsonparsers.Witobj;
 
@@ -23,7 +24,7 @@ import utils.jsonparsers.Witobj;
  * Created by bill on 12/12/17.
  */
 
-public abstract class Interact extends SpeechService {
+public abstract class Interact extends SpeechService implements AssistanListener {
 
     private final String TAG = "Interact";
     private int RETRY_FLAG = 0;
@@ -56,11 +57,12 @@ public abstract class Interact extends SpeechService {
         }
 
         //Wit Object Response
-        if(sender1.equals("WIT")){
+        if(sender1.equals("WIT"))
+        {
 
             Witobj resp = (Witobj) intent.getSerializableExtra("WitOBJ");
 
-            Log.d(TAG, "App stage is"+app.Stage);
+            Log.d(TAG, "App stage is"+app.type);
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
             if(resp.getEntities().getIntent() == null && app.Stage.equals(Constatns.IN_STAGE)){
@@ -83,6 +85,7 @@ public abstract class Interact extends SpeechService {
             //Initialization Phase
             if (app.Stage.equals(Constatns.IN_STAGE)){
                 String type = resp.getEntities().getIntent().get(0).getValue();
+                Log.d(TAG, "type = "+resp.getEntities().getIntent().get(0).getValue());
                 app = Switcher.selectActionbyType(app,type);
                 Log.d(TAG, "entered in init stage");
             }
@@ -132,7 +135,6 @@ public abstract class Interact extends SpeechService {
 
             }
 
-
             if (app.Stage.equals(Constatns.TR_STAGE)){
                 Log.i(TAG," entered in tr stage = ");
                 app.waiting_data = false;
@@ -169,15 +171,16 @@ public abstract class Interact extends SpeechService {
                     app.Stage = Constatns.RUN_STAGE;
                 }
                 else if(resp.getText().contains("όχι") ) {
-                    app.Stage = Constatns.CP_STAGE;
+                   // app.Stage = Constatns.CP_STAGE;
                     speak("όπως επιθυμείτε", false);
                 }
                 Log.i(TAG,"entered in after vr stage= ");
             }
 
+
             if (app.Stage.equals(Constatns.RUN_STAGE)){
                 app.runIntent(getApplicationContext());
-                app.Stage = Constatns.CP_STAGE;
+                //app.Stage = Constatns.CP_STAGE;
                 Log.i(TAG,"entered in run stage");
             }
 
@@ -185,22 +188,16 @@ public abstract class Interact extends SpeechService {
 
                 speak(app.NOT_FOUND,false);
                 Log.i(TAG,"entered in not found stage");
-                app.Stage = Constatns.CP_STAGE;
+                //app.Stage = Constatns.CP_STAGE;
 
             }
             if (app.Stage.equals(Constatns.CP_STAGE)){
                 Log.i(TAG,"completed");
-                app.Init();
+                //app.Init();
                 setActivated(false);
-                SendMessage("");
                 Log.i(TAG,"entered in completed stage");
-            }
-            if(app.Stage.equals("NS")){
-                app.Stage=Constatns.IN_STAGE;
-                app.Init();
-                SendMessage("");
-                Log.i(TAG,"entered in no speech stage= ");
-            }
+            }/**/
+
 
 
         }
@@ -222,6 +219,21 @@ public abstract class Interact extends SpeechService {
         StartMessage(message);
     }
 
+    @Override
+    public void OnSpeechError(int Error){
+        if (isActivated()) {
+            //app.Stage=Constatns.NO_SPEACH_STAGE;
+            Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
+        }
+        setActivated(false);
+        //close recognition if not continuous
+        CancelOnNotContinuous();
+        //mute audio beep
+        Mute(true);
+        app.Init();
+        SendMessage("");
+
+    }
 
 
 

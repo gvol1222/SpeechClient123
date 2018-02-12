@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class Action {
     public String Current_Key = "";
     public String Stage = Constatns.IN_STAGE;
     public Entities entities;
+    public Intent launchApp ;
 
     //Messages
     public String VERIFY_MESSAGE = "";
@@ -67,6 +69,7 @@ public class Action {
         NOT_FOUND = "";
         LAUNCHED = "";
         MULTI_STAGE_MESSAGE="";
+        launchApp = new Intent();
 
     }
     //Run the Intent
@@ -76,10 +79,10 @@ public class Action {
              Stage = Constatns.CP_STAGE;
              Sms.SendMessage(data.get(Current_Key), con, data.get("contact"));
         }else {
-             Stage = Constatns.CP_STAGE;
-             Intent curIntent = CreateIntent();
-             con.startActivity(curIntent);
-         }
+            Stage = Constatns.CP_STAGE;
+            Intent curIntent = CreateIntent();
+            con.startActivity(curIntent);
+        }
 
     }
 

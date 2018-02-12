@@ -15,6 +15,7 @@ public class Constatns {
     //app names
     static final String CALL_APP="make_call";
     static final String SEND_SMS="send_sms";
+    static final String OPEN_APP="open_app";
 
 
     //stages

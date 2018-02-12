@@ -63,7 +63,7 @@ public class SearchStringHelper {
             for (Map.Entry<String, Double> entry : result.entrySet()) {
                 Log.i(TAG, "matches results : " + entry.getKey()+" "+entry.getValue() );
 
-                if (entry.getValue() > 0.9)
+                if (entry.getValue() > 0.91)
                     finalResult.put(entry.getKey(), entry.getValue());
                 else
                     finalResult.put("no_match", max_match);

@@ -85,17 +85,6 @@ public class ContactUtils {
         return tels;
     }
 
-    public static boolean IsNumber(String query){
-
-        if(query !=null) {
-            Log.i(TAG, "phone number is " + query);
-            query = query.replace(" ", "");
-            if (MathUtils.isNumeric(query)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static boolean IsCorrectNumber(String number){
 
