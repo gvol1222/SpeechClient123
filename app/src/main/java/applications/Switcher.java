@@ -100,7 +100,7 @@ public class Switcher {
             String query = app.data.get(app.Current_Key);
             app.Stage = LaunchApp.launchapplication(query, con);
 
-        }else if(app.type.equals(Constatns.OPEN_APP)){
+        }else if(app.type.equals("h")){
 
             String query = app.data.get(app.Current_Key);
             app.Stage = LaunchApp.launchapplication(query, con);
