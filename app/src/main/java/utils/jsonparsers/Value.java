@@ -4,7 +4,9 @@ package utils.jsonparsers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Value {
+import java.io.Serializable;
+
+public class Value implements Serializable {
 
     @SerializedName("value")
     @Expose

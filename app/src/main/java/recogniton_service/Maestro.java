@@ -1,50 +1,43 @@
 package recogniton_service;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.app.IntentService;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.bill.Activities.R;
 
 import applications.Action;
-import applications.AppIntentService;
-import applications.CallTel;
+
 import applications.Constatns;
 import applications.Switcher;
-import recognize.AssistanListener;
-import recognize.Constants;
 import utils.jsonparsers.Witobj;
 
 /**
- * Created by bill on 12/12/17.
+ * Created by bill on 2/18/18.
  */
 
-public abstract class Interact extends SpeechService implements AssistanListener {
+public class Maestro extends IntentService {
 
-    private final String TAG = "Interact";
+
+    public static final String TAG = "Maestro";
     private int RETRY_FLAG = 0;
     private int RETRY_LIMIT = 5;
-    private String result ="";
-    private boolean HAS_APP = false;
     private Action app;
-    boolean second =false;
-
-    final static public String MaestroComm = "Maestro Communication Channell";
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        app = new Action();
-        IntentFilter iff= new IntentFilter(MaestroComm);
-        LocalBroadcastManager.getInstance(this).registerReceiver(MaestroReceiver,iff);
+    public Maestro() {
+        super("Maestro");
     }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+
+            CommandReceived(intent);
+    }
+
     private void CommandReceived(Intent intent){
         String sender1 = intent.getStringExtra("Sender");
+        app = Constatns.app;
         Log.d(TAG, "the response url from wit is "+sender1);
 
 
@@ -127,7 +120,7 @@ public abstract class Interact extends SpeechService implements AssistanListener
                         app.waiting_data = true;
                         break;
                     } else {
-                            app.Stage = Constatns.TR_STAGE;
+                        app.Stage = Constatns.TR_STAGE;
 
                     }
                 }
@@ -139,6 +132,8 @@ public abstract class Interact extends SpeechService implements AssistanListener
                 Log.i(TAG," entered in tr stage = ");
                 app.waiting_data = false;
                 app = Switcher.transforminfo(app,getApplicationContext());
+                // Task1 t = new Task1(app);
+                //t.execute();
             }
 
             if (app.Stage.equals(Constatns.MULTI_COMMAND_FROM_START)){
@@ -171,7 +166,7 @@ public abstract class Interact extends SpeechService implements AssistanListener
                     app.Stage = Constatns.RUN_STAGE;
                 }
                 else if(resp.getText().contains("όχι") ) {
-                   // app.Stage = Constatns.CP_STAGE;
+                    // app.Stage = Constatns.CP_STAGE;
                     speak("όπως επιθυμείτε", false);
                 }
                 Log.i(TAG,"entered in after vr stage= ");
@@ -191,50 +186,26 @@ public abstract class Interact extends SpeechService implements AssistanListener
                 //app.Stage = Constatns.CP_STAGE;
 
             }
-            if (app.Stage.equals(Constatns.CP_STAGE)){
+           /* if (app.Stage.equals(Constatns.CP_STAGE)){
                 Log.i(TAG,"completed");
                 //app.Init();
                 setActivated(false);
                 Log.i(TAG,"entered in completed stage");
-            }/**/
+            }*/
 
 
 
         }
     }
-    private BroadcastReceiver MaestroReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            CommandReceived(intent);
-        }
-    };
-    private void speak (String message,boolean recognize_after){
-        //Intent msg = new Intent();
 
-        if (recognize_after)
-            setActivated(true);
-        else
-            setActivated(false);
+private void speak(String msg,boolean recognizeAfter){
+    Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
+    Intent broadcastIntent = new Intent(Constatns.MAESTRO_ACTION);
+    broadcastIntent.putExtra("msg",msg);
+    broadcastIntent.putExtra("speak","speak");
+    broadcastIntent.putExtra("rec",recognizeAfter);
+    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+    localBroadcastManager.sendBroadcast(broadcastIntent);
 
-        StartMessage(message);
-    }
-
-    @Override
-    public void OnSpeechError(int Error){
-        if (isActivated()) {
-            //app.Stage=Constatns.NO_SPEACH_STAGE;
-            Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
-        }
-        setActivated(false);
-        //close recognition if not continuous
-        CancelOnNotContinuous();
-        //mute audio beep
-        Mute(true);
-        app.Init();
-        SendMessage("");
-
-    }
-
-
-
+}
 }

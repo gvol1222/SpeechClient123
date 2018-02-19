@@ -33,6 +33,7 @@
 
         <service android:name="applications.AppIntentService" />
         <service android:name="recogniton_service.ForeGroundRecognition" />
+        <service android:name="recogniton_service.Maestro" />
 
     </application>
 

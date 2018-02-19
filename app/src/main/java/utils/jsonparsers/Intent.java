@@ -4,7 +4,9 @@ package utils.jsonparsers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Intent {
+import java.io.Serializable;
+
+public class Intent implements Serializable {
 
     @SerializedName("confidence")
     @Expose

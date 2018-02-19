@@ -13,11 +13,13 @@ import android.util.Log;
 
 import com.example.bill.Activities.R;
 
+import applications.Constatns;
+
 /**
  * Created by bill on 11/30/17.
  */
 
-public class ForeGroundRecognition extends Interact {
+public class ForeGroundRecognition extends SpeechService{
 
     private static final int NOTIFY_ID = 1;
     private final String TAG = this.getClass().getSimpleName();
@@ -28,7 +30,7 @@ public class ForeGroundRecognition extends Interact {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         //return start sticky because we dont want to close on exit of app
-        Intent ConIntent = new Intent("notification.action");
+        Intent ConIntent = new Intent(Constatns.NOT_ACTION);
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         CreateNotification(ActionIntent);
         Log.i(TAG, "foreground started!!");

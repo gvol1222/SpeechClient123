@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.bill.Activities.R;
 
+import applications.Action;
 import applications.AppIntentService;
+import applications.Constatns;
 import wit_connection.WitResponse;
 import wit_connection.WitResponseMessage;
 
@@ -26,28 +29,16 @@ public abstract class SpeechService extends ServiceHelper  {
     public static final String HAS_WIT = "hasWit";
     private String msg ="";
     private boolean hasWit;
-    //broadcast for actions on clicking notification
-    private final BroadcastReceiver NotAction = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "activated is " + isActivated());
-            if (isActivated()) {
-                StopSrecognition();
-                setActivated(false);
-            } else {
-                StartInteract();
 
-            }
-        }
-    };
+
     private Intent broadcastIntent;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        //intent to communicate with foreground service
         broadcastIntent = new Intent(BroadcastAction);
-        registerReceiver(NotAction, new IntentFilter("notification.action"));/**/
+        SetReceivers();
+
+
     }
 
     @Nullable
@@ -60,8 +51,7 @@ public abstract class SpeechService extends ServiceHelper  {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "unregisterReceiver ");
-        unregisterReceiver(NotAction);
-
+        unregisterReceiver(MessageRes);
     }
 
     @Override
@@ -72,6 +62,23 @@ public abstract class SpeechService extends ServiceHelper  {
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
+    }
+
+
+    @Override
+    public void OnSpeechError(int Error){
+        if (isActivated()) {
+            //app.Stage=Constatns.NO_SPEACH_STAGE;
+            Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
+        }
+        setActivated(false);
+        //close recognition if not continuous
+        CancelOnNotContinuous();
+        //mute audio beep
+        Mute(true);
+        Constatns.app.Init();
+        SendMessage("");
+
     }
 
     //speech listener methods
@@ -100,7 +107,28 @@ public abstract class SpeechService extends ServiceHelper  {
             setActivated(true);
         }
     }
+    private void SetReceivers(){
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter MessageFilter = new IntentFilter();
+        //notification action
+        MessageFilter.addAction(Constatns.NOT_ACTION);
+        //maestro action
+        MessageFilter.addAction(Constatns.MAESTRO_ACTION);
+        localBroadcastManager.registerReceiver(MessageRes, MessageFilter);
+        //maestro action
+        registerReceiver(MessageRes,MessageFilter);
 
+    }
+    private void speak (String message,boolean recognize_after){
+        //Intent msg = new Intent();
+
+        if (recognize_after)
+            setActivated(true);
+        else
+            setActivated(false);
+
+        StartMessage(message);
+    }
     //send message to activity
     protected void SendMessage(String msg) {
         Log.i(TAG, "message of sendmessage method  is   " + msg);
@@ -108,5 +136,34 @@ public abstract class SpeechService extends ServiceHelper  {
         sendBroadcast(broadcastIntent);
     }
 
+    private final BroadcastReceiver MessageRes= new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            String action = intent.getAction();
+
+            if (action != null) {
+                if (action.equals(Constatns.NOT_ACTION)){
+                    Log.i(TAG, "notification action activate boolean  is " + isActivated());
+                    if (isActivated()) {
+                        StopSrecognition();
+                        setActivated(false);
+                    } else {
+                        StartInteract();
+
+                    }
+                }else if(action.equals(Constatns.MAESTRO_ACTION)){
+
+                    String speak =intent.getStringExtra("speak");
+                    boolean reocgnizeAfter = intent.getBooleanExtra("rec",true);
+                    String message = intent.getStringExtra("msg");
+                    if (speak.equals("speak")){
+                        speak(message,reocgnizeAfter);
+                    }
+                }
+            }
+
+
+        }
+    };
 }

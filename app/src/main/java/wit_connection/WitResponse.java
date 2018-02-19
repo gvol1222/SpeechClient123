@@ -16,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import applications.AppIntentService;
+import recogniton_service.Maestro;
 import utils.SearchStringHelper;
 import utils.jsonparsers.Witobj;
 
@@ -61,10 +63,15 @@ public class WitResponse extends AsyncTask<String, Void, Witobj> {
 
     @Override
     protected void onPostExecute(Witobj response) {
-        Intent intent = new Intent(MaestroComm);
+
+        Intent intent = new Intent(contextWeakReference.get(), Maestro.class);
         intent.putExtra("Sender","WIT");
         intent.putExtra("WitOBJ", response);
-        LocalBroadcastManager.getInstance(contextWeakReference.get()).sendBroadcast(intent);
+        contextWeakReference.get().startService(intent);
+        /*Intent intent = new Intent(MaestroComm);
+        intent.putExtra("Sender","WIT");
+        intent.putExtra("WitOBJ", response);
+        LocalBroadcastManager.getInstance(contextWeakReference.get()).sendBroadcast(intent);*/
 
     }
 

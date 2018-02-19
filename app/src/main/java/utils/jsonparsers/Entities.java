@@ -4,9 +4,10 @@ package utils.jsonparsers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Entities {
+public class Entities implements Serializable {
 
     @SerializedName("datetime")
     @Expose

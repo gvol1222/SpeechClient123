@@ -13,7 +13,7 @@ import utils.AppPackagesUtils;
  * Created by gvol on 11/16/17.
  */
 
-class LaunchApp {
+class LaunchApp  {
 
     static String launchapplication(String qry, Context con) {
         String packagename = AppPackagesUtils.getpackagename(qry,con);

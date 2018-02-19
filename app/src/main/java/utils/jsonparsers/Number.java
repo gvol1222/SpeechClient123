@@ -3,11 +3,13 @@ package utils.jsonparsers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by bill on 2/10/18.
  */
 
-public class Number {
+public class Number implements Serializable {
 
     @SerializedName("value")
     @Expose

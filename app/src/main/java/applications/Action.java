@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ import utils.jsonparsers.Entities;
  * Created by gvol on 17/12/2017.
  */
 
-public class Action {
+public class Action implements Serializable {
     //Config Variables
     private String TAG = "ActionClass";
     public String IntentAction = null;
@@ -75,9 +76,9 @@ public class Action {
     //Run the Intent
     public void runIntent(Context con) {
 
-         if(IntentAction.equals("SMS")){
-             Stage = Constatns.CP_STAGE;
-             Sms.SendMessage(data.get(Current_Key), con, data.get("contact"));
+        if(IntentAction.equals("SMS")){
+            Stage = Constatns.CP_STAGE;
+            Sms.SendMessage(data.get(Current_Key), con, data.get("contact"));
         }else {
             Stage = Constatns.CP_STAGE;
             Intent curIntent = CreateIntent();

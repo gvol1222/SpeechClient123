@@ -4,7 +4,9 @@ package utils.jsonparsers;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AppDatum {
+import java.io.Serializable;
+
+public class AppDatum  implements Serializable {
 
     @SerializedName("suggested")
     @Expose
