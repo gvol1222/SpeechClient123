@@ -1,4 +1,4 @@
-package recogniton_service;
+package applications;
 
 import android.app.Activity;
 import android.app.PendingIntent;
