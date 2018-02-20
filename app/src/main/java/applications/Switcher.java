@@ -1,9 +1,12 @@
 package applications;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.zip.CheckedOutputStream;
@@ -28,7 +31,8 @@ public class Switcher {
                     app,type,Constatns.ACTION_CALL,true,Constatns.CALL_APP_NAME,
                     Constatns.CALL_INFO_MESSAGE,Constatns.CALL_URI,
                     false,Constatns.CALL_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE, Constatns.CALL_VER_MESSAGE
+                    ,Constatns.CH_STAGE, Constatns.CALL_VER_MESSAGE,
+                    false,"",false
             );
         }else if(type.equals(Constatns.SEND_SMS)){
             Log.i(TAG,"send sms app");
@@ -36,7 +40,8 @@ public class Switcher {
                     app,type,"SMS",false,Constatns.SMS_APP_NAME,
                     Constatns.SMS_INFO_MESSAGE,Constatns.SMS_URI,
                     false,
-                    Constatns.SMS_NOT_FOUND_MESSAGE,Constatns.CH_STAGE,Constatns.SMS_VER_MESSAGE
+                    Constatns.SMS_NOT_FOUND_MESSAGE,Constatns.CH_STAGE,Constatns.SMS_VER_MESSAGE,
+                    false,"",false
             );
         }else if(type.equals(Constatns.OPEN_APP)){
             Log.i(TAG,"open app");
@@ -44,7 +49,35 @@ public class Switcher {
                     app,type,Intent.CATEGORY_LAUNCHER,false,Constatns.OPEN_APP_NAME,
                     Constatns.OPEN_INFO_MESSAGE,Constatns.OPEN_URI,
                     false,Constatns.OPEN_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.OPEN_VER_MESSAGE
+                    ,Constatns.CH_STAGE,Constatns.OPEN_VER_MESSAGE,
+                    false,"",false
+            );
+        }else if(type.equals(Constatns.DIRECTIONS)){
+            Log.i(TAG,"directions");
+            app = InitActionObj(
+                    app,type,Intent.ACTION_VIEW,true,Constatns.MAPS_APP_NAME,
+                    Constatns.MAPS_INFO_MESSAGE,Constatns.MAPS_URI,
+                    false,Constatns.MAPS_NOT_FOUND_MESSAGE
+                    ,Constatns.CH_STAGE,Constatns.MAPS_VER_MESSAGE,
+                    true,Constatns.MAPS_PACKAGE,false
+            );
+        }else if(type.equals(Constatns.PLAY_VIDEO)){
+            Log.i(TAG,"play video");
+            app = InitActionObj(
+                    app,type,Intent.ACTION_SEARCH,false,Constatns.VIDEO_APP_NAME,
+                    Constatns.VIDEO_INFO_MESSAGE,Constatns.VIDEO_URI,
+                    false,Constatns.VIDEO_NOT_FOUND_MESSAGE
+                    ,Constatns.CH_STAGE,Constatns.VIDEO_VER_MESSAGE,
+                    true,Constatns.YOUTUBE_PACKAGE,true
+            );
+        }else if(type.equals(Constatns.PLAY_MUSIC)){
+            Log.i(TAG,"play video");
+            app = InitActionObj(
+                    app,type,Constatns.MUSIC_SEARCH,false,Constatns.MUSIC_APP_NAME,
+                    Constatns.MUSIC_INFO_MESSAGE,Constatns.MUSIC_URI,
+                    false,Constatns.MUSIC_NOT_FOUND_MESSAGE
+                    ,Constatns.CH_STAGE,Constatns.MUSIC_VER_MESSAGE,
+                    false,"",true
             );
         }
         return app;
@@ -83,7 +116,7 @@ public class Switcher {
                 app.data.put(Constatns.SMS_APP_NAME, query);
                 app.Stage = Constatns.MULTI_COMMAND_FROM_START;
                 app.Current_Key ="SMS";
-                app.data_requests.put("SMS","Πείτε μου το κείμενο που επιθυμείτε να στείλετε");
+                app.data_requests.put("SMS",Constatns.OPEN_CONTENT_MESSAGE);
 
             }else if (ContactUtils.ContactNumber(query,con).size() > 0 ) {
                 app.data.put(Constatns.SMS_APP_NAME, ContactUtils.ContactNumber(app.data.get(Constatns.SMS_APP_NAME), con).get(0));
@@ -100,11 +133,17 @@ public class Switcher {
             String query = app.data.get(app.Current_Key);
             app.Stage = LaunchApp.launchapplication(query, con);
 
-        }else if(app.type.equals("h")){
+        }else if(app.type.equals(Constatns.DIRECTIONS)){
+            app.UriQuery = app.data.get(Constatns.MAPS_APP_NAME);
+            app.Stage = Constatns.RUN_STAGE;
 
-            String query = app.data.get(app.Current_Key);
-            app.Stage = LaunchApp.launchapplication(query, con);
-
+        }else if(app.type.equals(Constatns.PLAY_VIDEO)){
+            app.extras.putString(Constatns.VIDEO_EXTRA,app.data.get(Constatns.VIDEO_APP_NAME));
+            app.Stage = Constatns.RUN_STAGE;
+        }else if(app.type.equals(Constatns.PLAY_MUSIC)){
+            app.extras.putString(MediaStore.EXTRA_MEDIA_FOCUS,Constatns.MUSIC_EXTRA);
+            app.extras.putString(SearchManager.QUERY,app.data.get(Constatns.MUSIC_APP_NAME));
+            app.Stage = Constatns.RUN_STAGE;
         }
         return app;
     }
@@ -113,7 +152,8 @@ public class Switcher {
 
     private static Action InitActionObj(Action app,String type,String IntentAction,boolean requiresUri,
                                         String AppName,String SoundMessage,String uri,
-                                        boolean MultiStageCommFromStart,String NOT_FOUND,String Stage,String VerifyMessage
+                                        boolean MultiStageCommFromStart,String NOT_FOUND,String Stage,
+                                        String VerifyMessage,Boolean requiresPackage,String Package,Boolean requiresExtra
     ){
 
         app.type = type;
@@ -127,6 +167,9 @@ public class Switcher {
         app.NOT_FOUND = NOT_FOUND;
         app.Stage = Stage;
         app.VERIFY_MESSAGE =VerifyMessage;
+        app.RequiresPackage = requiresPackage;
+        app.Package =Package;
+        app.RequiresExtra = requiresExtra;
 
         return app;
 

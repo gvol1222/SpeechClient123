@@ -3,7 +3,6 @@ package wit_connection;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,34 +15,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import applications.AppIntentService;
 import recogniton_service.Maestro;
 import utils.SearchStringHelper;
 import utils.jsonparsers.Witobj;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-
-import com.google.gson.Gson;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import ai.wit.sdk.Wit;
-import utils.SearchStringHelper;
-import utils.jsonparsers.Witobj;
-
 
 
 public class WitResponse extends AsyncTask<String, Void, Witobj> {

@@ -10,8 +10,10 @@ import android.provider.MediaStore;
 public class Constatns {
 
     static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
-    static final String YputubePackage = "com.google.android.youtube";
     public  static final Action app = new Action();
+
+    static final String YOUTUBE_PACKAGE = "com.google.android.youtube";
+    static final String MAPS_PACKAGE = "com.google.android.apps.maps";
 
     //action receivers
     public static final String NOT_ACTION="notification.action";
@@ -20,6 +22,13 @@ public class Constatns {
     static final String CALL_APP="make_call";
     static final String SEND_SMS="send_sms";
     static final String OPEN_APP="open_app";
+    static final String DIRECTIONS="directions";
+    static final String PLAY_VIDEO="play_video";
+    static final String PLAY_MUSIC="play_music";
+    //actions
+    static final String ACTION_CALL = Intent.ACTION_CALL;
+    public static final String ACTION_SEARCH = Intent.ACTION_SEARCH;
+    public static final  String MUSIC_SEARCH = MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH;
 //    /static final String OPEN_APP="open_app";
     //stages
 
@@ -34,10 +43,7 @@ public class Constatns {
     public static final String MULTI_COMMAND_FROM_START ="MCFS";
     public static final String AFTER_VR_STAGE ="AFV";
 
-    //actions
-    static final String ACTION_CALL = Intent.ACTION_CALL;
-    public static final String ACTION_SEARCH = Intent.ACTION_SEARCH;
-    public static final  String MUSIC_SEARCH = MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH;
+
 
     //messages
 
@@ -62,4 +68,27 @@ public class Constatns {
     public static final String OPEN_CONTENT_MESSAGE ="Πείτε μου το κείμενο που επιθυμείτε να στείλετε";
     public static final String OPEN_VER_MESSAGE ="";
     public static final String OPEN_APP_NAME ="app_query";
+
+    public static final String MAPS_INFO_MESSAGE ="Πείτε μου τη τοποθεσία που επιθυμείτε";
+    public static final String MAPS_URI ="google.navigation:q=";
+    public static final String MAPS_NOT_FOUND_MESSAGE ="Η τοποθεσία δεν βρέθηκε";
+    public static final String MAPS_CONTENT_MESSAGE ="";
+    public static final String MAPS_VER_MESSAGE ="";
+    public static final String MAPS_APP_NAME ="maps_query";
+
+    public static final String VIDEO_INFO_MESSAGE ="Πείτε μου τo βίντεο που επιθυμείτε";
+    public static final String VIDEO_URI ="";
+    public static final String VIDEO_NOT_FOUND_MESSAGE ="Το βίντεο δεν βρέθηκε";
+    public static final String VIDEO_CONTENT_MESSAGE ="";
+    public static final String VIDEO_VER_MESSAGE ="";
+    public static final String VIDEO_APP_NAME ="video_query";
+    public static final String VIDEO_EXTRA ="query";
+
+    public static final String MUSIC_INFO_MESSAGE ="Πείτε μου το μουσικό κομμάτι που επιθυμείτε";
+    public static final String MUSIC_URI ="";
+    public static final String MUSIC_NOT_FOUND_MESSAGE ="Το  μουσικό κομμάτι δεν βρέθηκε";
+    public static final String MUSIC_CONTENT_MESSAGE ="";
+    public static final String MUSIC_VER_MESSAGE ="";
+    public static final String MUSIC_APP_NAME ="music_query";
+    public static final String MUSIC_EXTRA ="vnd.android.cursor.item/*";
 }

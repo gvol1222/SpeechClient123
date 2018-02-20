@@ -31,7 +31,7 @@ public class MediaIntents {
         } else {
             Intent intent = new Intent(Constatns.ACTION_SEARCH);
             intent.setFlags(Constatns.FLAGS);
-            intent.setPackage(Constatns.YputubePackage);
+            //intent.setPackage(Constatns.YputubePackage);
             intent.putExtra("query", query);
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);

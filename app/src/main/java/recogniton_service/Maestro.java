@@ -87,6 +87,7 @@ public class Maestro extends IntentService {
             if (app.Stage.equals(Constatns.CH_STAGE)){
                 Log.i(TAG,"entered in data fill stage ");
 
+
                 //One time no multistage comminicators to pass data from appdata
                 if( resp.getEntities().getAppData() != null && resp.getEntities().getAppData().get(0).getConfidence()> 0.8) {
                     app.data.put(app.Current_Key,resp.getEntities().getAppData().get(0).getValue());
@@ -132,8 +133,7 @@ public class Maestro extends IntentService {
                 Log.i(TAG," entered in tr stage = ");
                 app.waiting_data = false;
                 app = Switcher.transforminfo(app,getApplicationContext());
-                // Task1 t = new Task1(app);
-                //t.execute();
+
             }
 
             if (app.Stage.equals(Constatns.MULTI_COMMAND_FROM_START)){
@@ -145,12 +145,21 @@ public class Maestro extends IntentService {
                     app.waiting_data =false;
                 }
 
-                if (app.data.get(app.Current_Key) ==null) {
-                    speak(app.data_requests.get(app.Current_Key), true);
-                    app.waiting_data = true;
-                } else {
+                for (String key : app.data_requests.keySet()) {
+
+                    if (app.data_requests.get(key) != null) {
+                        speak(app.data_requests.get(app.Current_Key), true);
+                        app.Current_Key = key;
+                        app.waiting_data = true;
+                        app.data_requests.remove(key);
+                        break;
+                    }
+
+                }
+                if (app.data_requests.size() == 0) {
                     app.Stage = Constatns.VR_STAGE;
                 }
+
             }
 
             if (app.Stage.equals(Constatns.VR_STAGE)){

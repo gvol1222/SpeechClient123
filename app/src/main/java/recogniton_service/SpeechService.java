@@ -12,11 +12,8 @@ import android.widget.Toast;
 
 import com.example.bill.Activities.R;
 
-import applications.Action;
-import applications.AppIntentService;
 import applications.Constatns;
 import wit_connection.WitResponse;
-import wit_connection.WitResponseMessage;
 
 /**
  * Created by bill on 11/14/17.
