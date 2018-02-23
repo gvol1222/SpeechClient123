@@ -104,6 +104,11 @@ public class Maestro extends IntentService {
                     app.data.put(app.Current_Key,resp.getEntities().getPhoneNumber().get(0).getValue());
                 }
 
+                if(resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) {
+                    app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
+                }
+
+
                 //Multi stage comm gatherer
                 if(resp.getText() != null && app.waiting_data){
                     app.data.put(app.Current_Key,resp.getText());

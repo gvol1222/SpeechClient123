@@ -25,6 +25,7 @@ public class Constatns {
     static final String DIRECTIONS="directions";
     static final String PLAY_VIDEO="play_video";
     static final String PLAY_MUSIC="play_music";
+    static final String SET_REMINDER="set_reminder";
     //actions
     static final String ACTION_CALL = Intent.ACTION_CALL;
     public static final String ACTION_SEARCH = Intent.ACTION_SEARCH;
@@ -91,4 +92,14 @@ public class Constatns {
     public static final String MUSIC_VER_MESSAGE ="";
     public static final String MUSIC_APP_NAME ="music_query";
     public static final String MUSIC_EXTRA ="vnd.android.cursor.item/*";
+
+    public static final String REM_TIME_MESSAGE ="Πείτε μου πότε θέλετε υπενθύμιση";
+    public static final String REM_URI ="";
+    public static final String REM_NOT_FOUND_MESSAGE ="";
+    public static final String REM_CONTENT_MESSAGE ="Πείτε μου τίτλο για την υπενθύμιση";
+    public static final String REM_VER_MESSAGE ="Επιθυμείτε να προστεθεί η υπενθύμιση";
+    public static final String REM_KEY_TIME ="rem_time";
+    public static final String REM_APP_NAME ="rem_query";
+    public static final String REM_DATE_TIME ="date_time";
+    public static final String REM_EXTRA_BEGIN_TIME ="";
 }

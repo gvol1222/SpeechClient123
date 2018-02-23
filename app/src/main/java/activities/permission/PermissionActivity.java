@@ -24,7 +24,9 @@ public abstract class PermissionActivity extends AppCompatActivity {
             Manifest.permission.SEND_SMS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_CALENDAR,
+            Manifest.permission.WRITE_CALENDAR
     };
 
 
@@ -51,7 +53,9 @@ public abstract class PermissionActivity extends AppCompatActivity {
                     boolean WritePermission = grantResults[4] == PackageManager.PERMISSION_GRANTED;
                     boolean ReadPermission = grantResults[5] == PackageManager.PERMISSION_GRANTED;
                     boolean CameraPermission = grantResults[6] == PackageManager.PERMISSION_GRANTED;
-                    if (ReadContacts && CallPhone && RecordAudio && SendSms && WritePermission && ReadPermission && CameraPermission) {
+                    boolean ReadCalendar = grantResults[7] == PackageManager.PERMISSION_GRANTED;
+                    boolean WriteCalendar = grantResults[8] == PackageManager.PERMISSION_GRANTED;
+                    if (ReadContacts && CallPhone && RecordAudio && SendSms && WritePermission && ReadPermission && CameraPermission && ReadCalendar && WriteCalendar ) {
                         Toast.makeText(this, "Activities.Permission Granted", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "Activities.Permission Deinied", Toast.LENGTH_SHORT).show();
