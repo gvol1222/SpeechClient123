@@ -1,6 +1,7 @@
 package applications;
 
 import android.content.Intent;
+import android.provider.AlarmClock;
 import android.provider.MediaStore;
 
 /**
@@ -9,7 +10,7 @@ import android.provider.MediaStore;
 
 public class Constatns {
 
-    static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
+    public static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
     public  static final Action app = new Action();
 
     static final String YOUTUBE_PACKAGE = "com.google.android.youtube";
@@ -20,17 +21,20 @@ public class Constatns {
     public static final String MAESTRO_ACTION="speak.action";
     //app names
     static final String CALL_APP="make_call";
-    static final String SEND_SMS="send_sms";
-    static final String OPEN_APP="open_app";
-    static final String DIRECTIONS="directions";
+    public static final String SEND_SMS="send_sms";
+    public static final String OPEN_APP="open_app";
+    static final  String DIRECTIONS="directions";
     static final String PLAY_VIDEO="play_video";
     static final String PLAY_MUSIC="play_music";
-    static final String SET_REMINDER="set_reminder";
+    public static final String SET_REMINDER="set_reminder";
+    public static final String SET_ALARM="set_alarm";
     //actions
     static final String ACTION_CALL = Intent.ACTION_CALL;
     public static final String ACTION_SEARCH = Intent.ACTION_SEARCH;
     public static final  String MUSIC_SEARCH = MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH;
-//    /static final String OPEN_APP="open_app";
+    public static final  String ACTION_ALARM = AlarmClock.ACTION_SET_ALARM;
+
+    //static final String OPEN_APP="open_app";
     //stages
 
     public static final String IN_STAGE ="IN";
@@ -60,15 +64,16 @@ public class Constatns {
     public static final String SMS_URI ="";
     public static final String SMS_NOT_FOUND_MESSAGE ="Η επαφή δεν βρέθηκε.";
     public static final String SMS_VER_MESSAGE ="Επιθυμείτε να αποσταλεί το μήνυμα";
-    public static final String SMS_APP_NAME ="contact";
-
+    public static final String SMS_APP_NAME ="sms_contact";
+    public static final String SMS_CONTENT_NAME ="sms_content";
     //send sms tel
     public static final String OPEN_INFO_MESSAGE ="Πείτε μου το όνομα της εφαρμογής";
     public static final String OPEN_URI ="";
     public static final String OPEN_NOT_FOUND_MESSAGE ="Η εφαρμογη δεν βρέθηκε";
-    public static final String OPEN_CONTENT_MESSAGE ="Πείτε μου το κείμενο που επιθυμείτε να στείλετε";
+    public static final String OPEN_CONTENT_MESSAGE ="";
     public static final String OPEN_VER_MESSAGE ="";
     public static final String OPEN_APP_NAME ="app_query";
+    public static final String OPEN_LAUNCHED_MESSAGE ="Ανοίγει η εφαρμογή";
 
     public static final String MAPS_INFO_MESSAGE ="Πείτε μου τη τοποθεσία που επιθυμείτε";
     public static final String MAPS_URI ="google.navigation:q=";
@@ -76,6 +81,8 @@ public class Constatns {
     public static final String MAPS_CONTENT_MESSAGE ="";
     public static final String MAPS_VER_MESSAGE ="";
     public static final String MAPS_APP_NAME ="maps_query";
+    public static final String MAPS_LAUNCHED_MESSAGE ="Οδηγίες για τη τοποθεσία";
+
 
     public static final String VIDEO_INFO_MESSAGE ="Πείτε μου τo βίντεο που επιθυμείτε";
     public static final String VIDEO_URI ="";
@@ -84,6 +91,7 @@ public class Constatns {
     public static final String VIDEO_VER_MESSAGE ="";
     public static final String VIDEO_APP_NAME ="video_query";
     public static final String VIDEO_EXTRA ="query";
+    public static final String VIDEO_LAUNCHED_MESSAGE ="Ανοίγει το youtube";
 
     public static final String MUSIC_INFO_MESSAGE ="Πείτε μου το μουσικό κομμάτι που επιθυμείτε";
     public static final String MUSIC_URI ="";
@@ -92,6 +100,7 @@ public class Constatns {
     public static final String MUSIC_VER_MESSAGE ="";
     public static final String MUSIC_APP_NAME ="music_query";
     public static final String MUSIC_EXTRA ="vnd.android.cursor.item/*";
+    public static final String MUSIC_LAUNCHED_MESSAGE ="Ανοίγει το μουσικό κομμάτι";
 
     public static final String REM_TIME_MESSAGE ="Πείτε μου πότε θέλετε υπενθύμιση";
     public static final String REM_URI ="";
@@ -102,4 +111,18 @@ public class Constatns {
     public static final String REM_APP_NAME ="rem_query";
     public static final String REM_DATE_TIME ="date_time";
     public static final String REM_EXTRA_BEGIN_TIME ="";
+    public static final String REM_SUCCESS_MESSAGE ="Η υπενθύμιση προγραμματίστηκε ";
+
+
+    public static final String ALARM_TIME_MESSAGE ="Πείτε μου πότε θέλετε ξυπνητήρι";
+    public static final String ALARM_URI ="";
+    public static final String ALARM_NOT_FOUND_MESSAGE ="";
+    public static final String ALARM_CONTENT_MESSAGE ="";
+    public static final String ALARM_VER_MESSAGE ="";
+    public static final String ALARM_KEY_TIME ="alrm_time";
+    public static final String ALARM_APP_NAME ="alarm";
+    public static final String ALARM_DATE_TIME ="rem_time";
+    public static final String ALARM_EXTRA_BEGIN_TIME ="";
+    public static final String ALARM_SUCCESS_MESSAGE ="To ξυπνητήρι ορίστικε";
+
 }

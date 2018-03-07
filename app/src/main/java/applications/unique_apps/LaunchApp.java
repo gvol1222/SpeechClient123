@@ -1,4 +1,4 @@
-package applications;
+package applications.unique_apps;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.bill.Activities.R;
 
+import applications.Constatns;
 import utils.AppPackagesUtils;
 
 /**
@@ -24,9 +25,17 @@ class LaunchApp  {
 
         if (!packagename.equals(AppPackagesUtils.NO_MATCH)) {
             Log.i(TAG, "opening app successful " + qry);
+            String appName = "";
+            try {
+                appName = (String) manager.getApplicationLabel(manager.getApplicationInfo(packagename, PackageManager.GET_META_DATA));
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
             try {
                 i = manager.getLaunchIntentForPackage(packagename);
                 if (i != null) {
+                    Constatns.app.LAUNCHED = Constatns.app.LAUNCHED+" "+appName;
                     i.setFlags(Constatns.FLAGS);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     con.startActivity(i);
@@ -38,8 +47,6 @@ class LaunchApp  {
                 Log.i(TAG, "something goes wrong " + e);
 
             }
-
-
             return Constatns.CP_STAGE;
         } else {
             Log.i(TAG, "app does not exist " + qry);

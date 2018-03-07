@@ -2,7 +2,9 @@ package recogniton_service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -18,6 +20,7 @@ import utils.jsonparsers.Witobj;
  * Created by bill on 2/18/18.
  */
 
+@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
 public class Maestro extends IntentService {
 
 
@@ -32,7 +35,7 @@ public class Maestro extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-            CommandReceived(intent);
+        CommandReceived(intent);
     }
 
     private void CommandReceived(Intent intent){
@@ -90,6 +93,7 @@ public class Maestro extends IntentService {
 
                 //One time no multistage comminicators to pass data from appdata
                 if( resp.getEntities().getAppData() != null && resp.getEntities().getAppData().get(0).getConfidence()> 0.8) {
+
                     app.data.put(app.Current_Key,resp.getEntities().getAppData().get(0).getValue());
                 }
 
@@ -110,26 +114,31 @@ public class Maestro extends IntentService {
 
 
                 //Multi stage comm gatherer
-                if(resp.getText() != null && app.waiting_data){
+                if(resp.getText() != null && app.waiting_data && !(resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
                     app.data.put(app.Current_Key,resp.getText());
                     Log.i(TAG,"multistage data response from user is = "+resp.getText());
+                }else if(app.waiting_data && (resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
+                    app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
                 }
 
                 //Multi Stage comm Loop
-                for (String key : app.data.keySet()) {
-                    Log.i(TAG,"multistage data in comm loop = "+app.data.get(key));
+                if(app.data.containsValue(null)){
+                    for (String key : app.data.keySet()) {
+                        Log.i(TAG,"multistage data in comm loop = "+app.data.keySet());
 
-                    if (app.data.get(key) == null) {
-
-                        speak(app.data_requests.get(key), true);
-                        app.Current_Key = key;
-                        app.waiting_data = true;
-                        break;
-                    } else {
-                        app.Stage = Constatns.TR_STAGE;
-
+                        if (app.data.get(key) == null) {
+                            Log.i(TAG," key "+key);
+                            speak(app.data_requests.get(key), true);
+                            app.Current_Key = key;
+                            app.waiting_data = true;
+                            break;
+                        }
                     }
+                }else {
+                    app.Stage = Constatns.TR_STAGE;
+
                 }
+
 
 
             }
@@ -141,7 +150,7 @@ public class Maestro extends IntentService {
 
             }
 
-            if (app.Stage.equals(Constatns.MULTI_COMMAND_FROM_START)){
+            /*if (app.Stage.equals(Constatns.MULTI_COMMAND_FROM_START)){
 
                 Log.i(TAG,"entered in multi command stage from start");
 
@@ -165,7 +174,7 @@ public class Maestro extends IntentService {
                     app.Stage = Constatns.VR_STAGE;
                 }
 
-            }
+            }*/
 
             if (app.Stage.equals(Constatns.VR_STAGE)){
 
@@ -200,26 +209,26 @@ public class Maestro extends IntentService {
                 //app.Stage = Constatns.CP_STAGE;
 
             }
-           /* if (app.Stage.equals(Constatns.CP_STAGE)){
-                Log.i(TAG,"completed");
-                //app.Init();
-                setActivated(false);
-                Log.i(TAG,"entered in completed stage");
-            }*/
+           /**/ if (app.Stage.equals(Constatns.CP_STAGE)){
+            Log.i(TAG,"completed"+app.LAUNCHED);
+            if(!app.LAUNCHED.equals(""))
+                speak(app.LAUNCHED,false);
+            Log.i(TAG,"entered in completed stage");
+        }
 
 
 
         }
     }
 
-private void speak(String msg,boolean recognizeAfter){
-    Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
-    Intent broadcastIntent = new Intent(Constatns.MAESTRO_ACTION);
-    broadcastIntent.putExtra("msg",msg);
-    broadcastIntent.putExtra("speak","speak");
-    broadcastIntent.putExtra("rec",recognizeAfter);
-    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-    localBroadcastManager.sendBroadcast(broadcastIntent);
+    private void speak(String msg,boolean recognizeAfter){
+        Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
+        Intent broadcastIntent = new Intent(Constatns.MAESTRO_ACTION);
+        broadcastIntent.putExtra("msg",msg);
+        broadcastIntent.putExtra("speak","speak");
+        broadcastIntent.putExtra("rec",recognizeAfter);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        localBroadcastManager.sendBroadcast(broadcastIntent);
 
-}
+    }
 }

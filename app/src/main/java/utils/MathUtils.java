@@ -6,7 +6,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -18,7 +20,7 @@ public class MathUtils {
 
     static String TAG = "MathUtils";
 
-    static boolean isNumeric(String str) {
+    public static boolean isNumeric(String str) {
 
         Log.i(TAG, str);
         NumberFormat formatter = NumberFormat.getInstance();
@@ -30,40 +32,33 @@ public class MathUtils {
         return str.length() == pos.getIndex();
     }
 
-    private static final String[] formats = {
-            "yyyy-MM-dd'T'HH:mm:ss'Z'",   "yyyy-MM-dd'T'HH:mm:ssZ",
-            "yyyy-MM-dd'T'HH:mm:ss",      "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd HH:mm:ss",
-            "MM/dd/yyyy HH:mm:ss",        "MM/dd/yyyy'T'HH:mm:ss.SSS'Z'",
-            "MM/dd/yyyy'T'HH:mm:ss.SSSZ", "MM/dd/yyyy'T'HH:mm:ss.SSS",
-            "MM/dd/yyyy'T'HH:mm:ssZ",     "MM/dd/yyyy'T'HH:mm:ss",
-            "yyyy:MM:dd HH:mm:ss",        "yyyyMMdd", };
-    public static Date GetDtaeInfo(String Datetime){
+    public static HashMap<String,Integer> GetDtaeInfo(String Datetime){
 
-        /* SimpleDateFormat sdf = null;
-        if (Datetime != null) {
-            for (String parse : formats) {
-                 sdf = new SimpleDateFormat(parse);
-                try {
-                    sdf.parse(Datetime);
-                    Log.i(TAG,"Printing the value of " + parse);
-                } catch (ParseException e) {
-
-                }
-            }
-        }*/
-
-       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault());
         //sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Date date = null;
         try {
 
-           date = sdf.parse(Datetime);
+            date = sdf.parse(Datetime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        HashMap datetime = new HashMap();
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        int day = calendar.get(Calendar.DATE);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
 
-        return date;
+        datetime.put("month",month);
+        datetime.put("year",year);
+        datetime.put("day",day);
+        datetime.put("hour",hour);
+        datetime.put("minute",minute);
+
+        return datetime;
     }
 }

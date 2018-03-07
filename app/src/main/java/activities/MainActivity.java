@@ -35,6 +35,7 @@ import com.example.bill.Activities.R;
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
 import recogniton_service.ForeGroundRecognition;
+import recogniton_service.Maestro;
 import recogniton_service.SpeechService;
 import utils.AppPackagesUtils;
 

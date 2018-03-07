@@ -1,4 +1,4 @@
-package applications;
+package applications.unique_apps;
 
 import android.app.Activity;
 import android.app.PendingIntent;
