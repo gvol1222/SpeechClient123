@@ -2,11 +2,14 @@ package applications.unique_apps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.ResolveInfo;
 import android.provider.AlarmClock;
 import android.util.Log;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import applications.Constatns;
 
@@ -47,8 +50,21 @@ public class UniqueSwitcher {
                     .putExtra(AlarmClock.EXTRA_MINUTES, minute)
                     .putExtra(AlarmClock.EXTRA_SKIP_UI,true);
             intent.setFlags(Constatns.FLAGS);
+
+            List<ResolveInfo> resolveInfos = con.getPackageManager().queryIntentActivities(intent, 0); // returns all applications which can listen to the SEND Intent
             if (intent.resolveActivity(con.getPackageManager()) != null) {
                 con.startActivity(intent);
+            }
+
+            for (ResolveInfo info : resolveInfos) {
+                ApplicationInfo applicationInfo = info.activityInfo.applicationInfo;
+
+                //get package name, icon and label from applicationInfo object and display it in your custom layout
+                //App icon = applicationInfo.loadIcon(pm);
+                String name  = applicationInfo.loadLabel(con.getPackageManager()).toString();
+                Log.d(TAG,"app name "+name);
+                String ppackage_name = applicationInfo.packageName;
+                Log.d(TAG,"app name "+ppackage_name);
             }
             Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);
         }

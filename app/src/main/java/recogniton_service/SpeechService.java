@@ -19,7 +19,7 @@ import wit_connection.WitResponse;
  * Created by bill on 11/14/17.
  */
 
-public abstract class SpeechService extends ServiceHelper  {
+public abstract class SpeechService extends RecognitionService  {
 
     public static final String BroadcastAction = "com.example.bill.Activities.MainActivity.UpdateGui";
     private final String TAG = this.getClass().getSimpleName();
@@ -103,6 +103,10 @@ public abstract class SpeechService extends ServiceHelper  {
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
             setActivated(true);
         }
+    }
+    @Override
+    public void onEndOfSpeech() {
+        Log.i(TAG, "user ends speaking");
     }
     private void SetReceivers(){
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);

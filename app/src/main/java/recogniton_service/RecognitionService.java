@@ -7,28 +7,39 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.example.bill.Activities.R;
 
 import recognize.AssistanListener;
 import recognize.SpeechRegognition;
+import tts.SpeecHelper;
+import tts.TtsProgressListener;
 
 /**
  * Created by bill on 11/30/17.
  */
 
 //this class contains functions of speech recognizer
-public abstract class RecognitionService extends Service {
+public abstract class RecognitionService extends Service implements AssistanListener, TtsProgressListener {
 
     private final String TAG = this.getClass().getSimpleName();
     private SpeechRegognition recognition;
     private Handler startHandler;
     private Handler closeHandler;
     private boolean isFirst;
+    private SpeecHelper talkengine;
+    private String startMessage = "";
+    private String waitMessage = "";
+    private boolean isActivated;
+    private boolean isFinishedTts;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         InitHandler();
+        Init();
     }
 
     @Override
@@ -36,16 +47,6 @@ public abstract class RecognitionService extends Service {
         super.onDestroy();
         free();
     }
-
-    //close and destroy speech recognition
-    private void free() {
-        Log.i(TAG, "Free resources");
-        if (recognition != null) {
-            recognition.CloseSpeechRegognizer();
-            recognition = null;
-        }
-    }
-
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -59,10 +60,52 @@ public abstract class RecognitionService extends Service {
         return null;
     }
 
+    @Override
+    public void onStartTalk() {
+        //on start talking assistant close recognition and enable beep
+        isFinishedTts =false;
+        Mute(false);
+        runCloseSpeech();
+    }
+
+
+    @Override
+    public void onEndTalk() {
+        //on end talking assistant start recognition
+        isFinishedTts =true;
+        runStartSpeech();
+
+    }
     //set speech recognition for continuous recognition o not continuous
     public void setContinuous(boolean continuous) {
         Log.i(TAG, "continuous parameter is " + continuous);
         recognition.setContinuousSpeechRecognition(continuous);
+
+    }
+    private void Init() {
+        Log.i(TAG, "Initialization object and messages");
+        isFinishedTts =true;
+        talkengine = new SpeecHelper(getApplicationContext(), this);
+        startMessage = getApplicationContext().getResources().getString(R.string.StartMessage);
+        waitMessage = getApplicationContext().getResources().getString(R.string.WaitMessage);
+        setRecognition(this);
+    }
+    //close and destroy speech recognition
+    private void free() {
+        Log.i(TAG, "Free resources");
+        if (recognition != null) {
+            recognition.CloseSpeechRegognizer();
+            recognition = null;
+        }
+        if (talkengine != null)
+            talkengine.cancel();
+
+    }
+
+    public void StartMessage(String msg) {
+
+        talkengine.speak(msg);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -142,5 +185,31 @@ public abstract class RecognitionService extends Service {
         isFirst = first;
     }
 
+    public boolean isActivated() {
+        return isActivated;
+    }
 
+    public void setActivated(boolean activated) {
+        Log.i(TAG,"boolean activated is "+activated);
+        isActivated = activated;
+
+    }
+
+    public boolean isFinishedTts() {
+        return isFinishedTts;
+    }
+
+    public void setFinishedTts(boolean finishedTts) {
+        isFinishedTts = finishedTts;
+    }
+
+    //function for starting tts speaking
+    public void StartInteract() {
+        Log.i(TAG, "Assistant starting speaking");
+        isActivated = true;
+
+        StartMessage(startMessage);
+        if (!isContinuousSpeechRecognition())
+            setFirst(true);
+    }
 }

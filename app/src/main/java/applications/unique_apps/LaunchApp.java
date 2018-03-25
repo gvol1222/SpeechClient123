@@ -35,7 +35,7 @@ class LaunchApp  {
             try {
                 i = manager.getLaunchIntentForPackage(packagename);
                 if (i != null) {
-                    Constatns.app.LAUNCHED = Constatns.app.LAUNCHED+" "+appName;
+                    Constatns.app.LAUNCHED = Constatns.OPEN_LAUNCHED_MESSAGE+" "+appName;
                     i.setFlags(Constatns.FLAGS);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     con.startActivity(i);

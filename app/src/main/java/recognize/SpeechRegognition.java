@@ -257,8 +257,29 @@ public class SpeechRegognition implements RecognitionListener {
 
         }
     }
+     /*@Override
+    public void onPartialResults(Bundle results) {
 
-    @Override
+        if (speechResultFound) {
+            Log.i(TAG, "If partial results found returning");
+            //  MuteAudio(true);
+            return;
+        }
+        final String partialResult = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
+        Boolean valid = (
+                results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
+                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
+                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
+                        !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty()
+        );
+        if (valid) {
+            listener.OnSpeechResult(partialResult);
+        }
+
+
+
+    }*/
+   @Override
     public void onPartialResults(Bundle results) {
         if (speechResultFound) {
             Log.i(TAG, "If partial results found returning");
@@ -288,7 +309,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 300) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
@@ -316,15 +337,15 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 500);
+                }, 300);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();
-            }/* */
+            }
 
         } else {
             PauseAndSpeakTime = System.currentTimeMillis();
-        }/**/
+        }
     }
 
     @Override

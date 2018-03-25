@@ -43,7 +43,7 @@ public class Switcher {
             Log.i(TAG,"send sms app");
 
             data_request.put(Constatns.SMS_APP_NAME, Constatns.SMS_INFO_MESSAGE);
-            data_request.put(Constatns.SMS_CONTENT_NAME,Constatns.OPEN_CONTENT_MESSAGE);
+            data_request.put(Constatns.SMS_CONTENT_NAME,Constatns.SMS_CONTENT_MESSAGE);
             data.put(Constatns.SMS_APP_NAME,null);
             data.put(Constatns.SMS_CONTENT_NAME,null);
             app = InitActionObj(
@@ -144,7 +144,7 @@ public class Switcher {
 
             if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
 
-                Log.i(TAG,"CALL APP: found number ");
+                Log.i(TAG,"CALL APP: found number "+query);
                 app.data.put(Constatns.CALL_APP_NAME, query);
                 app.UriQuery = app.data.get(Constatns.CALL_APP_NAME);
                 app.Stage = Constatns.VR_STAGE;
@@ -163,17 +163,17 @@ public class Switcher {
         }else if(app.type.equals(Constatns.SEND_SMS)){
 
             String query = app.data.get(Constatns.SMS_APP_NAME);
-
+            app.UniqueAction=true;
             if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
                 Log.i(TAG,"SEND SMS: found number ");
                 app.Stage = Constatns.VR_STAGE;
-                app.UniqueAction=true;
+                //app.UniqueAction=true;
 
             }else if (ContactUtils.ContactNumber(query,con).size() > 0 ) {
                 Log.i(TAG,"SEND SMS: found name ");
                 app.data.put(Constatns.SMS_APP_NAME, ContactUtils.ContactNumber(app.data.get(Constatns.SMS_APP_NAME), con).get(0));
                 app.Stage = Constatns.VR_STAGE;
-                app.UniqueAction=true;
+                //app.UniqueAction=true;
             }
             else {
                 Log.i(TAG,"SEND SMS: not found tel ");

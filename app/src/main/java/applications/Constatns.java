@@ -62,6 +62,7 @@ public class Constatns {
     //send sms tel
     public static final String SMS_INFO_MESSAGE ="Πείτε μου το όνομα της επαφής ή αριθμό τηλεφώνου";
     public static final String SMS_URI ="";
+    public static final String SMS_CONTENT_MESSAGE ="Πείτε μου το κείμενο που επιθυμείτε";
     public static final String SMS_NOT_FOUND_MESSAGE ="Η επαφή δεν βρέθηκε.";
     public static final String SMS_VER_MESSAGE ="Επιθυμείτε να αποσταλεί το μήνυμα";
     public static final String SMS_APP_NAME ="sms_contact";

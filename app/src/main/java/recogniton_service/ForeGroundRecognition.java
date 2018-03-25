@@ -73,6 +73,8 @@ public class ForeGroundRecognition extends SpeechService{
         return assistantBinder;
     }
 
+
+
     public class AssistantBinder extends Binder {
         public ForeGroundRecognition getService() {
             return ForeGroundRecognition.this;
