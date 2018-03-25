@@ -37,8 +37,6 @@ public class UniqueSwitcher {
             Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);
         }else if(type.equals(Constatns.SET_ALARM)){
             HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constatns.ALARM_DATE_TIME));
-
-
             int month = datetime.get("month");
             int year = datetime.get("year");
             int day =datetime.get("day");
@@ -47,15 +45,14 @@ public class UniqueSwitcher {
 
             Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM)
                     .putExtra(AlarmClock.EXTRA_HOUR, hour)
-                    .putExtra(AlarmClock.EXTRA_MINUTES, minute)
+                   .putExtra(AlarmClock.EXTRA_MINUTES, minute)
                     .putExtra(AlarmClock.EXTRA_SKIP_UI,true);
             intent.setFlags(Constatns.FLAGS);
-
-            List<ResolveInfo> resolveInfos = con.getPackageManager().queryIntentActivities(intent, 0); // returns all applications which can listen to the SEND Intent
             if (intent.resolveActivity(con.getPackageManager()) != null) {
                 con.startActivity(intent);
             }
 
+            /*List<ResolveInfo> resolveInfos = con.getPackageManager().queryIntentActivities(intent, 0); // returns all applications which can listen to the SEND Intent
             for (ResolveInfo info : resolveInfos) {
                 ApplicationInfo applicationInfo = info.activityInfo.applicationInfo;
 
@@ -66,7 +63,7 @@ public class UniqueSwitcher {
                 String ppackage_name = applicationInfo.packageName;
                 Log.d(TAG,"app name "+ppackage_name);
             }
-            Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);
+            Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);*/
         }
         else if(type.equals(Constatns.SEND_SMS)){
             Sms.SendMessage((String)data.get(Constatns.SMS_CONTENT_NAME), con, (String)data.get(Constatns.SMS_APP_NAME));

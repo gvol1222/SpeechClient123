@@ -48,7 +48,7 @@ public class Reminder {
         Uri event = cr.insert(EVENTS_URI, values);
 
         // Display event id.
-        Log.i(TAG, "Event added :: ID :: " + event.getLastPathSegment());
+       // Log.i(TAG, "Event added :: ID :: " + event.getLastPathSegment());
 
         /** Adding reminder for event added. */
         Uri REMINDERS_URI = Uri.parse(getCalendarUriBase(true) + "reminders");
@@ -65,15 +65,12 @@ public class Reminder {
     private static String getCalendarUriBase(boolean eventUri) {
         Uri calendarURI = null;
         try {
-            if (android.os.Build.VERSION.SDK_INT <= 7) {
-                calendarURI = (eventUri) ? Uri.parse("content://calendar/") : Uri.parse("content://calendar/calendars");
-            } else {
-                calendarURI = (eventUri) ? Uri.parse("content://com.android.calendar/") : Uri
-                        .parse("content://com.android.calendar/calendars");
-            }
+            calendarURI = (eventUri) ? Uri.parse("content://com.android.calendar/") : Uri
+                    .parse("content://com.android.calendar/calendars");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        assert calendarURI != null;
         return calendarURI.toString();
     }
 }

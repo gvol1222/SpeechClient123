@@ -110,6 +110,7 @@ public class Maestro extends IntentService {
 
                 if(resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) {
                     app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
+                    Log.i(TAG,"rem key time = "+resp.getEntities().getDatetime().get(0).getValue());
                 }
 
 

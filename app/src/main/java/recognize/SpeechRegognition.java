@@ -53,6 +53,7 @@ public class SpeechRegognition implements RecognitionListener {
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        SpeechIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 100);
     }
 
     // functions for boolean continuous recognition
@@ -309,7 +310,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 300) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
@@ -337,7 +338,7 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 300);
+                }, 500);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();
