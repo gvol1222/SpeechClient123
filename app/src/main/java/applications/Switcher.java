@@ -131,6 +131,19 @@ public class Switcher {
                     ,Constatns.CH_STAGE,Constatns.ALARM_NOT_FOUND_MESSAGE,
                     false,"",true,Constatns.ALARM_SUCCESS_MESSAGE
             );
+        }else if(type.equals(Constatns.SEARCH_GOOGLE)){
+            Log.i(TAG,"search google");
+
+
+            data_request.put(Constatns.GOOGLE_SEARCH_APP_NAME, Constatns.GOOGLE_SEARCH_INFO_MESSAGE);
+            data.put(Constatns.GOOGLE_SEARCH_APP_NAME,null);
+            app = InitActionObj(
+                    app,type,Intent.ACTION_VIEW,true,Constatns.GOOGLE_SEARCH_APP_NAME,
+                    data_request,data,Constatns.GOOGLE_SEARCH_URI,
+                    false,Constatns.GOOGLE_SEARCH_NOT_FOUND_MESSAGE
+                    ,Constatns.CH_STAGE,"",
+                    false,Constatns.MAPS_PACKAGE,false,Constatns.GOOGLE_SEARCH_SUCCESS_MESSAGE
+            );
         }
         return app;
     }
@@ -222,6 +235,12 @@ public class Switcher {
             else {
                 app.Stage = Constatns.CH_STAGE;
             }
+        }else if(app.type.equals(Constatns.SEARCH_GOOGLE)){
+            Log.i(TAG,"search google ");
+            app.UriQuery = app.data.get(Constatns.GOOGLE_SEARCH_APP_NAME);
+
+            app.Stage = Constatns.RUN_STAGE;
+
         }
         return app;
     }

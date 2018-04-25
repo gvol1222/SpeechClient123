@@ -34,6 +34,7 @@ import com.example.bill.Activities.R;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
+import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 import recogniton_service.ForeGroundRecognition;
 import recogniton_service.Maestro;
 import recogniton_service.SpeechService;
@@ -57,6 +58,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private ForeGroundRecognition speechService;
     private Intent speechintent;
     private boolean exit, assistantBound;
+    private PulsatorLayout pulsator ;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -64,9 +66,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             String result = intent.getStringExtra("result");
 
             Log.d(TAG, "onReceive msg : "+ result);
-            if (!result.equals("")) {
+
+            if ( intent.getStringExtra("ripple")!=null &&  intent.getStringExtra("ripple").equals("ripple")) {
+
+               pulsator.start();
+            }else if(intent.getStringExtra("ripple")!=null &&  intent.getStringExtra("ripple").equals("ripple_stop")){
+                pulsator.stop();
+            }
+
+            if (result!=null && !result.equals("")) {
                 response.setText(result);
-            } else {
+            }else if(result!=null) {
                 response.setText("");
             }
 
@@ -96,6 +106,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         exit = sharedPref.getBoolean("exit", false);
         if (Build.VERSION.SDK_INT < 23) Init();
+        pulsator = findViewById(R.id.pulsator);
+
 
     }
 
@@ -225,8 +237,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void setProgress() {
-        progressBar = findViewById(R.id.progressBar3);
-        WaitAction = findViewById(R.id.progressBar4);
+        //progressBar = findViewById(R.id.progressBar3);
+        //WaitAction = findViewById(R.id.progressBar4);
     }
 
     private void setText() {
@@ -240,6 +252,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+
                 startRecord(b);
 
             }
@@ -279,10 +293,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
                if (b) {
                speechService.StartInteract();
-               showProgressBar();
+               //showProgressBar();
                 } else {
 
-                   clearProgressBar();
+                   //clearProgressBar();
                    speechService.StopSrecognition();
 
                 }

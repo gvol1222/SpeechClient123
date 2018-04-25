@@ -10,7 +10,7 @@ import android.provider.MediaStore;
 
 public class Constatns {
 
-    public static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
+    public static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP;
     public  static final Action app = new Action();
 
     static final String YOUTUBE_PACKAGE = "com.google.android.youtube";
@@ -28,6 +28,7 @@ public class Constatns {
     static final String PLAY_MUSIC="play_music";
     public static final String SET_REMINDER="set_reminder";
     public static final String SET_ALARM="set_alarm";
+    public static final String SEARCH_GOOGLE="search_google";
     //actions
     static final String ACTION_CALL = Intent.ACTION_CALL;
     public static final String ACTION_SEARCH = Intent.ACTION_SEARCH;
@@ -126,4 +127,9 @@ public class Constatns {
     public static final String ALARM_EXTRA_BEGIN_TIME ="";
     public static final String ALARM_SUCCESS_MESSAGE ="To ξυπνητήρι ορίστικε";
 
+    public static final String GOOGLE_SEARCH_INFO_MESSAGE ="Πείτε μου τι θέλετε να ψάξω";
+    public static final String GOOGLE_SEARCH_URI ="https://www.google.com/search?q=";
+    public static final String GOOGLE_SEARCH_NOT_FOUND_MESSAGE ="";
+    public static final String GOOGLE_SEARCH_APP_NAME ="query_search";
+    public static final String GOOGLE_SEARCH_SUCCESS_MESSAGE ="Ανοίγει το google search";
 }

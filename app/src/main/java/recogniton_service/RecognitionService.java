@@ -16,6 +16,8 @@ import recognize.SpeechRegognition;
 import tts.SpeecHelper;
 import tts.TtsProgressListener;
 
+import static recogniton_service.SpeechService.BroadcastAction;
+
 /**
  * Created by bill on 11/30/17.
  */
@@ -33,11 +35,12 @@ public abstract class RecognitionService extends Service implements AssistanList
     private String waitMessage = "";
     private boolean isActivated;
     private boolean isFinishedTts;
-
+    Intent broadcastIntent;
 
     @Override
     public void onCreate() {
         super.onCreate();
+         broadcastIntent = new Intent(BroadcastAction);
         InitHandler();
         Init();
     }
@@ -64,6 +67,7 @@ public abstract class RecognitionService extends Service implements AssistanList
     public void onStartTalk() {
         //on start talking assistant close recognition and enable beep
         isFinishedTts =false;
+
         Mute(false);
         runCloseSpeech();
     }
@@ -72,6 +76,8 @@ public abstract class RecognitionService extends Service implements AssistanList
     @Override
     public void onEndTalk() {
         //on end talking assistant start recognition
+        broadcastIntent.putExtra("ripple", "ripple");
+        sendBroadcast(broadcastIntent);
         isFinishedTts =true;
         runStartSpeech();
 

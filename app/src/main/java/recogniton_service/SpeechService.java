@@ -64,6 +64,8 @@ public abstract class SpeechService extends RecognitionService  {
 
     @Override
     public void OnSpeechError(int Error){
+        broadcastIntent.putExtra("ripple", "ripple_stop");
+        sendBroadcast(broadcastIntent);
         if (isActivated()) {
             //app.Stage=Constatns.NO_SPEACH_STAGE;
             Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();

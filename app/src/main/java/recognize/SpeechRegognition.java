@@ -310,7 +310,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 350) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
@@ -338,7 +338,7 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 500);
+                }, 350);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();
