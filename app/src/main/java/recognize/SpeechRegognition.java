@@ -13,6 +13,8 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import wit_connection.WitResponse;
+
 /**
  * Created by bill on 11/1/17.
  */
@@ -53,7 +55,7 @@ public class SpeechRegognition implements RecognitionListener {
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        SpeechIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 100);
+        //SpeechIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 500);
     }
 
     // functions for boolean continuous recognition
@@ -146,7 +148,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             }
 
-        }, Constants.DelayRestartTime);
+        }, 200);
 
     }
 
@@ -237,6 +239,8 @@ public class SpeechRegognition implements RecognitionListener {
             } else {
                 Log.i(TAG, " speech final result is  = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
 
+
+
                 listener.OnSpeechResult(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
             }
 
@@ -258,28 +262,7 @@ public class SpeechRegognition implements RecognitionListener {
 
         }
     }
-     /*@Override
-    public void onPartialResults(Bundle results) {
 
-        if (speechResultFound) {
-            Log.i(TAG, "If partial results found returning");
-            //  MuteAudio(true);
-            return;
-        }
-        final String partialResult = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
-        Boolean valid = (
-                results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
-                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
-                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
-                        !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty()
-        );
-        if (valid) {
-            listener.OnSpeechResult(partialResult);
-        }
-
-
-
-    }*/
    @Override
     public void onPartialResults(Bundle results) {
         if (speechResultFound) {
@@ -310,7 +293,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 350) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
@@ -338,7 +321,7 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 350);
+                }, 500);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();

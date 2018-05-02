@@ -37,9 +37,9 @@ public class UniqueSwitcher {
             Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);
         }else if(type.equals(Constatns.SET_ALARM)){
             HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constatns.ALARM_DATE_TIME));
-            int month = datetime.get("month");
-            int year = datetime.get("year");
-            int day =datetime.get("day");
+            //int month = datetime.get("month");
+            //int year = datetime.get("year");
+           // int day =datetime.get("day");
             int hour = datetime.get("hour");
             int minute = datetime.get("minute");
 
@@ -52,18 +52,6 @@ public class UniqueSwitcher {
                 con.startActivity(intent);
             }
 
-            /*List<ResolveInfo> resolveInfos = con.getPackageManager().queryIntentActivities(intent, 0); // returns all applications which can listen to the SEND Intent
-            for (ResolveInfo info : resolveInfos) {
-                ApplicationInfo applicationInfo = info.activityInfo.applicationInfo;
-
-                //get package name, icon and label from applicationInfo object and display it in your custom layout
-                //App icon = applicationInfo.loadIcon(pm);
-                String name  = applicationInfo.loadLabel(con.getPackageManager()).toString();
-                Log.d(TAG,"app name "+name);
-                String ppackage_name = applicationInfo.packageName;
-                Log.d(TAG,"app name "+ppackage_name);
-            }
-            Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);*/
         }
         else if(type.equals(Constatns.SEND_SMS)){
             Sms.SendMessage((String)data.get(Constatns.SMS_CONTENT_NAME), con, (String)data.get(Constatns.SMS_APP_NAME));

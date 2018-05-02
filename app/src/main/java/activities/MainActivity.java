@@ -59,6 +59,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private Intent speechintent;
     private boolean exit, assistantBound;
     private PulsatorLayout pulsator ;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,8 +80,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             }else if(result!=null) {
                 response.setText("");
             }
-
-
 
         }
     };
