@@ -1,13 +1,16 @@
 package applications;
 
 import android.content.Intent;
+import android.os.Build;
 import android.provider.AlarmClock;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 
 /**
  * Created by bill on 11/9/17.
  */
 
+@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class Constatns {
 
     public static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -29,11 +32,14 @@ public class Constatns {
     public static final String SET_REMINDER="set_reminder";
     public static final String SET_ALARM="set_alarm";
     public static final String SEARCH_GOOGLE="search_google";
+    public static final String SET_TIMER="set_timer";
     //actions
     static final String ACTION_CALL = Intent.ACTION_CALL;
     public static final String ACTION_SEARCH = Intent.ACTION_SEARCH;
     public static final  String MUSIC_SEARCH = MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH;
     public static final  String ACTION_ALARM = AlarmClock.ACTION_SET_ALARM;
+    public static final  String ACTION_TIMER = AlarmClock.ACTION_SET_TIMER;
+    public static final  String TIMER_EXTRA = AlarmClock.EXTRA_LENGTH;
 
     //static final String OPEN_APP="open_app";
     //stages
@@ -132,4 +138,10 @@ public class Constatns {
     public static final String GOOGLE_SEARCH_NOT_FOUND_MESSAGE ="";
     public static final String GOOGLE_SEARCH_APP_NAME ="query_search";
     public static final String GOOGLE_SEARCH_SUCCESS_MESSAGE ="Ανοίγει το google search";
+
+    public static final String TIMER_INFO_MESSAGE ="Πείτε για πόση ώρα να μετρήσω";
+    public static final String TIMER_URI ="";
+    public static final String TIMER_NOT_FOUND_MESSAGE ="";
+    public static final String TIMER_KEY ="timer_time";
+    public static final String TIMER_SUCCESS_MESSAGE ="Ξεκινάει η χρονομέτρηση";
 }

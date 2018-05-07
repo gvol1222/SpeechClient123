@@ -12,6 +12,9 @@ public class Entities implements Serializable {
     @SerializedName("datetime")
     @Expose
     private List<Datetime> datetime = null;
+    @SerializedName("duration")
+    @Expose
+    private List<Duration> duration = null;
     @SerializedName("app_data")
     @Expose
     private List<AppDatum> appData = null;
@@ -26,6 +29,14 @@ public class Entities implements Serializable {
     @SerializedName("number")
     @Expose
     private List<Number> number = null;
+
+    public List<Duration> getDuration() {
+        return duration;
+    }
+
+    public void setDuration(List<Duration> duration) {
+        this.duration = duration;
+    }
 
     public List<PhoneNumber> getPhoneNumber() {
         return phoneNumber;

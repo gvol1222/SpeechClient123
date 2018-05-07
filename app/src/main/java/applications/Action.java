@@ -5,8 +5,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -63,11 +65,13 @@ public class Action implements Serializable {
     public boolean UniqueAction;
 
     //Constructor
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public Action() {
         Init();
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void Init(){
         setIntentParms();
         setStageParms();
@@ -90,6 +94,7 @@ public class Action implements Serializable {
         //Request data from user with message
         data_requests = new LinkedHashMap<>();
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void setStageParms(){
         type = "";
         RequiresVerification = false;
@@ -110,6 +115,7 @@ public class Action implements Serializable {
         extras = new Bundle();
     }
     //Run the Intent
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void runIntent(Context con) {
 
         if(UniqueAction ){
@@ -119,12 +125,14 @@ public class Action implements Serializable {
         else {
             Stage = Constatns.CP_STAGE;
             Intent curIntent = CreateIntent();
+            Log.d(TAG, "package: "+curIntent);
             con.startActivity(curIntent);
         }
 
     }
 
     //Helper Classes
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private Intent CreateIntent() {
         Intent runInt;
         if (RequiresUri) {
@@ -139,7 +147,7 @@ public class Action implements Serializable {
             runInt.setPackage(Package);
         }/**/
         if(RequiresExtra){
-            Log.d(TAG, "package: "+Package);
+            Log.d(TAG, "package: "+extras);
             runInt.putExtras(extras);
         }/**/
         return runInt;

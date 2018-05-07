@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -62,6 +64,7 @@ public abstract class SpeechService extends RecognitionService  {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void OnSpeechError(int Error){
         broadcastIntent.putExtra("ripple", "ripple_stop");
@@ -110,6 +113,7 @@ public abstract class SpeechService extends RecognitionService  {
     public void onEndOfSpeech() {
         Log.i(TAG, "user ends speaking");
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void SetReceivers(){
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter MessageFilter = new IntentFilter();
@@ -140,6 +144,7 @@ public abstract class SpeechService extends RecognitionService  {
     }
 
     private final BroadcastReceiver MessageRes= new BroadcastReceiver() {
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onReceive(Context context, Intent intent) {
 

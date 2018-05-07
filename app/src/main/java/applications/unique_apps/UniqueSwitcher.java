@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.provider.AlarmClock;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -21,6 +23,7 @@ public class UniqueSwitcher {
 
 
     private static final String TAG ="UniqueSwitcher";
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void Switcher(String type, LinkedHashMap data, Context con){
 
         if(type.equals(Constatns.SET_REMINDER)){

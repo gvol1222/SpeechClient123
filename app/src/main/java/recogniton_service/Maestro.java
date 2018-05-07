@@ -32,12 +32,14 @@ public class Maestro extends IntentService {
         super("Maestro");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
         CommandReceived(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void CommandReceived(Intent intent){
         String sender1 = intent.getStringExtra("Sender");
         app = Constatns.app;
@@ -58,7 +60,7 @@ public class Maestro extends IntentService {
 
             Witobj resp = (Witobj) intent.getSerializableExtra("WitOBJ");
 
-            Log.d(TAG, "App stage is"+app.type);
+            Log.d(TAG, "App stage is"+app.type+" "+RETRY_FLAG);
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
             if(resp.getEntities().getIntent() == null && app.Stage.equals(Constatns.IN_STAGE)){
@@ -112,15 +114,20 @@ public class Maestro extends IntentService {
                     app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
                     Log.i(TAG,"rem key time = "+resp.getEntities().getDatetime().get(0).getValue());
                 }
+                if(resp.getEntities().getDuration() !=null && resp.getEntities().getDuration().get(0).getConfidence() >0.8 ) {
+                    app.data.put(Constatns.TIMER_KEY,resp.getEntities().getDuration().get(0).getNormalized().getValue());
+                    Log.i(TAG,"rem duration= "+resp.getEntities().getDuration().get(0).getNormalized().getValue());
+                }
 
 
                 //Multi stage comm gatherer
-                if(resp.getText() != null && app.waiting_data && !(resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
+                if(resp.getText() != null && app.waiting_data && app.data.get(Constatns.TIMER_KEY)==null && !(resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
                     app.data.put(app.Current_Key,resp.getText());
                     Log.i(TAG,"multistage data response from user is = "+resp.getText());
-                }else if(app.waiting_data && (resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
+                }else if(app.waiting_data && (resp.getEntities().getDatetime() !=null &&  app.data.get(Constatns.TIMER_KEY)==null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
                     app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
                 }
+
 
                 //Multi Stage comm Loop
                 if(app.data.containsValue(null)){
@@ -145,7 +152,7 @@ public class Maestro extends IntentService {
             }
 
             if (app.Stage.equals(Constatns.TR_STAGE)){
-                Log.i(TAG," entered in tr stage = ");
+                Log.i(TAG," entered in tr stage = "+app.data.get(app.Current_Key));
                 app.waiting_data = false;
                 app = Switcher.transforminfo(app,getApplicationContext());
 
@@ -212,8 +219,10 @@ public class Maestro extends IntentService {
             }
            /**/ if (app.Stage.equals(Constatns.CP_STAGE)){
             Log.i(TAG,"completed"+app.LAUNCHED);
+
             if(!app.LAUNCHED.equals(""))
                 speak(app.LAUNCHED,false);
+            Constatns.app.Init();
             Log.i(TAG,"entered in completed stage");
         }
 
@@ -222,7 +231,8 @@ public class Maestro extends IntentService {
         }
     }
 
-    private void speak(String msg,boolean recognizeAfter){
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void speak(String msg, boolean recognizeAfter){
         Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
         Intent broadcastIntent = new Intent(Constatns.MAESTRO_ACTION);
         broadcastIntent.putExtra("msg",msg);

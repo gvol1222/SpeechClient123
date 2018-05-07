@@ -3,6 +3,8 @@ package applications.unique_apps;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.example.bill.Activities.R;
@@ -16,6 +18,7 @@ import utils.AppPackagesUtils;
 
 class LaunchApp  {
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     static String launchapplication(String qry, Context con) {
         String packagename = AppPackagesUtils.getpackagename(qry,con);
         String TAG = "LaunchApp";

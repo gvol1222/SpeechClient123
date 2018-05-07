@@ -11,7 +11,7 @@ public class Datetime  implements Serializable {
 
     @SerializedName("confidence")
     @Expose
-    private Integer confidence;
+    private Double confidence;
     @SerializedName("values")
     @Expose
     private List<Value> values = null;
@@ -25,11 +25,11 @@ public class Datetime  implements Serializable {
     @Expose
     private String type;
 
-    public Integer getConfidence() {
+    public Double getConfidence() {
         return confidence;
     }
 
-    public void setConfidence(Integer confidence) {
+    public void setConfidence(Double confidence) {
         this.confidence = confidence;
     }
 

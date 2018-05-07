@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -22,6 +24,7 @@ public class Switcher {
 
 
     private static String TAG = "Switcher";
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static Action selectActionbyType(Action app, String type) {
 
         Log.i(TAG,"type of app is: "+app.type);
@@ -144,10 +147,24 @@ public class Switcher {
                     ,Constatns.CH_STAGE,"",
                     false,Constatns.MAPS_PACKAGE,false,Constatns.GOOGLE_SEARCH_SUCCESS_MESSAGE
             );
+        }else if(type.equals(Constatns.SET_TIMER)){
+            Log.i(TAG,"set timer");
+
+            data_request.put(Constatns.TIMER_KEY, Constatns.TIMER_INFO_MESSAGE);
+            data.put(Constatns.TIMER_KEY,null);
+
+            app = InitActionObj(
+                    app,type,Constatns.ACTION_TIMER,false,Constatns.TIMER_KEY,
+                    data_request,data,"",
+                    false,""
+                    ,Constatns.CH_STAGE,"",
+                    false,"",true,Constatns.TIMER_SUCCESS_MESSAGE
+            );
         }
         return app;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static Action transforminfo (Action app, Context con){
 
 
@@ -238,6 +255,12 @@ public class Switcher {
         }else if(app.type.equals(Constatns.SEARCH_GOOGLE)){
             Log.i(TAG,"search google ");
             app.UriQuery = app.data.get(Constatns.GOOGLE_SEARCH_APP_NAME);
+
+            app.Stage = Constatns.RUN_STAGE;
+
+        }else if(app.type.equals(Constatns.SET_TIMER)){
+            Log.i(TAG,"timer");
+            app.extras.putInt(Constatns.TIMER_EXTRA, Integer.parseInt(app.data.get(Constatns.TIMER_KEY)));
 
             app.Stage = Constatns.RUN_STAGE;
 
