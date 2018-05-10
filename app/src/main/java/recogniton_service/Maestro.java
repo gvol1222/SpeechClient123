@@ -5,15 +5,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.bill.Activities.R;
+
+import org.greenrobot.eventbus.EventBus;
 
 import applications.Action;
 
 import applications.Constatns;
 import applications.Switcher;
+import events.Events;
 import utils.jsonparsers.Witobj;
 
 /**
@@ -234,12 +236,15 @@ public class Maestro extends IntentService {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void speak(String msg, boolean recognizeAfter){
         Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
-        Intent broadcastIntent = new Intent(Constatns.MAESTRO_ACTION);
+
+        EventBus.getDefault().post(new Events.SpeechMessage(msg,recognizeAfter));
+
+        /*Intent broadcastIntent = new Intent(Constatns.MAESTRO_ACTION);
         broadcastIntent.putExtra("msg",msg);
         broadcastIntent.putExtra("speak","speak");
         broadcastIntent.putExtra("rec",recognizeAfter);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.sendBroadcast(broadcastIntent);
+        localBroadcastManager.sendBroadcast(broadcastIntent);*/
 
     }
 }

@@ -2,28 +2,33 @@ package recogniton_service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.bill.Activities.R;
 
-import recognize.AssistanListener;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import applications.Constatns;
+import events.Events;
 import recognize.SpeechRegognition;
 import tts.SpeecHelper;
 import tts.TtsProgressListener;
-
-import static recogniton_service.SpeechService.BroadcastAction;
+import wit_connection.WitResponse;
 
 /**
  * Created by bill on 11/30/17.
  */
 
 //this class contains functions of speech recognizer
-public abstract class RecognitionService extends Service implements AssistanListener, TtsProgressListener {
+public abstract class RecognitionService extends Service implements  TtsProgressListener {
 
     private final String TAG = this.getClass().getSimpleName();
     private SpeechRegognition recognition;
@@ -35,12 +40,66 @@ public abstract class RecognitionService extends Service implements AssistanList
     private String waitMessage = "";
     private boolean isActivated;
     private boolean isFinishedTts;
-    Intent broadcastIntent;
+    private Handler mHandler;
+    // Intent broadcastIntent;
 
+   /*@Subscribe()
+   public void onMessageEvent(FinalSpeechText event) {
+       EventBus.getDefault().post(new PartialSpeechText(event.getPartialspeech()));
+
+   }*/
+    /**/@Subscribe
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void OnSpeechError(Events.SpeechError event){
+
+        if(event.isError()){
+            EventBus.getDefault().post(new Events.PartialResults(""));
+            if (isActivated()) {
+                //app.Stage=Constatns.NO_SPEACH_STAGE;
+                Toast.makeText(this, "Η αναγνώριση τερματίζει", Toast.LENGTH_SHORT).show();
+            }
+            setActivated(false);
+            //close recognition if not continuous
+            CancelOnNotContinuous();
+            //mute audio beep
+            Mute(true);
+            Constatns.app.Init();
+        }
+
+    }
+    @Subscribe
+    public void OnSpeechResult(Events.FinalResults event){
+
+        String Result = event.getFinalResults();
+
+        Log.i(TAG, "On partial res speech"+Result);
+        if (isActivated() && !Result.equals("")) {
+            //EventBus.getDefault().postSticky(new PartialSpeechText(""));
+            new WitResponse(getApplicationContext()).execute(Result);
+        } else if (Result.equals(getResources().getString(R.string.title_activity_gui))) {
+            Mute(false);
+            StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
+            setActivated(true);
+        }
+
+    }
+    @Subscribe
+    public void OnSpeechMessage(Events.SpeechMessage event){
+
+
+        boolean reocgnizeAfter = event.getRecognige_after();
+        String message = event.getSpeechMessage();
+        speak(message,reocgnizeAfter);
+      //  EventBus.getDefault().postSticky(new SpeechMessage("",false));
+
+
+    }
     @Override
     public void onCreate() {
         super.onCreate();
-         broadcastIntent = new Intent(BroadcastAction);
+        mHandler = new Handler();
+        //EventBus.getDefault().register(this);
+       // broadcastIntent = new Intent(BroadcastAction);
         InitHandler();
         Init();
     }
@@ -48,11 +107,13 @@ public abstract class RecognitionService extends Service implements AssistanList
     @Override
     public void onDestroy() {
         super.onDestroy();
+       //EventBus.getDefault().unregister(this);
         free();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        //EventBus.getDefault().unregister(this);
         free();
         return false;
     }
@@ -62,6 +123,8 @@ public abstract class RecognitionService extends Service implements AssistanList
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+
 
     @Override
     public void onStartTalk() {
@@ -76,8 +139,8 @@ public abstract class RecognitionService extends Service implements AssistanList
     @Override
     public void onEndTalk() {
         //on end talking assistant start recognition
-        broadcastIntent.putExtra("ripple", "ripple");
-        sendBroadcast(broadcastIntent);
+      //  broadcastIntent.putExtra("ripple", "ripple");
+       // sendBroadcast(broadcastIntent);
         isFinishedTts =true;
         runStartSpeech();
 
@@ -94,7 +157,7 @@ public abstract class RecognitionService extends Service implements AssistanList
         talkengine = new SpeecHelper(getApplicationContext(), this);
         startMessage = getApplicationContext().getResources().getString(R.string.StartMessage);
         waitMessage = getApplicationContext().getResources().getString(R.string.WaitMessage);
-        setRecognition(this);
+        setRecognition();
     }
     //close and destroy speech recognition
     private void free() {
@@ -108,10 +171,18 @@ public abstract class RecognitionService extends Service implements AssistanList
 
     }
 
-    public void StartMessage(String msg) {
+    public void StartMessage(final String msg) {
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(RecognitionService.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         talkengine.speak(msg);
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+
 
     }
 
@@ -122,9 +193,9 @@ public abstract class RecognitionService extends Service implements AssistanList
         closeHandler = new Handler(Looper.getMainLooper());
     }
 
-    public void setRecognition(AssistanListener listener) {
+    public void setRecognition() {
         Log.i(TAG, "Recognition created");
-        recognition = new SpeechRegognition(getApplicationContext(), listener);
+        recognition = new SpeechRegognition(getApplicationContext());
 
     }
 
@@ -170,10 +241,10 @@ public abstract class RecognitionService extends Service implements AssistanList
             public void run() {
                 Log.i(TAG, "recognition started first: " + isFirst);
                 if (!recognition.isContinuousSpeechRecognition()) {
-                    if (isFirst) {
-                        isFirst = false;
+                    //if (isFirst) {
+                       // isFirst = false;
                         StartRecognition();
-                    }
+                  //  }
                 } else {
                     StartRecognition();
                 }
@@ -215,7 +286,19 @@ public abstract class RecognitionService extends Service implements AssistanList
         isActivated = true;
 
         StartMessage(startMessage);
-        if (!isContinuousSpeechRecognition())
-            setFirst(true);
+       // if (!isContinuousSpeechRecognition())
+          //  setFirst(true);
     }
+    private void speak (String message,boolean recognize_after){
+        //Intent msg = new Intent();
+
+        if (recognize_after)
+            setActivated(true);
+        else
+            setActivated(false);
+
+        StartMessage(message);
+    }
+
+
 }

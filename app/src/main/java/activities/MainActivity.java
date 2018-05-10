@@ -1,11 +1,9 @@
 package activities;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -23,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,12 +29,16 @@ import android.widget.ToggleButton;
 
 import com.example.bill.Activities.R;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
+import butterknife.ButterKnife;
+import events.Events;
 import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 import recogniton_service.ForeGroundRecognition;
-import recogniton_service.Maestro;
-import recogniton_service.SpeechService;
 import utils.AppPackagesUtils;
 
 /**
@@ -60,7 +61,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private boolean exit, assistantBound;
     private PulsatorLayout pulsator ;
 
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    /*private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -82,7 +83,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             }
 
         }
-    };
+    };*/
+
     private ServiceConnection speechConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
@@ -98,14 +100,22 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         }
     };
 
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Events.PartialResults event ) {
+        response.setText(event.getPartialResults());
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_gui);
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         exit = sharedPref.getBoolean("exit", false);
         if (Build.VERSION.SDK_INT < 23) Init();
         pulsator = findViewById(R.id.pulsator);
+
+        ButterKnife.bind(this);
+
 
 
     }
@@ -113,12 +123,14 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onStart() {
         super.onStart();
+
         if (speechService == null) {
             speechintent = new Intent(MainActivity.this, ForeGroundRecognition.class);
             speechintent.setAction("com.marothiatechs.foregroundservice.action.startforeground");
             startService(speechintent);
             bindService(speechintent, speechConnection, Context.BIND_AUTO_CREATE);
         }
+
     }
 
     @Override
@@ -262,25 +274,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     }
 
-    private void clearProgressBar() {
-        progressBar.setIndeterminate(false);
-        progressBar.setVisibility(View.INVISIBLE);
-    }
 
-    private void clearWaitBar() {
-        WaitAction.setIndeterminate(false);
-        WaitAction.setVisibility(View.INVISIBLE);
-    }
-
-    private void showProgressBar() {
-        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void showWaitBar() {
-        WaitAction.setIndeterminate(true);
-        WaitAction.setVisibility(View.VISIBLE);
-    }
 
     private void startRecord(boolean b) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -312,6 +306,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         unbindService(speechConnection);
         if (!exit) {
             stopService(speechintent);
@@ -321,7 +316,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(broadcastReceiver, new IntentFilter(SpeechService.BroadcastAction));
+
+        //EventBus.getDefault().register(this);
+        //registerReceiver(broadcastReceiver, new IntentFilter(SpeechService.BroadcastAction));
 
 
     }
@@ -329,7 +326,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(broadcastReceiver);
+
+      //  unregisterReceiver(broadcastReceiver);
     }
 
     @Override

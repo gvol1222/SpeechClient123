@@ -10,6 +10,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
+import butterknife.ButterKnife;
+
 /**
  * Created by bill on 11/21/17.
  */
@@ -36,6 +40,7 @@ public abstract class PermissionActivity extends AppCompatActivity {
         if (!(Build.VERSION.SDK_INT < 23)) {
             ActivityCompat.requestPermissions(this, permissions, RequestPermissionCode);
         }
+
     }
 
 

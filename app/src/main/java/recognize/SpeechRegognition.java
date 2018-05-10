@@ -11,9 +11,11 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Locale;
 
-import wit_connection.WitResponse;
+import events.Events;
 
 /**
  * Created by bill on 11/1/17.
@@ -27,15 +29,15 @@ public class SpeechRegognition implements RecognitionListener {
     private Intent SpeechIntent;
     private Handler restartDroidSpeech = new Handler(), SpeechPartialResult = new Handler();
     private Boolean IsReadyForSpeach = false, speechResultFound = false;
-    private AssistanListener listener;
+   // private AssistanListener listener;
     private long StartListeningTime, PauseAndSpeakTime;
     private boolean continuousSpeechRecognition;
     private AudioManager audioManager;
     private Context context;
 
-    public SpeechRegognition(Context context, AssistanListener listener) {
+    public SpeechRegognition(Context context) {
         this.context = context;
-        this.listener = listener;
+        //this.listener = listener;
         Init();
 
     }
@@ -99,6 +101,8 @@ public class SpeechRegognition implements RecognitionListener {
         Log.i(TAG, "start recognize");
 
 
+       // //EventBus.getDefault().post(new FinalSpeechText(""));
+       // EventBus.getDefault().post(new PartialSpeechText(""));
         //take the specific time of start listening
         StartListeningTime = System.currentTimeMillis();
         PauseAndSpeakTime = StartListeningTime;
@@ -139,6 +143,7 @@ public class SpeechRegognition implements RecognitionListener {
     //function for restarting speech recognition after 500 milliseconds delay
     private void restartSpeechRegognizer() {
 
+
         restartDroidSpeech.postDelayed(new Runnable() {
 
             @Override
@@ -148,7 +153,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             }
 
-        }, 100);
+        }, 300);
 
     }
 
@@ -181,15 +186,16 @@ public class SpeechRegognition implements RecognitionListener {
     @Override
     public void onEndOfSpeech() {
         Log.i(TAG, "end of speeking");
-        listener.onEndOfSpeech();
+       // listener.onEndOfSpeech();
     }
 
     @Override
     public void onError(int i) {
         Log.i(TAG, "error code: " + i);
-
-        listener.OnSpeechError(i);
-        // MuteAudio(true);
+        EventBus.getDefault().post(new Events.SpeechError(true));
+        //EventBus.getDefault().post(new SpeechErrorEvent(true));
+       // listener.OnSpeechError(i);
+         MuteAudio(true);
 
         // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
         long duration = System.currentTimeMillis() - StartListeningTime;
@@ -205,10 +211,10 @@ public class SpeechRegognition implements RecognitionListener {
                 restartSpeechRegognizer();
             }
 
-        } else if (listener == null) {
-            Log.i(TAG, "something goes wrong! ");
+        } //else if (listener == null) {
+            //Log.i(TAG, "something goes wrong! ");
 
-        }
+        //}
 
     }
 
@@ -234,7 +240,7 @@ public class SpeechRegognition implements RecognitionListener {
 
         if (valid) {
             // Getting the speech final result
-            if (listener == null) {
+            /*if (listener == null) {
                 Log.i(TAG, " speech null result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
             } else {
                 Log.i(TAG, " speech final result is  = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
@@ -242,8 +248,9 @@ public class SpeechRegognition implements RecognitionListener {
 
 
                 listener.OnSpeechResult(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-            }
+            }*/
 
+            EventBus.getDefault().post(new Events.FinalResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
             if (continuousSpeechRecognition) {
                 Log.i(TAG, "speech start again");
                 // Start  speech recognition again
@@ -281,34 +288,35 @@ public class SpeechRegognition implements RecognitionListener {
 
         if (valid) {
 
-            if (listener == null) {
+            /*if (listener == null) {
                 Log.i(TAG, "Droid speech error partial result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
             } else {
                 Log.i(TAG, "If partial result: " + partialResult);
                 // Sending an update with the droid speech live result
                 listener.OnSpeechLiveResult(partialResult);
-            }
+            }*/
             Log.i(TAG, "pause time: " + PauseAndSpeakTime + " current mills: " + System.currentTimeMillis());
 
-
+            EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 300) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 350) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(TAG, "On partial result closing speech");
+                        Log.i(TAG, "On partial result closing speech"+partialResult);
 
                         CloseSpeechRegognizer();
-                        if (listener == null) {
+                        /*if (listener == null) {
                             Log.i(TAG, " speech nullable error result = " + partialResult);
                         } else {
                             Log.i(TAG, "On partial  final result " + partialResult);
                             //the speech result found and put it on listener function
                             listener.OnSpeechResult(partialResult);
-                        }
+                        }*/
+                        EventBus.getDefault().post(new Events.FinalResults(partialResult));
 
                         if (continuousSpeechRecognition) {
                             Log.i(TAG, "on partial start speech again");
@@ -321,7 +329,7 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 300);
+                }, 350);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();

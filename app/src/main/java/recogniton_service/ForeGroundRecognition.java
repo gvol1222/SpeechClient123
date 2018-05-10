@@ -15,13 +15,18 @@ import android.util.Log;
 
 import com.example.bill.Activities.R;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import applications.Constatns;
+import events.Events;
 
 /**
  * Created by bill on 11/30/17.
  */
 
-public class ForeGroundRecognition extends SpeechService{
+public class ForeGroundRecognition extends RecognitionService{
 
     private static final int NOTIFY_ID = 1;
     private final String TAG = this.getClass().getSimpleName();
@@ -33,6 +38,7 @@ public class ForeGroundRecognition extends SpeechService{
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         //return start sticky because we dont want to close on exit of app
+
         Intent ConIntent = new Intent(Constatns.NOT_ACTION);
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         CreateNotification(ActionIntent);
@@ -65,6 +71,7 @@ public class ForeGroundRecognition extends SpeechService{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         //close notification and foreground service
         stopForeground(true);
         stopSelf();
@@ -73,6 +80,7 @@ public class ForeGroundRecognition extends SpeechService{
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        EventBus.getDefault().register(this);
         return assistantBinder;
     }
 

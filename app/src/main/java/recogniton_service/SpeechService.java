@@ -30,12 +30,13 @@ public abstract class SpeechService extends RecognitionService  {
     private boolean hasWit;
 
 
-    private Intent broadcastIntent;
+    //private Intent broadcastIntent;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate() {
         super.onCreate();
-        broadcastIntent = new Intent(BroadcastAction);
-        SetReceivers();
+       // broadcastIntent = new Intent(BroadcastAction);
+        //SetReceivers();
 
 
     }
@@ -50,7 +51,7 @@ public abstract class SpeechService extends RecognitionService  {
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "unregisterReceiver ");
-        unregisterReceiver(MessageRes);
+        //unregisterReceiver(MessageRes);
     }
 
     @Override
@@ -65,7 +66,9 @@ public abstract class SpeechService extends RecognitionService  {
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
+
+
+   /* @Override
     public void OnSpeechError(int Error){
         broadcastIntent.putExtra("ripple", "ripple_stop");
         sendBroadcast(broadcastIntent);
@@ -125,7 +128,7 @@ public abstract class SpeechService extends RecognitionService  {
         //maestro action
         registerReceiver(MessageRes,MessageFilter);
 
-    }
+    }*/
     private void speak (String message,boolean recognize_after){
         //Intent msg = new Intent();
 
@@ -139,11 +142,11 @@ public abstract class SpeechService extends RecognitionService  {
     //send message to activity
     protected void SendMessage(String msg) {
         Log.i(TAG, "message of sendmessage method  is   " + msg);
-        broadcastIntent.putExtra("result", msg);
-        sendBroadcast(broadcastIntent);
+      //  broadcastIntent.putExtra("result", msg);
+        //sendBroadcast(broadcastIntent);
     }
 
-    private final BroadcastReceiver MessageRes= new BroadcastReceiver() {
+   /* private final BroadcastReceiver MessageRes= new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -173,5 +176,5 @@ public abstract class SpeechService extends RecognitionService  {
 
 
         }
-    };
+    };*/
 }
