@@ -111,6 +111,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         setContentView(R.layout.activity_gui);
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         exit = sharedPref.getBoolean("exit", false);
+        Log.d("exit...", String.valueOf(exit));
         if (Build.VERSION.SDK_INT < 23) Init();
         pulsator = findViewById(R.id.pulsator);
 
@@ -148,19 +149,21 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
         switch (item.getItemId()) {
             case R.id.action_settings:
-                if (exit) {
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putBoolean("exit", false);
-                    editor.apply();
-                    exit = false;
-                    Toast.makeText(this, "Θα τερματίσει στη έξοδο", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(this, "Θα είναι πάντα ενεργό", Toast.LENGTH_LONG).show();
+                Log.d("exit...1", String.valueOf(exit));
+                if (!exit) {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putBoolean("exit", true);
                     editor.apply();
                     exit = true;
+                    Toast.makeText(this, "Θα τερματίσει στη έξοδο", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Θα είναι πάντα ενεργό", Toast.LENGTH_LONG).show();
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("exit", false);
+                    editor.apply();
+                    exit = false;
                 }
+                Log.d("exit...2", String.valueOf(exit));
                 invalidateOptionsMenu();
                 break;
             default:
@@ -174,7 +177,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     public boolean onPrepareOptionsMenu(Menu menu) {
 
 
-        if (exit) {
+        if (!exit) {
             menu.findItem(R.id.action_settings)
                     .setIcon(R.mipmap.power_off);
         } else {
@@ -308,7 +311,9 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         unbindService(speechConnection);
-        if (!exit) {
+        exit = sharedPref.getBoolean("exit", false);
+        Log.d("exit...", String.valueOf(exit));
+        if (exit) {
             stopService(speechintent);
         }
     }

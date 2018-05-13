@@ -42,6 +42,7 @@ public class ForeGroundRecognition extends RecognitionService{
         Intent ConIntent = new Intent(Constatns.NOT_ACTION);
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         CreateNotification(ActionIntent);
+
         Log.i(TAG, "foreground started!!");
 
         return Service.START_STICKY;
@@ -81,6 +82,7 @@ public class ForeGroundRecognition extends RecognitionService{
     @Override
     public IBinder onBind(Intent intent) {
         EventBus.getDefault().register(this);
+
         return assistantBinder;
     }
 

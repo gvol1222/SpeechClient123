@@ -11,6 +11,8 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.bill.Activities.R;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,11 +45,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     private Handler mHandler;
     // Intent broadcastIntent;
 
-   /*@Subscribe()
-   public void onMessageEvent(FinalSpeechText event) {
-       EventBus.getDefault().post(new PartialSpeechText(event.getPartialspeech()));
 
-   }*/
     /**/@Subscribe
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void OnSpeechError(Events.SpeechError event){
@@ -75,8 +73,10 @@ public abstract class RecognitionService extends Service implements  TtsProgress
         Log.i(TAG, "On partial res speech"+Result);
         if (isActivated() && !Result.equals("")) {
             //EventBus.getDefault().postSticky(new PartialSpeechText(""));
-            new WitResponse(getApplicationContext()).execute(Result);
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(WitResponse.GetResults(Result));
         } else if (Result.equals(getResources().getString(R.string.title_activity_gui))) {
+
             Mute(false);
             StartMessage(getApplicationContext().getResources().getString(R.string.StartMessage));
             setActivated(true);
@@ -114,7 +114,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     @Override
     public boolean onUnbind(Intent intent) {
         //EventBus.getDefault().unregister(this);
-        free();
+       // free();
         return false;
     }
 
@@ -213,8 +213,10 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     }
 
     public void StartRecognition() {
-        if (recognition != null)
+        if (recognition != null) {
+            startService(new Intent(this, Maestro.class));
             recognition.StartSpeechRegognize();
+        }
     }
 
     //mute and unmute beep sound

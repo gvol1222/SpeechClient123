@@ -1,5 +1,7 @@
 package events;
 
+import utils.jsonparsers.Witobj;
+
 public class Events {
 
 
@@ -50,6 +52,23 @@ public class Events {
 
         public boolean isError() {
             return error;
+        }
+    }
+    public static class WitREsp {
+
+        private Witobj witResponse;
+        private String sender;
+        public WitREsp(Witobj witResponse,String sender) {
+
+            this.witResponse = witResponse;
+            this.sender = sender;
+        }
+
+        public Witobj getWitResponse() {
+            return witResponse;
+        }
+        public String getSender() {
+            return sender;
         }
     }
 }
