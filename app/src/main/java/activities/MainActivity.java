@@ -53,37 +53,13 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     SharedPreferences sharedPref;
     private TextView response;
     private ToggleButton btnIput;
-    private ProgressBar progressBar;
-    private ProgressBar WaitAction;
+
     private Toolbar toolbar;
     private ForeGroundRecognition speechService;
     private Intent speechintent;
     private boolean exit, assistantBound;
-    private PulsatorLayout pulsator ;
 
-    /*private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-            String result = intent.getStringExtra("result");
-
-            Log.d(TAG, "onReceive msg : "+ result);
-
-            if ( intent.getStringExtra("ripple")!=null &&  intent.getStringExtra("ripple").equals("ripple")) {
-
-               pulsator.start();
-            }else if(intent.getStringExtra("ripple")!=null &&  intent.getStringExtra("ripple").equals("ripple_stop")){
-                pulsator.stop();
-            }
-
-            if (result!=null && !result.equals("")) {
-                response.setText(result);
-            }else if(result!=null) {
-                response.setText("");
-            }
-
-        }
-    };*/
 
     private ServiceConnection speechConnection = new ServiceConnection() {
         @Override
@@ -104,16 +80,24 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     public void onMessageEvent(Events.PartialResults event ) {
         response.setText(event.getPartialResults());
     }
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void isActivated(Events.ActivatedRecognition event ) {
+
+        if(!event.isActivated() ){
+            btnIput.performClick();
+        }
+
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_gui);
         sharedPref = getPreferences(Context.MODE_PRIVATE);
-        exit = sharedPref.getBoolean("exit", false);
+        exit = sharedPref.getBoolean("exit", true);
         Log.d("exit...", String.valueOf(exit));
         if (Build.VERSION.SDK_INT < 23) Init();
-        pulsator = findViewById(R.id.pulsator);
+
 
         ButterKnife.bind(this);
 
@@ -219,7 +203,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private void Init() {
 
         setButtons();
-        setProgress();
+
         setText();
         setToolbar();
         setDrawerLayout();
@@ -250,10 +234,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         btnIput = findViewById(R.id.toggleButton2);
     }
 
-    private void setProgress() {
-        //progressBar = findViewById(R.id.progressBar3);
-        //WaitAction = findViewById(R.id.progressBar4);
-    }
 
     private void setText() {
         response = findViewById(R.id.textView2);
@@ -281,26 +261,27 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     private void startRecord(boolean b) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), true);
+        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
         speechService.setContinuous(btn);
-       if (AppPackagesUtils.isNetworkAvailable(this)) {
-           Log.i(TAG,"boolean is"+b);
-           if( speechService.isFinishedTts()) {
+        if (AppPackagesUtils.isNetworkAvailable(this)) {
+            Log.i(TAG,"boolean is"+b);
+            if( speechService.isFinishedTts()) {
 
-               if (b) {
-               speechService.StartInteract();
-               //showProgressBar();
+                if (b) {
+                    speechService.speak(getResources().getString(R.string.StartMessage),true);
+                    //showProgressBar();
                 } else {
 
-                   //clearProgressBar();
-                   speechService.StopSrecognition();
+                    //clearProgressBar();
+                    speechService.StopSrecognition();
+                    response.setText("");
 
                 }
 
-           }
-       }else {
-           Toast.makeText(this,getResources().getString(R.string.network_error),Toast.LENGTH_LONG).show();
-       }
+            }
+        }else {
+            Toast.makeText(this,getResources().getString(R.string.network_error),Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -322,9 +303,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onResume() {
         super.onResume();
 
-        //EventBus.getDefault().register(this);
-        //registerReceiver(broadcastReceiver, new IntentFilter(SpeechService.BroadcastAction));
-
 
     }
 
@@ -332,7 +310,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onPause() {
         super.onPause();
 
-      //  unregisterReceiver(broadcastReceiver);
     }
 
     @Override

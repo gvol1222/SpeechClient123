@@ -3,7 +3,7 @@
     <PreferenceCategory android:title="Επιλογές Φωνής">
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/switch_continuous"
             android:title="@string/continuous_setting" />
 

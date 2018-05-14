@@ -1,5 +1,6 @@
 package recognize;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -9,13 +10,20 @@ import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Locale;
 
+import applications.Constatns;
 import events.Events;
+import wit_connection.WitResponse;
 
 /**
  * Created by bill on 11/1/17.
@@ -29,15 +37,16 @@ public class SpeechRegognition implements RecognitionListener {
     private Intent SpeechIntent;
     private Handler restartDroidSpeech = new Handler(), SpeechPartialResult = new Handler();
     private Boolean IsReadyForSpeach = false, speechResultFound = false;
-   // private AssistanListener listener;
+
     private long StartListeningTime, PauseAndSpeakTime;
     private boolean continuousSpeechRecognition;
     private AudioManager audioManager;
     private Context context;
+    private boolean isActivated;
 
     public SpeechRegognition(Context context) {
         this.context = context;
-        //this.listener = listener;
+
         Init();
 
     }
@@ -100,9 +109,6 @@ public class SpeechRegognition implements RecognitionListener {
 
         Log.i(TAG, "start recognize");
 
-
-       // //EventBus.getDefault().post(new FinalSpeechText(""));
-       // EventBus.getDefault().post(new PartialSpeechText(""));
         //take the specific time of start listening
         StartListeningTime = System.currentTimeMillis();
         PauseAndSpeakTime = StartListeningTime;
@@ -115,7 +121,9 @@ public class SpeechRegognition implements RecognitionListener {
 
         AssistantSpeechRegnizer.setRecognitionListener(this);
         // Canceling any running  speech operations, before listening
-        CancelSpeechRecognizer();
+        if (!isContinuousSpeechRecognition()) {
+            CancelSpeechRecognizer();
+        }
         // Start Listening
         AssistantSpeechRegnizer.startListening(SpeechIntent);
     }
@@ -136,7 +144,7 @@ public class SpeechRegognition implements RecognitionListener {
             AssistantSpeechRegnizer.destroy();
         }
         SpeechPartialResult.removeCallbacksAndMessages(null);
-        // MuteAudio(false);
+
     }
 
 
@@ -186,16 +194,31 @@ public class SpeechRegognition implements RecognitionListener {
     @Override
     public void onEndOfSpeech() {
         Log.i(TAG, "end of speeking");
-       // listener.onEndOfSpeech();
+
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onError(int i) {
         Log.i(TAG, "error code: " + i);
-        EventBus.getDefault().post(new Events.SpeechError(true));
-        //EventBus.getDefault().post(new SpeechErrorEvent(true));
-       // listener.OnSpeechError(i);
-         MuteAudio(true);
+        EventBus.getDefault().postSticky(new Events.PartialResults(""));
+        if (isActivated()) {
+            EventBus.getDefault().post(new Events.SpeechMessage("Η αναγνώριση τερματίζει",false));
+
+
+        }
+        setActivated(false);
+        //close recognition if not continuous
+
+
+        //mute audio beep
+        MuteAudio(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Constatns.app.Init();
+        }
+
+
 
         // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
         long duration = System.currentTimeMillis() - StartListeningTime;
@@ -209,12 +232,12 @@ public class SpeechRegognition implements RecognitionListener {
             if (continuousSpeechRecognition) {
                 Log.i(TAG, "if no match found restarting.. ");
                 restartSpeechRegognizer();
+            }else{
+                CancelSpeechRecognizer();
+                EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
             }
 
-        } //else if (listener == null) {
-            //Log.i(TAG, "something goes wrong! ");
-
-        //}
+        }
 
     }
 
@@ -233,24 +256,23 @@ public class SpeechRegognition implements RecognitionListener {
 
         Boolean valid = (
                 results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
-                results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
-                results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
+                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
+                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
                         !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty()
         );
 
         if (valid) {
             // Getting the speech final result
-            /*if (listener == null) {
-                Log.i(TAG, " speech null result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-            } else {
-                Log.i(TAG, " speech final result is  = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
 
+            if (isActivated() && !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
+                RequestQueue queue = Volley.newRequestQueue(context);
+                queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
+            } else if (results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("Ίριδα")) {
 
-
-                listener.OnSpeechResult(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-            }*/
-
-            EventBus.getDefault().post(new Events.FinalResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
+                MuteAudio(false);
+                EventBus.getDefault().post(new Events.SpeechMessage("Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω",true));
+                setActivated(true);
+            }
             if (continuousSpeechRecognition) {
                 Log.i(TAG, "speech start again");
                 // Start  speech recognition again
@@ -270,7 +292,7 @@ public class SpeechRegognition implements RecognitionListener {
         }
     }
 
-   @Override
+    @Override
     public void onPartialResults(Bundle results) {
         if (speechResultFound) {
             Log.i(TAG, "If partial results found returning");
@@ -288,19 +310,15 @@ public class SpeechRegognition implements RecognitionListener {
 
         if (valid) {
 
-            /*if (listener == null) {
-                Log.i(TAG, "Droid speech error partial result = " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-            } else {
-                Log.i(TAG, "If partial result: " + partialResult);
-                // Sending an update with the droid speech live result
-                listener.OnSpeechLiveResult(partialResult);
-            }*/
             Log.i(TAG, "pause time: " + PauseAndSpeakTime + " current mills: " + System.currentTimeMillis());
 
-            EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
+            if(isActivated()){
+                EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
+            }
+
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 350) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
@@ -309,15 +327,16 @@ public class SpeechRegognition implements RecognitionListener {
                         Log.i(TAG, "On partial result closing speech"+partialResult);
 
                         CloseSpeechRegognizer();
-                        /*if (listener == null) {
-                            Log.i(TAG, " speech nullable error result = " + partialResult);
-                        } else {
-                            Log.i(TAG, "On partial  final result " + partialResult);
-                            //the speech result found and put it on listener function
-                            listener.OnSpeechResult(partialResult);
-                        }*/
-                        EventBus.getDefault().post(new Events.FinalResults(partialResult));
 
+                        if (isActivated() && !partialResult.equals("")) {
+                            RequestQueue queue = Volley.newRequestQueue(context);
+                            queue.add(WitResponse.GetResults(partialResult));
+                        } else if (partialResult.equals("Ίριδα")) {
+
+                            MuteAudio(false);
+                            EventBus.getDefault().post(new Events.SpeechMessage("Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω",true));
+                            setActivated(true);
+                        }
                         if (continuousSpeechRecognition) {
                             Log.i(TAG, "on partial start speech again");
                             // Start  speech recognition again
@@ -329,7 +348,7 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 350);
+                }, 500);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();
@@ -343,6 +362,15 @@ public class SpeechRegognition implements RecognitionListener {
     @Override
     public void onEvent(int i, Bundle bundle) {
         //NA
+
+    }
+    public boolean isActivated() {
+        return isActivated;
+    }
+
+    public void setActivated(boolean activated) {
+        Log.i(TAG,"boolean activated is "+activated);
+        isActivated = activated;
 
     }
 

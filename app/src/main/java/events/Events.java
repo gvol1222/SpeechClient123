@@ -7,23 +7,31 @@ public class Events {
 
     public static class PartialResults {
         private String message;
+
         public PartialResults(String message) {
             this.message = message;
         }
         public String getPartialResults() {
             return message;
         }
+
+
+    }
+    public static class ActivatedRecognition {
+
+        private boolean activated;
+
+        public ActivatedRecognition(boolean activated) {
+            this.activated = activated;
+        }
+
+
+        public boolean isActivated() {
+            return activated;
+        }
     }
 
-    public static class FinalResults {
-        private String message;
-        public FinalResults(String message) {
-            this.message = message;
-        }
-        public String getFinalResults() {
-            return message;
-        }
-    }
+
     public static class SpeechMessage {
         private String message;
         private boolean Recognige_after;
@@ -42,18 +50,7 @@ public class Events {
             return Recognige_after;
         }
     }
-    public static class SpeechError {
 
-        private boolean error;
-
-        public SpeechError(boolean error) {
-            this.error = error;
-        }
-
-        public boolean isError() {
-            return error;
-        }
-    }
     public static class WitREsp {
 
         private Witobj witResponse;
