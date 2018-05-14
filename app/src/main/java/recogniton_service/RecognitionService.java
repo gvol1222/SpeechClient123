@@ -1,7 +1,10 @@
 package recogniton_service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -42,13 +45,27 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     private boolean isFinishedTts;
     private Handler mHandler;
 
+    //broadcast for actions on clicking notification
+    private final BroadcastReceiver NotAction = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "activated is " + recognition.isActivated());
+            if (recognition.isActivated()) {
+                StopSrecognition();
+                recognition.setActivated(false);
+            } else {
+                speak(getResources().getString(R.string.StartMessage),true);
 
+            }
+        }
+    };
     @Subscribe
     public void OnSpeechMessage(Events.SpeechMessage event){
         boolean reocgnizeAfter = event.getRecognige_after();
         String message = event.getSpeechMessage();
         speak(message,reocgnizeAfter);
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate() {
         super.onCreate();
@@ -57,6 +74,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
         Init();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -99,13 +117,16 @@ public abstract class RecognitionService extends Service implements  TtsProgress
         recognition.setContinuousSpeechRecognition(continuous);
 
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void Init() {
         Log.i(TAG, "Initialization object and messages");
         isFinishedTts =true;
         talkengine = new SpeecHelper(getApplicationContext(), this);
+        registerReceiver(NotAction, new IntentFilter(Constatns.NOT_ACTION));
         setRecognition();
     }
     //close and destroy speech recognition
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void free() {
         Log.i(TAG, "Free resources");
         if (recognition != null) {
@@ -114,6 +135,8 @@ public abstract class RecognitionService extends Service implements  TtsProgress
         }
         if (talkengine != null)
             talkengine.cancel();
+
+        unregisterReceiver(NotAction);
 
     }
 
