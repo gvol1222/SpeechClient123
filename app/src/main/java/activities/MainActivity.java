@@ -76,6 +76,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         }
     };
 
+
+
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     public void onMessageEvent(Events.PartialResults event ) {
         response.setText(event.getPartialResults());

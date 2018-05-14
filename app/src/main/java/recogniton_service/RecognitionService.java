@@ -142,17 +142,20 @@ public abstract class RecognitionService extends Service implements  TtsProgress
 
     public void StartMessage(final String msg) {
 
+
+        ToasMessage(msg);
+        talkengine.speak(msg);
+
+
+
+    }
+    public void ToasMessage(final String msg){
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(RecognitionService.this, msg, Toast.LENGTH_SHORT).show();
             }
         });
-
-        talkengine.speak(msg);
-
-
-
     }
 
     //initiate handler for running on main thread

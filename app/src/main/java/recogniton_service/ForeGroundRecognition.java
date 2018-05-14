@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.bill.Activities.R;
 
@@ -69,6 +70,7 @@ public class ForeGroundRecognition extends RecognitionService{
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -92,5 +94,15 @@ public class ForeGroundRecognition extends RecognitionService{
         public ForeGroundRecognition getService() {
             return ForeGroundRecognition.this;
         }
+    }
+
+
+    @Subscribe
+    public void isComputing(Events.ComputingRecognition event ) {
+
+        if(event.isComputing()){
+            ToasMessage("Παρακαλώ περιμένετε");
+        }
+
     }
 }

@@ -111,6 +111,8 @@ public class Maestro extends Service {
 
             //Initialization Phase
             if (app.Stage.equals(Constatns.IN_STAGE)){
+
+
                 String type = resp.getEntities().getIntent().get(0).getValue();
                 Log.d(TAG, "type = "+resp.getEntities().getIntent().get(0).getValue());
                 app = Switcher.selectActionbyType(app,type);

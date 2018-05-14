@@ -57,6 +57,7 @@ public  class WitResponse {
                 Log.e("Your Array Response", String.valueOf(response));
                 Witobj witResponse = new Gson().fromJson(response.toString(), Witobj.class);
                 EventBus.getDefault().postSticky(new Events.WitREsp(witResponse,"WIT"));
+                EventBus.getDefault().post(new Events.ComputingRecognition(false));
             }
 
 

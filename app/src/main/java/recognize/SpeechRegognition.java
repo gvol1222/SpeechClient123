@@ -234,9 +234,9 @@ public class SpeechRegognition implements RecognitionListener {
                 restartSpeechRegognizer();
             }else{
                 CancelSpeechRecognizer();
-                EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
-            }
 
+            }
+            EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
         }
 
     }
@@ -318,7 +318,7 @@ public class SpeechRegognition implements RecognitionListener {
 
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 350) {
                 speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
@@ -331,6 +331,7 @@ public class SpeechRegognition implements RecognitionListener {
                         if (isActivated() && !partialResult.equals("")) {
                             RequestQueue queue = Volley.newRequestQueue(context);
                             queue.add(WitResponse.GetResults(partialResult));
+                            //EventBus.getDefault().post(new Events.ComputingRecognition(true));
                         } else if (partialResult.equals("Ίριδα")) {
 
                             MuteAudio(false);
@@ -348,7 +349,7 @@ public class SpeechRegognition implements RecognitionListener {
                         }
 
                     }
-                }, 500);
+                }, 350);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();

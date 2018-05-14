@@ -31,7 +31,19 @@ public class Events {
         }
     }
 
+    public static class ComputingRecognition {
 
+        private boolean isComputing;
+
+        public ComputingRecognition(boolean isComputing) {
+            this.isComputing = isComputing;
+        }
+
+
+        public boolean isComputing() {
+            return isComputing;
+        }
+    }
     public static class SpeechMessage {
         private String message;
         private boolean Recognige_after;
