@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -35,6 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
+import applications.Constatns;
 import butterknife.ButterKnife;
 import events.Events;
 import pl.bclogic.pulsator4droid.library.PulsatorLayout;
@@ -53,7 +55,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     SharedPreferences sharedPref;
     private TextView response;
     private ToggleButton btnIput;
-
+    private boolean paused;
     private Toolbar toolbar;
     private ForeGroundRecognition speechService;
     private Intent speechintent;
@@ -82,17 +84,21 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     public void onMessageEvent(Events.PartialResults event ) {
         response.setText(event.getPartialResults());
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     public void isActivated(Events.ActivatedRecognition event ) {
 
-        if(!event.isActivated() ){
+        if(!event.isActivated() && !speechService.isContinuous()){
             btnIput.performClick();
+            Constatns.app.Init();
         }
 
     }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        paused=false;
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_gui);
         sharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -270,6 +276,8 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             if( speechService.isFinishedTts()) {
 
                 if (b) {
+
+                    paused=true;
                     speechService.speak(getResources().getString(R.string.StartMessage),true);
                     //showProgressBar();
                 } else {
@@ -301,10 +309,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onResume() {
         super.onResume();
-
 
     }
 

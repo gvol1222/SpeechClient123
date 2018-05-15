@@ -71,6 +71,7 @@ public class SpeechRegognition implements RecognitionListener {
 
     // functions for boolean continuous recognition
     public boolean isContinuousSpeechRecognition() {
+
         return continuousSpeechRecognition;
     }
 
@@ -202,18 +203,8 @@ public class SpeechRegognition implements RecognitionListener {
     @Override
     public void onError(int i) {
         Log.i(TAG, "error code: " + i);
-        EventBus.getDefault().postSticky(new Events.PartialResults(""));
-        if (isActivated()) {
-            EventBus.getDefault().post(new Events.SpeechMessage("Η αναγνώριση τερματίζει",false));
 
 
-        }
-        setActivated(false);
-        //close recognition if not continuous
-
-
-        //mute audio beep
-        MuteAudio(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Constatns.app.Init();
         }
@@ -233,12 +224,26 @@ public class SpeechRegognition implements RecognitionListener {
                 Log.i(TAG, "if no match found restarting.. ");
                 restartSpeechRegognizer();
             }else{
-                CancelSpeechRecognizer();
+                //close recognition if not continuous
+                if (isActivated()) {
+                    EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
+                }
 
             }
-            EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
+
+        }
+        EventBus.getDefault().postSticky(new Events.PartialResults(""));
+        if (isActivated()) {
+            EventBus.getDefault().post(new Events.SpeechMessage("Η αναγνώριση τερματίζει",false));
+
         }
 
+        setActivated(false);
+
+
+
+        //mute audio beep
+        MuteAudio(true);
     }
 
     @Override
@@ -279,9 +284,13 @@ public class SpeechRegognition implements RecognitionListener {
                 StartSpeechRegognize();
             } else {
                 // Closing the  speech operations
-                CloseSpeechRegognizer();
-            }
+                 CloseSpeechRegognizer();
 
+
+
+
+            }
+            EventBus.getDefault().postSticky(new Events.PartialResults(""));
 
         } else {
             // No match found, restart  speech recognition
@@ -331,7 +340,7 @@ public class SpeechRegognition implements RecognitionListener {
                         if (isActivated() && !partialResult.equals("")) {
                             RequestQueue queue = Volley.newRequestQueue(context);
                             queue.add(WitResponse.GetResults(partialResult));
-                            //EventBus.getDefault().post(new Events.ComputingRecognition(true));
+                            EventBus.getDefault().post(new Events.ComputingRecognition(true));
                         } else if (partialResult.equals("Ίριδα")) {
 
                             MuteAudio(false);
@@ -345,8 +354,10 @@ public class SpeechRegognition implements RecognitionListener {
                         } else {
                             Log.i(TAG, "on partial stop speech");
                             // Closing the  speech operations
-                            CloseSpeechRegognizer();
+                             CloseSpeechRegognizer();
+                            //EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                         }
+                        EventBus.getDefault().postSticky(new Events.PartialResults(""));
 
                     }
                 }, 350);

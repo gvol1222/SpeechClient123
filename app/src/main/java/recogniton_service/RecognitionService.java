@@ -36,7 +36,7 @@ import wit_connection.WitResponse;
 public abstract class RecognitionService extends Service implements  TtsProgressListener {
 
     private final String TAG = this.getClass().getSimpleName();
-    private SpeechRegognition recognition;
+    protected SpeechRegognition recognition;
     private Handler startHandler;
     private Handler closeHandler;
     private boolean isFirst;

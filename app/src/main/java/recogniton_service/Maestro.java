@@ -208,6 +208,7 @@ public class Maestro extends Service {
                 }
                 else if(resp.getText().contains("όχι") ) {
                     // app.Stage = Constatns.CP_STAGE;
+                    EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                     speak("όπως επιθυμείτε", false);
                 }
                 Log.i(TAG,"entered in after vr stage= ");
@@ -217,11 +218,12 @@ public class Maestro extends Service {
             if (app.Stage.equals(Constatns.RUN_STAGE)){
                 app.runIntent(getApplicationContext());
                 //app.Stage = Constatns.CP_STAGE;
+                EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                 Log.i(TAG,"entered in run stage");
             }
 
             if (app.Stage.equals(Constatns.NF_STAGE)){
-
+                EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                 speak(app.NOT_FOUND,false);
                 Log.i(TAG,"entered in not found stage");
                 //app.Stage = Constatns.CP_STAGE;
@@ -231,8 +233,9 @@ public class Maestro extends Service {
             Log.i(TAG,"completed"+app.LAUNCHED);
 
             if(!app.LAUNCHED.equals(""))
+
                 speak(app.LAUNCHED,false);
-            Constatns.app.Init();
+                Constatns.app.Init();
             Log.i(TAG,"entered in completed stage");
         }
 
@@ -246,7 +249,8 @@ public class Maestro extends Service {
     private void speak(String msg, boolean recognizeAfter){
         Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
 
-        EventBus.getDefault().post(new Events.SpeechMessage(msg,recognizeAfter));
+        if(!msg.equals(""))
+            EventBus.getDefault().post(new Events.SpeechMessage(msg,recognizeAfter));
 
     }
 }

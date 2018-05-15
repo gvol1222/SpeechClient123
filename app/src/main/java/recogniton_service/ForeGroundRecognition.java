@@ -96,6 +96,9 @@ public class ForeGroundRecognition extends RecognitionService{
         }
     }
 
+    public boolean isContinuous(){
+        return recognition.isContinuousSpeechRecognition();
+    }
 
     @Subscribe
     public void isComputing(Events.ComputingRecognition event ) {
