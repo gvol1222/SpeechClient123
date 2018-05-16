@@ -89,20 +89,24 @@ public class Maestro extends Service {
             app = Constatns.app;
 
 
-            Log.d(TAG, "App stage is"+app.type+" "+RETRY_FLAG);
+            Log.d(TAG, "App stage is"+app.type+" ");
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
             if(resp.getEntities().getIntent() == null && app.Stage.equals(Constatns.IN_STAGE)){
-
-                app.Stage = Constatns.NO_SPEACH_STAGE;
-                Log.d(TAG, "no speech ");
-           /* if (RETRY_FLAG < RETRY_LIMIT){
-                speak(getString(R.string.command_repeat),true);
+                speak("Παρακαλώ επαναλάβετε",true);
+                /*app.Stage = Constatns.NO_SPEACH_STAGE;
+                Log.d(TAG, "no speech "+RETRY_FLAG);
+            if (RETRY_FLAG < RETRY_LIMIT){
+                app.Stage=Constatns.IN_STAGE;
+                speak("Παρακαλώ επαναλάβετε",true);
+                RETRY_FLAG = RETRY_FLAG + 1;
             }
             else {
-                speak(getString(R.string.retry_silent_stop),false);
+                RETRY_FLAG = 0;
+                speak("Παρακαλώ προσπαθήστε ξανά",false);
             }
-            RETRY_FLAG = RETRY_FLAG + 1;*/
+                Log.d(TAG, "no speech "+RETRY_FLAG);*/
+
             }
 
             if(resp.getEntities()!=null){
