@@ -37,27 +37,30 @@ public class MathUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault());
         //sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        Date date = null;
+        Date date;
+        HashMap datetime = new HashMap();
         try {
 
             date = sdf.parse(Datetime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        HashMap datetime = new HashMap();
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
-        int day = calendar.get(Calendar.DATE);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
 
-        datetime.put("month",month);
-        datetime.put("year",year);
-        datetime.put("day",day);
-        datetime.put("hour",hour);
-        datetime.put("minute",minute);
+            int month = calendar.get(Calendar.MONTH);
+            int year = calendar.get(Calendar.YEAR);
+            int day = calendar.get(Calendar.DATE);
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+            datetime.put("month",month);
+            datetime.put("year",year);
+            datetime.put("day",day);
+            datetime.put("hour",hour);
+            datetime.put("minute",minute);
+        } catch (ParseException e) {
+            datetime=null;
+
+        }
+
 
         return datetime;
     }

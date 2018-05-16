@@ -52,7 +52,7 @@ public class Constatns {
     public static final String NF_STAGE ="NF";
     public static final String RUN_STAGE ="RS";
     public static final String NO_SPEACH_STAGE ="NS";
-    public static final String MULTI_COMMAND_FROM_START ="MCFS";
+    public static final String MULTI_COMMAND_FROM_START ="US";
     public static final String AFTER_VR_STAGE ="AFV";
 
 
@@ -112,7 +112,7 @@ public class Constatns {
 
     public static final String REM_TIME_MESSAGE ="Πείτε μου πότε θέλετε υπενθύμιση";
     public static final String REM_URI ="";
-    public static final String REM_NOT_FOUND_MESSAGE ="";
+    public static final String REM_NOT_FOUND_MESSAGE ="Μη έγκυρη ημερομηνία";
     public static final String REM_CONTENT_MESSAGE ="Πείτε μου τίτλο για την υπενθύμιση";
     public static final String REM_VER_MESSAGE ="Επιθυμείτε να προστεθεί η υπενθύμιση";
     public static final String REM_KEY_TIME ="rem_time";
@@ -124,7 +124,7 @@ public class Constatns {
 
     public static final String ALARM_TIME_MESSAGE ="Πείτε μου πότε θέλετε ξυπνητήρι";
     public static final String ALARM_URI ="";
-    public static final String ALARM_NOT_FOUND_MESSAGE ="";
+    public static final String ALARM_NOT_FOUND_MESSAGE ="Μη έγκυρη ώρα";
     public static final String ALARM_CONTENT_MESSAGE ="";
     public static final String ALARM_VER_MESSAGE ="";
     public static final String ALARM_KEY_TIME ="alrm_time";
@@ -141,7 +141,7 @@ public class Constatns {
 
     public static final String TIMER_INFO_MESSAGE ="Πείτε για πόση ώρα να μετρήσω";
     public static final String TIMER_URI ="";
-    public static final String TIMER_NOT_FOUND_MESSAGE ="";
+    public static final String TIMER_NOT_FOUND_MESSAGE ="Μη έγκυρος χρόνος";
     public static final String TIMER_KEY ="timer_time";
     public static final String TIMER_SUCCESS_MESSAGE ="Ξεκινάει η χρονομέτρηση";
 }

@@ -156,7 +156,7 @@ public class Switcher {
             app = InitActionObj(
                     app,type,Constatns.ACTION_TIMER,false,Constatns.TIMER_KEY,
                     data_request,data,"",
-                    false,""
+                    false,Constatns.TIMER_NOT_FOUND_MESSAGE
                     ,Constatns.CH_STAGE,"",
                     false,"",true,Constatns.TIMER_SUCCESS_MESSAGE
             );
@@ -260,9 +260,15 @@ public class Switcher {
 
         }else if(app.type.equals(Constatns.SET_TIMER)){
             Log.i(TAG,"timer");
-            app.extras.putInt(Constatns.TIMER_EXTRA, Integer.parseInt(app.data.get(Constatns.TIMER_KEY)));
 
-            app.Stage = Constatns.RUN_STAGE;
+
+            if( app.entities.getDuration()!=null){
+                app.extras.putInt(Constatns.TIMER_EXTRA, Integer.parseInt(app.data.get(Constatns.TIMER_KEY)));
+                app.Stage = Constatns.RUN_STAGE;
+            }else{
+                app.Stage = Constatns.NF_STAGE;
+            }
+
 
         }
         return app;

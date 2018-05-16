@@ -5,26 +5,17 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_settings_helper">Settings</string>
-
     <string name="network_error">Παρακαώ συνδεθείτε στο internet</string>
     <!--Notification strings -->
     <string name="Notification_Title">"Η προσωπική σας βοηθός</string>
 
     <!--String for interactive  messages -->
-    <string name="Error_Command">"Η εντολή δεν είναι σωστή προσπαθήστε ξανά"</string>
 
     <string name="StartMessage">Πείτε μου πως μπορώ να βοηθήσω</string>
-    <string name="WaitMessage">Παρακαλώ περιμένετε</string>
 
     <!--Strings for calls -->
-    <string name="make_call_acces_message">Ξεκινάει το τηλεφώνημα</string>
-    <string name="make_call_error_message">Η επαφη δεν υπάρχει</string>
-    <string name="make_call_question">Επιθυμείτε να πραγματοποιηθεί το τηλεφώνημα</string>
 
     <!-- Strings for sending sms -->
-    <string name="send_sms_question">Πείτε μου το κείμενο που επιθυμείτε να στείλετε </string>
     <string name="sms_successfully_sented">Tο μήνυμα σταλθηκε με επυτηχία</string>
     <string name="sms_not_sented">Tο μήνυμα δεν μπορεί να σταλθεί</string>
     <string name="sms_service_not_available">Η υπηρεσία δεν είναι διαθέσιμη</string>
@@ -34,16 +25,11 @@
 
 
     <!-- Strings for open apps -->
-    <string name="success_open">Ανοίγει η εφαρμογή: </string>
-    <string name="no_success_open">Η εφαρμογή δεν είναι εγκατεστημένη</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
     <string name="settings_title">Ρυθμίσεις</string>
     <string name="continuous_setting"> Συνεχής αναγνώριση</string>
     <string name="switch_continuous">switch_continuous</string>
-    <string name="command_repeat">Παρακαλώ, επαναλάβετε.</string>
-    <string name="retry_silent_stop">Προσπαθήστε ξανά κάπου πιό ήσυχα.</string>
-    <string name="helper_prompt">Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω</string>
 
 </resources>

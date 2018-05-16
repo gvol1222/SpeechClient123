@@ -119,7 +119,7 @@ public class Action implements Serializable {
     public void runIntent(Context con) {
 
         if(UniqueAction ){
-            Stage = Constatns.CP_STAGE;
+            //Stage = Constatns.CP_STAGE;
             UniqueSwitcher.Switcher(type,data,con);
         }
         else {

@@ -225,6 +225,7 @@ public class Maestro extends Service {
             if (app.Stage.equals(Constatns.NF_STAGE)){
                 EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                 speak(app.NOT_FOUND,false);
+                Constatns.app.Init();
                 Log.i(TAG,"entered in not found stage");
                 //app.Stage = Constatns.CP_STAGE;
 
