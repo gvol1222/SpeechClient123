@@ -11,24 +11,27 @@ public class Intent implements Serializable {
     @SerializedName("confidence")
     @Expose
     private Double confidence;
-    @SerializedName("value")
+    @SerializedName("id")
     @Expose
-    private String value;
+    private String id;
+
+    @SerializedName("name")
+    @Expose
+    private String name;
+
+    public String getName() {
+        return name;
+    }
 
     public Double getConfidence() {
         return confidence;
     }
 
-    public void setConfidence(Double confidence) {
-        this.confidence = confidence;
-    }
 
     public String getValue() {
-        return value;
+        return id;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+
 
 }

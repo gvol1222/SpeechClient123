@@ -8,15 +8,24 @@ import java.io.Serializable;
 
 public class Witobj implements Serializable {
 
-    @SerializedName("_text")
+    @SerializedName("text")
     @Expose
     private String text;
     @SerializedName("entities")
     @Expose
+
     private Entities entities;
     @SerializedName("msg_id")
     @Expose
     private String msgId;
+
+    @SerializedName("traits")
+    @Expose
+    private Traits traits;
+
+    public Traits getTraits() {
+        return traits;
+    }
 
     public String getText() {
         return text;

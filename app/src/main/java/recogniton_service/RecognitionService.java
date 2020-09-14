@@ -49,7 +49,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "activated is " + recognition.isActivated());
+            Log.i(TAG, "activated is broadcast " + recognition.isActivated());
             if (recognition.isActivated()) {
                 StopSrecognition();
                 recognition.setActivated(false);
@@ -98,9 +98,10 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     public void onStartTalk() {
         //on start talking assistant close recognition and enable beep
         isFinishedTts =false;
+        recognition.setActivated(false);
 
         Mute(false);
-        runCloseSpeech();
+
     }
 
 
@@ -108,9 +109,11 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     public void onEndTalk() {
         //on end talking assistant start recognition
         isFinishedTts =true;
+        recognition.setActivated(true);
         runStartSpeech();
 
     }
+
     //set speech recognition for continuous recognition o not continuous
     public void setContinuous(boolean continuous) {
         Log.i(TAG, "continuous parameter is " + continuous);
@@ -182,7 +185,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     }
 
     public void StartRecognition() {
-        if (recognition != null) {
+        if (recognition != null ) {
             startService(new Intent(this, Maestro.class));
             recognition.StartSpeechRegognize();
         }
@@ -211,14 +214,8 @@ public abstract class RecognitionService extends Service implements  TtsProgress
             @Override
             public void run() {
                 Log.i(TAG, "recognition started first: " + isFirst);
-                if (!recognition.isContinuousSpeechRecognition()) {
-                    //if (isFirst) {
-                    // isFirst = false;
-                    StartRecognition();
-                    //  }
-                } else {
-                    StartRecognition();
-                }
+                StartRecognition();
+
             }
         });
     }
@@ -241,9 +238,11 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     public void speak (String message,boolean recognize_after){
 
 
-        if (recognize_after)
+        if (recognize_after) {
             recognition.setActivated(true);
-        else
+            recognition.isTalking = talkengine.getIsTalking();
+        }
+         else
             recognition.setActivated(false);
 
         StartMessage(message);

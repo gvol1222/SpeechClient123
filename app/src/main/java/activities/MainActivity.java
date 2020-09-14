@@ -272,7 +272,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
         speechService.setContinuous(btn);
         if (AppPackagesUtils.isNetworkAvailable(this)) {
-            Log.i(TAG,"boolean is"+b);
+            Log.i(TAG,"boolean ias"+b);
             if( speechService.isFinishedTts()) {
 
                 if (b) {

@@ -92,9 +92,9 @@ public class Maestro extends Service {
             Log.d(TAG, "App stage is"+app.type+" ");
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
-            if(resp.getEntities().getIntent() == null && app.Stage.equals(Constatns.IN_STAGE)){
+            /*if(resp.getEntities().getIntent() == null && app.Stage.equals(Constatns.IN_STAGE)){
                 speak("Παρακαλώ επαναλάβετε",true);
-                /*app.Stage = Constatns.NO_SPEACH_STAGE;
+                app.Stage = Constatns.NO_SPEACH_STAGE;
                 Log.d(TAG, "no speech "+RETRY_FLAG);
             if (RETRY_FLAG < RETRY_LIMIT){
                 app.Stage=Constatns.IN_STAGE;
@@ -105,9 +105,9 @@ public class Maestro extends Service {
                 RETRY_FLAG = 0;
                 speak("Παρακαλώ προσπαθήστε ξανά",false);
             }
-                Log.d(TAG, "no speech "+RETRY_FLAG);*/
+                Log.d(TAG, "no speech "+RETRY_FLAG);
 
-            }
+            }*/
 
             if(resp.getEntities()!=null){
                 app.entities = resp.getEntities();
@@ -116,7 +116,7 @@ public class Maestro extends Service {
             //Initialization Phase
             if (app.Stage.equals(Constatns.IN_STAGE)){
 
-
+                Log.d(TAG, "type = "+ resp.getEntities().getIntent());
                 String type = resp.getEntities().getIntent().get(0).getValue();
                 Log.d(TAG, "type = "+resp.getEntities().getIntent().get(0).getValue());
                 app = Switcher.selectActionbyType(app,type);
@@ -211,7 +211,7 @@ public class Maestro extends Service {
                     app.Stage = Constatns.RUN_STAGE;
                 }
                 else if(resp.getText().contains("όχι") ) {
-                    // app.Stage = Constatns.CP_STAGE;
+                     app.Stage = Constatns.CP_STAGE;
                     EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                     speak("όπως επιθυμείτε", false);
                 }
@@ -221,8 +221,8 @@ public class Maestro extends Service {
 
             if (app.Stage.equals(Constatns.RUN_STAGE)){
                 app.runIntent(getApplicationContext());
-                //app.Stage = Constatns.CP_STAGE;
-                EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
+                app.Stage = Constatns.CP_STAGE;
+                //EventBus.getDefault().postSticky(new Events.ActivatedRecognition(true));
                 Log.i(TAG,"entered in run stage");
             }
 
@@ -231,7 +231,7 @@ public class Maestro extends Service {
                 speak(app.NOT_FOUND,false);
                 Constatns.app.Init();
                 Log.i(TAG,"entered in not found stage");
-                //app.Stage = Constatns.CP_STAGE;
+                app.Stage = Constatns.CP_STAGE;
 
             }
             /**/ if (app.Stage.equals(Constatns.CP_STAGE)){

@@ -5,8 +5,12 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
 import java.util.Locale;
+
+import events.Events;
 
 /**
  * Created by bill on 11/23/17.
@@ -17,6 +21,8 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
     private static final HashMap<String, String> map = new HashMap<String, String>();
     private TextToSpeech tts;
     private TtsProgressListener ttsListener;
+    private  boolean isTalking;
+
 
     //initiate text to speech api and map
     public SpeecHelper(Context context, TtsProgressListener ttsListener) {
@@ -34,7 +40,12 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
         tts.speak(msg, TextToSpeech.QUEUE_FLUSH, map);
     }
 
-
+    public void setIsTalking(boolean isTalking){
+        this.isTalking = isTalking;
+    }
+    public boolean getIsTalking(){
+        return this.isTalking ;
+    }
     @Override
     public void onInit(int status) {
 
@@ -52,7 +63,6 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
                 public void onDone(String s) {
                     Log.i(TAG, "end speaking");
                     ttsListener.onEndTalk();
-
                 }
 
                 @Override

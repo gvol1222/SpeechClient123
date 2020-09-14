@@ -88,6 +88,15 @@ public class ForeGroundRecognition extends RecognitionService{
         return assistantBinder;
     }
 
+    @Override
+    public void setIsTalking(boolean isTalking) {
+
+    }
+
+    @Override
+    public boolean getIsTalking() {
+        return false;
+    }
 
 
     public class AssistantBinder extends Binder {

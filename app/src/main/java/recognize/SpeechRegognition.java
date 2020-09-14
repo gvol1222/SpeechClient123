@@ -43,6 +43,7 @@ public class SpeechRegognition implements RecognitionListener {
     private AudioManager audioManager;
     private Context context;
     private boolean isActivated;
+    public boolean isTalking;
 
     public SpeechRegognition(Context context) {
         this.context = context;
@@ -224,26 +225,28 @@ public class SpeechRegognition implements RecognitionListener {
                 Log.i(TAG, "if no match found restarting.. ");
                 restartSpeechRegognizer();
             }else{
+                CloseSpeechRegognizer();
                 //close recognition if not continuous
-                if (isActivated()) {
+               if (isActivated()) {
                     EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
-                }
+                } /**/
 
             }
 
         }
         EventBus.getDefault().postSticky(new Events.PartialResults(""));
-        if (isActivated()) {
-            EventBus.getDefault().post(new Events.SpeechMessage("Η αναγνώριση τερματίζει",false));
+     /*  if (isActivated()) {
+           setActivated(false);
+            //EventBus.getDefault().post(new Events.SpeechMessage("Η αναγνώριση τερματίζει",false));
 
-        }
+        }*/
 
-        setActivated(false);
+        //setActivated(false);
 
 
 
         //mute audio beep
-        MuteAudio(true);
+       // MuteAudio(true);
     }
 
     @Override
@@ -251,7 +254,7 @@ public class SpeechRegognition implements RecognitionListener {
 
         Log.i(TAG, "final results: " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
 
-        if (speechResultFound) {
+        if (speechResultFound ) {
             Log.i(TAG, "If results found returning");
             //  MuteAudio(true);
             return;
@@ -272,11 +275,13 @@ public class SpeechRegognition implements RecognitionListener {
             if (isActivated() && !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
                 RequestQueue queue = Volley.newRequestQueue(context);
                 queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
+
+                Log.i(TAG, "Results");
             } else if (results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("Ίριδα")) {
 
                 MuteAudio(false);
                 EventBus.getDefault().post(new Events.SpeechMessage("Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω",true));
-                setActivated(true);
+
             }
             if (continuousSpeechRecognition) {
                 Log.i(TAG, "speech start again");
@@ -299,11 +304,13 @@ public class SpeechRegognition implements RecognitionListener {
             restartSpeechRegognizer();
 
         }
+
+
     }
 
     @Override
     public void onPartialResults(Bundle results) {
-        if (speechResultFound) {
+        if (speechResultFound ) {
             Log.i(TAG, "If partial results found returning");
             //  MuteAudio(true);
             return;
@@ -327,8 +334,8 @@ public class SpeechRegognition implements RecognitionListener {
 
             //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
             // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 350) {
-                speechResultFound = true;
+            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
+               // speechResultFound = true;
 
                 SpeechPartialResult.postDelayed(new Runnable() {
                     @Override
@@ -340,13 +347,14 @@ public class SpeechRegognition implements RecognitionListener {
                         if (isActivated() && !partialResult.equals("")) {
                             RequestQueue queue = Volley.newRequestQueue(context);
                             queue.add(WitResponse.GetResults(partialResult));
-                            EventBus.getDefault().post(new Events.ComputingRecognition(true));
-                        } else if (partialResult.equals("Ίριδα")) {
+                            CloseSpeechRegognizer();
+                            // EventBus.getDefault().post(new Events.ComputingRecognition(true));
+                        }/* else if (partialResult.equals("Ίριδα")) {
 
                             MuteAudio(false);
                             EventBus.getDefault().post(new Events.SpeechMessage("Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω",true));
                             setActivated(true);
-                        }
+                        }*/
                         if (continuousSpeechRecognition) {
                             Log.i(TAG, "on partial start speech again");
                             // Start  speech recognition again
@@ -360,7 +368,7 @@ public class SpeechRegognition implements RecognitionListener {
                         EventBus.getDefault().postSticky(new Events.PartialResults(""));
 
                     }
-                }, 350);
+                }, 500);
 
             } else {
                 PauseAndSpeakTime = System.currentTimeMillis();
@@ -369,6 +377,7 @@ public class SpeechRegognition implements RecognitionListener {
         } else {
             PauseAndSpeakTime = System.currentTimeMillis();
         }
+
     }
 
     @Override

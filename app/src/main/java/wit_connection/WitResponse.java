@@ -25,8 +25,8 @@ import utils.jsonparsers.Witobj;
 public  class WitResponse {
 
 
-    private static final String TAG = WitResponse.class.getSimpleName();
-    private static final String accessToken = "Bearer CKZRXPXVE2D2XYFU34PYPQS6PLAFRR5R";
+    private static final String TAG ="WitResponse";
+    private static final String accessToken = "Bearer 6QDRV7CUMG5GKV3FUMUVS4NLADANOMVN";
     private static final String header = "Authorization";
 
 
@@ -45,7 +45,7 @@ public  class WitResponse {
         } catch (UnsupportedEncodingException e) {
             Log.i(TAG, "UnsupportedEncodingException: " + e.getMessage());
         }
-        String witurl = "https://api.wit.ai/message?v=20171106&q=";
+        String witurl = "https://api.wit.ai/message?v=20200913&q=";
         String fullwiturl = witurl + queryencoded;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, fullwiturl,null, new Response.Listener<JSONObject>() {
 
@@ -54,8 +54,9 @@ public  class WitResponse {
             public void onResponse(JSONObject response) {
 
 
-                Log.e("Your Array Response", String.valueOf(response));
+                Log.e("Your Array Response", response.toString());
                 Witobj witResponse = new Gson().fromJson(response.toString(), Witobj.class);
+
                 EventBus.getDefault().postSticky(new Events.WitREsp(witResponse,"WIT"));
                 EventBus.getDefault().post(new Events.ComputingRecognition(false));
             }
