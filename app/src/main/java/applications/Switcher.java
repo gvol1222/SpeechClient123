@@ -11,10 +11,12 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 
 import utils.ContactUtils;
+import utils.jsonparsers.Entities;
 
 /**
  * Created by gvol on 28/1/2018.
@@ -171,6 +173,8 @@ public class Switcher {
         if (app.type.equals(Constatns.CALL_APP)){
 
             String query = app.data.get(Constatns.CALL_APP_NAME);
+
+
 
             if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
 

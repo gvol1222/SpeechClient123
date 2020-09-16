@@ -27,7 +27,7 @@ import events.Events;
  * Created by bill on 11/30/17.
  */
 
-public class ForeGroundRecognition extends RecognitionService{
+public class ForeGroundRecognition extends WitSpeechAi{
 
     private static final int NOTIFY_ID = 1;
     private final String TAG = this.getClass().getSimpleName();
@@ -105,9 +105,6 @@ public class ForeGroundRecognition extends RecognitionService{
         }
     }
 
-    public boolean isContinuous(){
-        return recognition.isContinuousSpeechRecognition();
-    }
 
     @Subscribe
     public void isComputing(Events.ComputingRecognition event ) {

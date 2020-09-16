@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Witobj implements Serializable {
 
@@ -18,6 +19,14 @@ public class Witobj implements Serializable {
     @SerializedName("msg_id")
     @Expose
     private String msgId;
+
+    public List<Intent> getIntents() {
+        return intents;
+    }
+
+    @SerializedName("intents")
+    @Expose
+    private List<Intent> intents = null;
 
     @SerializedName("traits")
     @Expose

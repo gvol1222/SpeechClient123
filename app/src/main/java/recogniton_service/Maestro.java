@@ -92,7 +92,7 @@ public class Maestro extends Service {
             Log.d(TAG, "App stage is"+app.type+" ");
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
-            /*if(resp.getEntities().getIntent() == null && app.Stage.equals(Constatns.IN_STAGE)){
+            if(resp.getIntents()== null && app.Stage.equals(Constatns.IN_STAGE)){
                 speak("Παρακαλώ επαναλάβετε",true);
                 app.Stage = Constatns.NO_SPEACH_STAGE;
                 Log.d(TAG, "no speech "+RETRY_FLAG);
@@ -107,7 +107,7 @@ public class Maestro extends Service {
             }
                 Log.d(TAG, "no speech "+RETRY_FLAG);
 
-            }*/
+            }/**/
 
             if(resp.getEntities()!=null){
                 app.entities = resp.getEntities();
@@ -116,9 +116,9 @@ public class Maestro extends Service {
             //Initialization Phase
             if (app.Stage.equals(Constatns.IN_STAGE)){
 
-                Log.d(TAG, "type = "+ resp.getEntities().getIntent());
-                String type = resp.getEntities().getIntent().get(0).getValue();
-                Log.d(TAG, "type = "+resp.getEntities().getIntent().get(0).getValue());
+                Log.d(TAG, "type = "+ resp.getIntents().get(0).getName());
+                String type = resp.getIntents().get(0).getName();
+                Log.d(TAG, "type = "+resp.getIntents().get(0).getValue());
                 app = Switcher.selectActionbyType(app,type);
                 Log.d(TAG, "entered in init stage");
             }

@@ -88,10 +88,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     public void isActivated(Events.ActivatedRecognition event ) {
 
-        if(!event.isActivated() && !speechService.isContinuous()){
+       /* if(!event.isActivated() && !speechService.isContinuous()){
             btnIput.performClick();
             Constatns.app.Init();
-        }
+        }*/
 
     }
     @Override
@@ -270,7 +270,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private void startRecord(boolean b) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
-        speechService.setContinuous(btn);
+        //speechService.setContinuous(btn);
         if (AppPackagesUtils.isNetworkAvailable(this)) {
             Log.i(TAG,"boolean ias"+b);
             if( speechService.isFinishedTts()) {
