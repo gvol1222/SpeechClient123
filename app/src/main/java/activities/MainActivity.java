@@ -12,23 +12,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+
 
 import com.example.bill.Activities.R;
 
@@ -38,10 +39,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
-import applications.Constatns;
 import butterknife.ButterKnife;
 import events.Events;
-import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 import recogniton_service.ForeGroundRecognition;
 import utils.AppPackagesUtils;
 

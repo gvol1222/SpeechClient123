@@ -7,16 +7,13 @@ import android.net.Uri;
 
 import android.os.Build;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.util.Log;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 
 import utils.ContactUtils;
-import utils.jsonparsers.Entities;
 
 /**
  * Created by gvol on 28/1/2018.

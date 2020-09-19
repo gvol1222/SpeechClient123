@@ -9,16 +9,13 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.example.bill.Activities.R;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import applications.Constatns;
@@ -26,7 +23,6 @@ import events.Events;
 import recognize.SpeechRegognition;
 import tts.SpeecHelper;
 import tts.TtsProgressListener;
-import wit_connection.WitResponse;
 
 /**
  * Created by bill on 11/30/17.
