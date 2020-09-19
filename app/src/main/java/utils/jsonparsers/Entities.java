@@ -9,17 +9,17 @@ import java.util.List;
 
 public class Entities implements Serializable {
 
-    @SerializedName("datetime")
+    @SerializedName("wit$datetime:datetime")
     @Expose
     private List<Datetime> datetime = null;
     @SerializedName("duration")
     @Expose
     private List<Duration> duration = null;
-    @SerializedName("app_data")
+    @SerializedName("app_data:app_data")
     @Expose
     private List<AppDatum> appData = null;
 
-    @SerializedName("phone_number")
+    @SerializedName("wit$phone_number:phone_number")
     @Expose
     private List<PhoneNumber> phoneNumber= null;
 

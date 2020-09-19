@@ -1,6 +1,8 @@
 package activities;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -68,6 +70,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             ForeGroundRecognition.AssistantBinder binder = (ForeGroundRecognition.AssistantBinder) service;
             speechService = binder.getService();
+            Log.i(TAG,"adf");
             assistantBound = true;
         }
 
@@ -97,7 +100,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        createNotificationChannel();
         paused=false;
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_gui);
@@ -112,7 +115,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
 
     }
-
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    "1",
+                    "Example Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -120,6 +133,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         if (speechService == null) {
             speechintent = new Intent(MainActivity.this, ForeGroundRecognition.class);
             speechintent.setAction("com.marothiatechs.foregroundservice.action.startforeground");
+
             startService(speechintent);
             bindService(speechintent, speechConnection, Context.BIND_AUTO_CREATE);
         }

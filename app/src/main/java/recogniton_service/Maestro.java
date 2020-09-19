@@ -89,10 +89,10 @@ public class Maestro extends Service {
             app = Constatns.app;
 
 
-            Log.d(TAG, "App stage is"+app.type+" ");
+            Log.d(TAG, "App stage is"+resp.getIntents().size()+" ");
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
-            if(resp.getIntents()== null && app.Stage.equals(Constatns.IN_STAGE)){
+            if((resp.getIntents()== null || resp.getIntents().size() ==0) && app.Stage.equals(Constatns.IN_STAGE)){
                 speak("Παρακαλώ επαναλάβετε",true);
                 app.Stage = Constatns.NO_SPEACH_STAGE;
                 Log.d(TAG, "no speech "+RETRY_FLAG);
@@ -130,7 +130,7 @@ public class Maestro extends Service {
 
                 //One time no multistage comminicators to pass data from appdata
                 if( resp.getEntities().getAppData() != null && resp.getEntities().getAppData().get(0).getConfidence()> 0.8) {
-
+                    Log.d("1",app.Current_Key+" "+resp.getEntities().getAppData().get(0).getValue());
                     app.data.put(app.Current_Key,resp.getEntities().getAppData().get(0).getValue());
                 }
 
@@ -144,6 +144,7 @@ public class Maestro extends Service {
 
                 //One time no multistage comminicators to pass data from phone number
                 if(resp.getEntities().getPhoneNumber() !=null && resp.getEntities().getPhoneNumber().get(0).getConfidence() >0.8 ) {
+                    Log.d("2",app.Current_Key+" "+resp.getEntities().getPhoneNumber().get(0).getValue());
                     app.data.put(app.Current_Key,resp.getEntities().getPhoneNumber().get(0).getValue());
                 }
 
@@ -164,12 +165,14 @@ public class Maestro extends Service {
                     Log.i(TAG,"multistage data response from user is = "+resp.getText());
                 }else if(app.waiting_data && (resp.getEntities().getDatetime() !=null &&  app.data.get(Constatns.TIMER_KEY)==null
                         && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
+                    Log.d("3",app.Current_Key+" "+resp.getEntities().getDatetime().get(0).getValue());
                     app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
                 }
 
 
                 //Multi Stage comm Loop
                 if(app.data.containsValue(null)){
+
                     for (String key : app.data.keySet()) {
                         Log.i(TAG,"multistage data in comm loop = "+app.data.keySet());
 

@@ -49,14 +49,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "activated is broadcast " + recognition.isActivated());
-            if (recognition.isActivated()) {
-                StopSrecognition();
-                recognition.setActivated(false);
-            } else {
-                speak(getResources().getString(R.string.StartMessage),true);
-
-            }
+            speak(getResources().getString(R.string.StartMessage),true);
         }
     };
     @Subscribe
@@ -98,9 +91,8 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     public void onStartTalk() {
         //on start talking assistant close recognition and enable beep
         isFinishedTts =false;
-        recognition.setActivated(false);
 
-        Mute(false);
+        runCloseSpeech();
 
     }
 
@@ -109,17 +101,12 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     public void onEndTalk() {
         //on end talking assistant start recognition
         isFinishedTts =true;
-        recognition.setActivated(true);
+
         runStartSpeech();
 
     }
 
-    //set speech recognition for continuous recognition o not continuous
-    public void setContinuous(boolean continuous) {
-        Log.i(TAG, "continuous parameter is " + continuous);
-        recognition.setContinuousSpeechRecognition(continuous);
 
-    }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void Init() {
         Log.i(TAG, "Initialization object and messages");
@@ -191,13 +178,6 @@ public abstract class RecognitionService extends Service implements  TtsProgress
         }
     }
 
-    //mute and unmute beep sound
-    public void Mute(Boolean mute) {
-        recognition.MuteAudio(mute);
-
-    }
-
-    //this functions that start and close the speech recognition must run on the main thread
     public void runCloseSpeech() {
         closeHandler.post(new Runnable() {
             @Override
@@ -207,7 +187,6 @@ public abstract class RecognitionService extends Service implements  TtsProgress
             }
         });
     }
-
     public void runStartSpeech() {
 
         startHandler.post(new Runnable() {
@@ -222,12 +201,6 @@ public abstract class RecognitionService extends Service implements  TtsProgress
 
 
 
-    //this function is usefull for not continuous recognition
-    public void setFirst(boolean first) {
-        Log.i(TAG, "first parameter is " + first);
-        isFirst = first;
-    }
-
 
     public boolean isFinishedTts() {
         return isFinishedTts;
@@ -236,14 +209,6 @@ public abstract class RecognitionService extends Service implements  TtsProgress
 
 
     public void speak (String message,boolean recognize_after){
-
-
-        if (recognize_after) {
-            recognition.setActivated(true);
-            recognition.isTalking = talkengine.getIsTalking();
-        }
-         else
-            recognition.setActivated(false);
 
         StartMessage(message);
     }

@@ -35,14 +35,14 @@ public class SpeechRegognition implements RecognitionListener {
     private final String TAG = this.getClass().getSimpleName();
     private SpeechRecognizer AssistantSpeechRegnizer;
     private Intent SpeechIntent;
-    private Handler restartDroidSpeech = new Handler(), SpeechPartialResult = new Handler();
-    private Boolean IsReadyForSpeach = false, speechResultFound = false;
+    private Handler SpeechPartialResult ;
+    private Boolean  speechResultFound = false;
 
     private long StartListeningTime, PauseAndSpeakTime;
     private boolean continuousSpeechRecognition;
     private AudioManager audioManager;
     private Context context;
-    private boolean isActivated;
+
     public boolean isTalking;
 
     public SpeechRegognition(Context context) {
@@ -54,6 +54,7 @@ public class SpeechRegognition implements RecognitionListener {
 
     private void Init() {
         Log.i(TAG, "Initialize parameters");
+        SpeechPartialResult = new Handler();
         createSpeechIntent();
         AssistantSpeechRegnizer = SpeechRecognizer.createSpeechRecognizer(context);
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -70,42 +71,9 @@ public class SpeechRegognition implements RecognitionListener {
         //SpeechIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 500);
     }
 
-    // functions for boolean continuous recognition
-    public boolean isContinuousSpeechRecognition() {
-
-        return continuousSpeechRecognition;
-    }
-
-    public void setContinuousSpeechRecognition(boolean continuousSpeechRecognition) {
-        Log.i(TAG, "set continuous recognition " + continuousSpeechRecognition);
-        this.continuousSpeechRecognition = continuousSpeechRecognition;
-    }
 
     //function for mute and unmute audio
-    public void MuteAudio(Boolean mute) {
-        Log.i(TAG, "mute parameter is " + mute);
 
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                        mute ? AudioManager.ADJUST_MUTE : AudioManager.ADJUST_UNMUTE, 0
-                );
-
-            } else {
-                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, mute);
-            }
-        } catch (Exception error) {
-            if (audioManager == null) return;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
-            } else {
-                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-            }
-
-
-        }
-
-    }
 
     public void StartSpeechRegognize() {
 
@@ -123,9 +91,7 @@ public class SpeechRegognition implements RecognitionListener {
 
         AssistantSpeechRegnizer.setRecognitionListener(this);
         // Canceling any running  speech operations, before listening
-        if (!isContinuousSpeechRecognition()) {
-            CancelSpeechRecognizer();
-        }
+
         // Start Listening
         AssistantSpeechRegnizer.startListening(SpeechIntent);
     }
@@ -135,7 +101,7 @@ public class SpeechRegognition implements RecognitionListener {
             Log.i(TAG, "cancel speech recognize");
             AssistantSpeechRegnizer.cancel();
         }
-        //  MuteAudio(false);
+
 
     }
 
@@ -149,30 +115,10 @@ public class SpeechRegognition implements RecognitionListener {
 
     }
 
-
-    //function for restarting speech recognition after 500 milliseconds delay
-    private void restartSpeechRegognizer() {
-
-
-        restartDroidSpeech.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                Log.i(TAG, "Restart speech recognize");
-                StartSpeechRegognize();
-
-            }
-
-        }, 300);
-
-    }
-
     @Override
     public void onReadyForSpeech(Bundle bundle) {
         Log.i(TAG, "ready for speaking");
 
-        // MuteAudio(false);
-        IsReadyForSpeach = true;
 
     }
 
@@ -210,43 +156,14 @@ public class SpeechRegognition implements RecognitionListener {
             Constatns.app.Init();
         }
 
-
-
         // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
         long duration = System.currentTimeMillis() - StartListeningTime;
-        if (duration < 5000 && i == Constants.ErrorNoMatch && !IsReadyForSpeach) {
+        if (i == Constants.ErrorNoMatch ) {
             Log.i(TAG, "no match and duration is : " + duration);
             return;
         }
-
-
-        if (Constants.ErrorNoMatch == i || Constants.ErrorSpeechTimeOut == i || Constants.ErrorAudio == i) {
-            if (continuousSpeechRecognition) {
-                Log.i(TAG, "if no match found restarting.. ");
-                restartSpeechRegognizer();
-            }else{
-                CloseSpeechRegognizer();
-                //close recognition if not continuous
-               if (isActivated()) {
-                    EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
-                } /**/
-
-            }
-
-        }
         EventBus.getDefault().postSticky(new Events.PartialResults(""));
-     /*  if (isActivated()) {
-           setActivated(false);
-            //EventBus.getDefault().post(new Events.SpeechMessage("Η αναγνώριση τερματίζει",false));
 
-        }*/
-
-        //setActivated(false);
-
-
-
-        //mute audio beep
-       // MuteAudio(true);
     }
 
     @Override
@@ -272,36 +189,17 @@ public class SpeechRegognition implements RecognitionListener {
         if (valid) {
             // Getting the speech final result
 
-            if (isActivated() && !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
+            if (!results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
                 RequestQueue queue = Volley.newRequestQueue(context);
                 queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
 
                 Log.i(TAG, "Results");
-            } else if (results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("Ίριδα")) {
-
-                MuteAudio(false);
-                EventBus.getDefault().post(new Events.SpeechMessage("Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω",true));
-
             }
-            if (continuousSpeechRecognition) {
-                Log.i(TAG, "speech start again");
-                // Start  speech recognition again
-                StartSpeechRegognize();
-            } else {
+
                 // Closing the  speech operations
-                 CloseSpeechRegognizer();
+            CloseSpeechRegognizer();
 
-
-
-
-            }
             EventBus.getDefault().postSticky(new Events.PartialResults(""));
-
-        } else {
-            // No match found, restart  speech recognition
-            Log.i(TAG, "If no results restarting");
-
-            restartSpeechRegognizer();
 
         }
 
@@ -327,57 +225,9 @@ public class SpeechRegognition implements RecognitionListener {
         if (valid) {
 
             Log.i(TAG, "pause time: " + PauseAndSpeakTime + " current mills: " + System.currentTimeMillis());
+            EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
 
-            if(isActivated()){
-                EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
-            }
-
-            //if the current time (that receive partial result) subtraction with the start time of listening is 500 milliseconds
-            // close recognition and restart it after 500 milliseconds
-            if ((System.currentTimeMillis() - PauseAndSpeakTime) > 500) {
-               // speechResultFound = true;
-
-                SpeechPartialResult.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "On partial result closing speech"+partialResult);
-
-                        CloseSpeechRegognizer();
-
-                        if (isActivated() && !partialResult.equals("")) {
-                            RequestQueue queue = Volley.newRequestQueue(context);
-                            queue.add(WitResponse.GetResults(partialResult));
-                            CloseSpeechRegognizer();
-                            // EventBus.getDefault().post(new Events.ComputingRecognition(true));
-                        }/* else if (partialResult.equals("Ίριδα")) {
-
-                            MuteAudio(false);
-                            EventBus.getDefault().post(new Events.SpeechMessage("Παρακαλώ, πείτε μου πως μπορώ να βοηθήσω",true));
-                            setActivated(true);
-                        }*/
-                        if (continuousSpeechRecognition) {
-                            Log.i(TAG, "on partial start speech again");
-                            // Start  speech recognition again
-                            StartSpeechRegognize();
-                        } else {
-                            Log.i(TAG, "on partial stop speech");
-                            // Closing the  speech operations
-                             CloseSpeechRegognizer();
-                            //EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
-                        }
-                        EventBus.getDefault().postSticky(new Events.PartialResults(""));
-
-                    }
-                }, 500);
-
-            } else {
-                PauseAndSpeakTime = System.currentTimeMillis();
-            }
-
-        } else {
-            PauseAndSpeakTime = System.currentTimeMillis();
         }
-
     }
 
     @Override
@@ -385,14 +235,6 @@ public class SpeechRegognition implements RecognitionListener {
         //NA
 
     }
-    public boolean isActivated() {
-        return isActivated;
-    }
 
-    public void setActivated(boolean activated) {
-        Log.i(TAG,"boolean activated is "+activated);
-        isActivated = activated;
-
-    }
 
 }

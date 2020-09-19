@@ -27,7 +27,7 @@ import events.Events;
  * Created by bill on 11/30/17.
  */
 
-public class ForeGroundRecognition extends WitSpeechAi{
+public class ForeGroundRecognition extends RecognitionService{
 
     private static final int NOTIFY_ID = 1;
     private final String TAG = this.getClass().getSimpleName();
@@ -39,6 +39,11 @@ public class ForeGroundRecognition extends WitSpeechAi{
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         //return start sticky because we dont want to close on exit of app
+
+        if (intent != null) {
+            String action = intent.getAction();
+            Log.i(TAG,action);
+        }
 
         Intent ConIntent = new Intent(Constatns.NOT_ACTION);
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -52,7 +57,14 @@ public class ForeGroundRecognition extends WitSpeechAi{
 
     //create notification load image and start service
     private void CreateNotification(PendingIntent ActionIntent) {
-        Notification.Builder builder = new Notification.Builder(this);
+        Notification.Builder builder = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(this,"1");
+        }
+        else
+        {
+            builder = new Notification.Builder(this);
+        }
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_stat_name);
         builder.setContentIntent(ActionIntent)
@@ -63,8 +75,10 @@ public class ForeGroundRecognition extends WitSpeechAi{
                 .setContentTitle(getResources().getString(R.string.title_activity_gui))
                 .setContentText(getResources().getString(R.string.Notification_Title));
         Notification not = builder.build();
+
         startForeground(NOTIFY_ID,
                 not);
+
         Log.i(TAG, "notification created!!");
 
 
