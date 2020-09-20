@@ -8,15 +8,11 @@
     tools:showIn="@layout/app_bar_gui">
 
 
-
-
-
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="155dp"
         android:layout_height="42dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:text="TextView"
         android:textAlignment="center"
         app:layout_constraintHorizontal_bias="0.502"
@@ -24,23 +20,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <pl.bclogic.pulsator4droid.library.PulsatorLayout
-        android:id="@+id/pulsator"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:pulse_count="4"
-        app:pulse_duration="7000"
-        app:pulse_repeat="0"
-        app:pulse_color="@color/colorAccent"
-        app:pulse_startFromScratch="false"
-        app:pulse_interpolator="Linear">
-        <ToggleButton
-            android:id="@+id/toggleButton2"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_menu_send"
-            />
-    </pl.bclogic.pulsator4droid.library.PulsatorLayout>
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

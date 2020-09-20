@@ -252,7 +252,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void setButtons() {
-        btnIput = findViewById(R.id.toggleButton2);
+        btnIput = findViewById(R.id.button2);
     }
 
 
