@@ -13,7 +13,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import applications.Action;
 
-import applications.Constatns;
+import applications.Constants;
 import applications.Switcher;
 import events.Events;
 import utils.jsonparsers.Witobj;
@@ -82,18 +82,18 @@ public class Maestro extends Service {
 
             resp = event.getWitResponse();
 
-            app = Constatns.app;
+            app = Constants.app;
 
 
             Log.d(TAG, "App stage is"+resp.getIntents().size()+" ");
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
-            if((resp.getIntents()== null || resp.getIntents().size() ==0) && app.Stage.equals(Constatns.IN_STAGE)){
+            if((resp.getIntents()== null || resp.getIntents().size() ==0) && app.Stage.equals(Constants.IN_STAGE)){
                 speak("Παρακαλώ επαναλάβετε",true);
-                app.Stage = Constatns.NO_SPEACH_STAGE;
+                app.Stage = Constants.NO_SPEACH_STAGE;
                 Log.d(TAG, "no speech "+RETRY_FLAG);
             if (RETRY_FLAG < RETRY_LIMIT){
-                app.Stage=Constatns.IN_STAGE;
+                app.Stage= Constants.IN_STAGE;
                 speak("Παρακαλώ επαναλάβετε",true);
                 RETRY_FLAG = RETRY_FLAG + 1;
             }
@@ -110,7 +110,7 @@ public class Maestro extends Service {
             }
 
             //Initialization Phase
-            if (app.Stage.equals(Constatns.IN_STAGE)){
+            if (app.Stage.equals(Constants.IN_STAGE)){
 
                 Log.d(TAG, "type = "+ resp.getIntents().get(0).getName());
                 String type = resp.getIntents().get(0).getName();
@@ -120,7 +120,7 @@ public class Maestro extends Service {
             }
 
             //Data Fill Phase
-            if (app.Stage.equals(Constatns.CH_STAGE)){
+            if (app.Stage.equals(Constants.CH_STAGE)){
                 Log.i(TAG,"entered in data fill stage ");
 
 
@@ -145,24 +145,24 @@ public class Maestro extends Service {
                 }
 
                 if(resp.getEntities().getDatetime() !=null && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) {
-                    app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
+                    app.data.put(Constants.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
                     Log.i(TAG,"rem key time = "+resp.getEntities().getDatetime().get(0).getValue());
                 }
                 if(resp.getEntities().getDuration() !=null && resp.getEntities().getDuration().get(0).getConfidence() >0.8 ) {
-                    app.data.put(Constatns.TIMER_KEY,resp.getEntities().getDuration().get(0).getNormalized().getValue());
+                    app.data.put(Constants.TIMER_KEY,resp.getEntities().getDuration().get(0).getNormalized().getValue());
                     Log.i(TAG,"rem duration= "+resp.getEntities().getDuration().get(0).getNormalized().getValue());
                 }
 
 
                 //Multi stage comm gatherer
-                if(resp.getText() != null && app.waiting_data && app.data.get(Constatns.TIMER_KEY)==null && !(resp.getEntities().getDatetime() !=null
+                if(resp.getText() != null && app.waiting_data && app.data.get(Constants.TIMER_KEY)==null && !(resp.getEntities().getDatetime() !=null
                         && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
                     app.data.put(app.Current_Key,resp.getText());
                     Log.i(TAG,"multistage data response from user is = "+resp.getText());
-                }else if(app.waiting_data && (resp.getEntities().getDatetime() !=null &&  app.data.get(Constatns.TIMER_KEY)==null
+                }else if(app.waiting_data && (resp.getEntities().getDatetime() !=null &&  app.data.get(Constants.TIMER_KEY)==null
                         && resp.getEntities().getDatetime().get(0).getConfidence() >0.8 ) ){
                     Log.d("3",app.Current_Key+" "+resp.getEntities().getDatetime().get(0).getValue());
-                    app.data.put(Constatns.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
+                    app.data.put(Constants.REM_KEY_TIME,resp.getEntities().getDatetime().get(0).getValue());
                 }
 
 
@@ -181,7 +181,7 @@ public class Maestro extends Service {
                         }
                     }
                 }else {
-                    app.Stage = Constatns.TR_STAGE;
+                    app.Stage = Constants.TR_STAGE;
 
                 }
 
@@ -189,7 +189,7 @@ public class Maestro extends Service {
 
             }
 
-            if (app.Stage.equals(Constatns.TR_STAGE)){
+            if (app.Stage.equals(Constants.TR_STAGE)){
                 Log.i(TAG," entered in tr stage = "+app.data.get(app.Current_Key));
                 app.waiting_data = false;
                 app = Switcher.transforminfo(app,getApplicationContext());
@@ -197,20 +197,20 @@ public class Maestro extends Service {
             }
 
 
-            if (app.Stage.equals(Constatns.VR_STAGE)){
+            if (app.Stage.equals(Constants.VR_STAGE)){
 
                 speak(app.VERIFY_MESSAGE,true);
-                app.Stage = Constatns.AFTER_VR_STAGE;
+                app.Stage = Constants.AFTER_VR_STAGE;
                 Log.i(TAG,"entered in vr stage= ");
             }
 
-            if (app.Stage.equals(Constatns.AFTER_VR_STAGE)){
+            if (app.Stage.equals(Constants.AFTER_VR_STAGE)){
 
                 if(resp.getText().contains("ναι")) {
-                    app.Stage = Constatns.RUN_STAGE;
+                    app.Stage = Constants.RUN_STAGE;
                 }
                 else if(resp.getText().contains("όχι") ) {
-                     app.Stage = Constatns.CP_STAGE;
+                     app.Stage = Constants.CP_STAGE;
                     EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                     speak("όπως επιθυμείτε", false);
                 }
@@ -218,28 +218,28 @@ public class Maestro extends Service {
             }
 
 
-            if (app.Stage.equals(Constatns.RUN_STAGE)){
+            if (app.Stage.equals(Constants.RUN_STAGE)){
                 app.runIntent(getApplicationContext());
-                app.Stage = Constatns.CP_STAGE;
+                app.Stage = Constants.CP_STAGE;
                 //EventBus.getDefault().postSticky(new Events.ActivatedRecognition(true));
                 Log.i(TAG,"entered in run stage");
             }
 
-            if (app.Stage.equals(Constatns.NF_STAGE)){
+            if (app.Stage.equals(Constants.NF_STAGE)){
                 EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
                 speak(app.NOT_FOUND,false);
-                Constatns.app.Init();
+                Constants.app.Init();
                 Log.i(TAG,"entered in not found stage");
-                app.Stage = Constatns.CP_STAGE;
+                app.Stage = Constants.CP_STAGE;
 
             }
-            /**/ if (app.Stage.equals(Constatns.CP_STAGE)){
+            /**/ if (app.Stage.equals(Constants.CP_STAGE)){
             Log.i(TAG,"completed"+app.LAUNCHED);
 
             if(!app.LAUNCHED.equals(""))
 
                 speak(app.LAUNCHED,false);
-                Constatns.app.Init();
+                Constants.app.Init();
             Log.i(TAG,"entered in completed stage");
         }
 

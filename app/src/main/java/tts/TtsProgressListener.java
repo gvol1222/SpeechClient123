@@ -7,7 +7,5 @@ package tts;
 public interface TtsProgressListener {
 
     void onEndTalk();
-    void setIsTalking(boolean isTalking);
-    boolean getIsTalking();
     void onStartTalk();
 }

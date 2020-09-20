@@ -10,8 +10,9 @@ import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import androidx.annotation.RequiresApi;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -20,7 +21,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Locale;
 
-import applications.Constatns;
+import applications.Constants;
 import events.Events;
 import wit_connection.WitResponse;
 
@@ -34,19 +35,16 @@ public class SpeechRecognition implements RecognitionListener {
     private final String TAG = this.getClass().getSimpleName();
     private SpeechRecognizer AssistantSpeechRecognizer;
     private Intent SpeechIntent;
-    private Handler SpeechPartialResult ;
-    private Boolean  speechResultFound = false;
+    private Handler SpeechPartialResult;
+    private Boolean speechResultFound = false;
 
     private long StartListeningTime, PauseAndSpeakTime;
-    private boolean continuousSpeechRecognition;
     private AudioManager audioManager;
     private Context context;
 
-    public boolean isTalking;
 
     public SpeechRecognition(Context context) {
         this.context = context;
-
         Init();
 
     }
@@ -70,13 +68,13 @@ public class SpeechRecognition implements RecognitionListener {
     }
 
 
-    public void StartSpeechRegognize() {
+    public void StartSpeechRecognize() {
 
         Log.i(TAG, "start recognize");
 
         //take the specific time of start listening
         StartListeningTime = System.currentTimeMillis();
-        PauseAndSpeakTime = StartListeningTime;
+        PauseAndSpeakTime = StartListeningTime+5000;
         speechResultFound = false;
 
         if (SpeechIntent == null || AssistantSpeechRecognizer == null || audioManager == null) {
@@ -136,7 +134,7 @@ public class SpeechRecognition implements RecognitionListener {
 
     @Override
     public void onEndOfSpeech() {
-        Log.i(TAG, "end of speeking");
+        Log.i(TAG, "end of speaking");
 
     }
 
@@ -146,14 +144,11 @@ public class SpeechRecognition implements RecognitionListener {
     public void onError(int i) {
         Log.i(TAG, "error code: " + i);
 
-
-
-        Constatns.app.Init();
-
+        Constants.app.Init();
 
         // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
         long duration = System.currentTimeMillis() - StartListeningTime;
-        if (i == Constants.ErrorNoMatch ) {
+        if (i == recognize.Constants.ErrorNoMatch) {
             Log.i(TAG, "no match and duration is : " + duration);
             return;
         }
@@ -166,7 +161,7 @@ public class SpeechRecognition implements RecognitionListener {
 
         Log.i(TAG, "final results: " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
 
-        if (speechResultFound ) {
+        if (speechResultFound) {
             Log.i(TAG, "If results found returning");
             return;
         }
@@ -186,11 +181,10 @@ public class SpeechRecognition implements RecognitionListener {
             if (!results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
                 RequestQueue queue = Volley.newRequestQueue(context);
                 queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
-
                 Log.i(TAG, "Results");
             }
 
-                // Closing the  speech operations
+            // Closing the  speech operations
             CloseSpeechRecognizer();
 
             EventBus.getDefault().postSticky(new Events.PartialResults(""));
@@ -202,7 +196,7 @@ public class SpeechRecognition implements RecognitionListener {
 
     @Override
     public void onPartialResults(Bundle results) {
-        if (speechResultFound ) {
+        if (speechResultFound) {
             Log.i(TAG, "If partial results found returning");
             //  MuteAudio(true);
             return;

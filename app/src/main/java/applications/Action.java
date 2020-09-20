@@ -94,7 +94,7 @@ public class Action implements Serializable {
         MultiStageCommFromStart = false;
         waiting_data = false;
         Current_Key = "";
-        Stage = Constatns.IN_STAGE;
+        Stage = Constants.IN_STAGE;
     }
     private void setIntentParms(){
         IntentAction = null;
@@ -116,7 +116,7 @@ public class Action implements Serializable {
             UniqueSwitcher.Switcher(type,data,con);
         }
         else {
-            Stage = Constatns.CP_STAGE;
+            Stage = Constants.CP_STAGE;
             Intent curIntent = CreateIntent();
             Log.d(TAG, "package: "+curIntent);
             con.startActivity(curIntent);
@@ -134,7 +134,7 @@ public class Action implements Serializable {
         } else {
             runInt = new Intent(IntentAction);
         }
-        runInt.setFlags(Constatns.FLAGS);
+        runInt.setFlags(Constants.FLAGS);
         if(RequiresPackage){
             Log.d(TAG, "package: "+Package);
             runInt.setPackage(Package);

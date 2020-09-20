@@ -12,7 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import applications.Constatns;
+import applications.Constants;
 import events.Events;
 
 /**
@@ -26,12 +26,12 @@ public class UniqueSwitcher {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void Switcher(String type, LinkedHashMap data, Context con){
 
-        if(type.equals(Constatns.SET_REMINDER)){
-            HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constatns.REM_KEY_TIME));
+        if(type.equals(Constants.SET_REMINDER)){
+            HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constants.REM_KEY_TIME));
 
 
            if(datetime!=null){
-               String query = (String) data.get(Constatns.REM_APP_NAME);
+               String query = (String) data.get(Constants.REM_APP_NAME);
 
                int month = datetime.get("month");
                int year = datetime.get("year");
@@ -41,16 +41,16 @@ public class UniqueSwitcher {
 
                Reminder.addReminderInCalendar(con,year,month,day,hour,minute,year,month,day,hour,minute,query);
                Log.d(TAG,"month "+month+" year "+year+" day "+day+" hour "+hour+" minute "+minute);
-               Constatns.app.Stage = Constatns.CP_STAGE;
+               Constants.app.Stage = Constants.CP_STAGE;
            }else
            {
-               Constatns.app.Stage = Constatns.NF_STAGE;
+               Constants.app.Stage = Constants.NF_STAGE;
                EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
            }
 
-        }else if(type.equals(Constatns.SET_ALARM)){
+        }else if(type.equals(Constants.SET_ALARM)){
 
-            HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constatns.ALARM_DATE_TIME));
+            HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constants.ALARM_DATE_TIME));
 
 
             if(datetime!=null)
@@ -62,25 +62,25 @@ public class UniqueSwitcher {
                         .putExtra(AlarmClock.EXTRA_HOUR, hour)
                         .putExtra(AlarmClock.EXTRA_MINUTES, minute)
                         .putExtra(AlarmClock.EXTRA_SKIP_UI,true);
-                intent.setFlags(Constatns.FLAGS);
+                intent.setFlags(Constants.FLAGS);
                 if (intent.resolveActivity(con.getPackageManager()) != null) {
                     con.startActivity(intent);
                 }
-                Constatns.app.Stage = Constatns.CP_STAGE;
+                Constants.app.Stage = Constants.CP_STAGE;
             }
             else
             {
-                Constatns.app.Stage = Constatns.NF_STAGE;
+                Constants.app.Stage = Constants.NF_STAGE;
                 EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
             }
 
         }
-        else if(type.equals(Constatns.SEND_SMS)){
-            Sms.SendMessage((String)data.get(Constatns.SMS_CONTENT_NAME), con, (String)data.get(Constatns.SMS_APP_NAME));
-            Constatns.app.Stage = Constatns.CP_STAGE;
-        }else if(type.equals(Constatns.OPEN_APP)){
-            String query = (String) data.get(Constatns.OPEN_APP_NAME);
-            Constatns.app.Stage=LaunchApp.launchapplication(query, con);
+        else if(type.equals(Constants.SEND_SMS)){
+            Sms.SendMessage((String)data.get(Constants.SMS_CONTENT_NAME), con, (String)data.get(Constants.SMS_APP_NAME));
+            Constants.app.Stage = Constants.CP_STAGE;
+        }else if(type.equals(Constants.OPEN_APP)){
+            String query = (String) data.get(Constants.OPEN_APP_NAME);
+            Constants.app.Stage=LaunchApp.launchapplication(query, con);
         }
 
 

@@ -16,19 +16,18 @@ import events.Events;
  * Created by bill on 11/23/17.
  */
 
-public class SpeecHelper implements TextToSpeech.OnInitListener {
-    private static final String TAG = "SpeecHelper";
-    private static final HashMap<String, String> map = new HashMap<String, String>();
-    private TextToSpeech tts;
-    private TtsProgressListener ttsListener;
+public class SpeechHelper implements TextToSpeech.OnInitListener {
+    private static final String TAG = "SpeechHelper";
+    private final TextToSpeech tts;
+    private final TtsProgressListener ttsListener;
     private  boolean isTalking;
 
 
     //initiate text to speech api and map
-    public SpeecHelper(Context context, TtsProgressListener ttsListener) {
+    public SpeechHelper(Context context, TtsProgressListener ttsListener) {
         this.ttsListener = ttsListener;
         tts = new TextToSpeech(context.getApplicationContext(), this);
-        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+
         tts.setPitch(1.3f);
         tts.setSpeechRate(1f);
         Log.i(TAG, "intiatiated successfully");
@@ -37,7 +36,7 @@ public class SpeecHelper implements TextToSpeech.OnInitListener {
     //function for speaking text to speech
     public void speak(String msg) {
         Log.i(TAG, "call speak");
-        tts.speak(msg, TextToSpeech.QUEUE_FLUSH, map);
+        tts.speak(msg, TextToSpeech.QUEUE_FLUSH,null,"UniqueID");
     }
 
     public void setIsTalking(boolean isTalking){

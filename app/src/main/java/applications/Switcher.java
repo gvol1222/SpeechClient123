@@ -29,135 +29,135 @@ public class Switcher {
         Log.i(TAG,"type of app is: "+app.type);
         LinkedHashMap<String,String> data_request = new LinkedHashMap<>();
         LinkedHashMap<String,String> data = new LinkedHashMap<>();
-        if (type.equals(Constatns.CALL_APP)) {
+        if (type.equals(Constants.CALL_APP)) {
             Log.i(TAG,"call app");
 
-            data_request.put(Constatns.CALL_APP_NAME,Constatns.CALL_INFO_MESSAGE);
-            data.put(Constatns.CALL_APP_NAME,null);
+            data_request.put(Constants.CALL_APP_NAME, Constants.CALL_INFO_MESSAGE);
+            data.put(Constants.CALL_APP_NAME,null);
             app = InitActionObj(
-                    app,type,Constatns.ACTION_CALL,true,Constatns.CALL_APP_NAME,
-                    data_request,data,Constatns.CALL_URI,
-                    false,Constatns.CALL_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE, Constatns.CALL_VER_MESSAGE,
+                    app,type, Constants.ACTION_CALL,true, Constants.CALL_APP_NAME,
+                    data_request,data, Constants.CALL_URI,
+                    false, Constants.CALL_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.CALL_VER_MESSAGE,
                     false,"",false,""
             );
-        }else if(type.equals(Constatns.SEND_SMS)){
+        }else if(type.equals(Constants.SEND_SMS)){
             Log.i(TAG,"send sms app");
 
-            data_request.put(Constatns.SMS_APP_NAME, Constatns.SMS_INFO_MESSAGE);
-            data_request.put(Constatns.SMS_CONTENT_NAME,Constatns.SMS_CONTENT_MESSAGE);
-            data.put(Constatns.SMS_APP_NAME,null);
-            data.put(Constatns.SMS_CONTENT_NAME,null);
+            data_request.put(Constants.SMS_APP_NAME, Constants.SMS_INFO_MESSAGE);
+            data_request.put(Constants.SMS_CONTENT_NAME, Constants.SMS_CONTENT_MESSAGE);
+            data.put(Constants.SMS_APP_NAME,null);
+            data.put(Constants.SMS_CONTENT_NAME,null);
             app = InitActionObj(
-                    app,type,"",false,Constatns.SMS_APP_NAME,
-                    data_request,data,Constatns.SMS_URI,
+                    app,type,"",false, Constants.SMS_APP_NAME,
+                    data_request,data, Constants.SMS_URI,
                     false,
-                    Constatns.SMS_NOT_FOUND_MESSAGE,Constatns.CH_STAGE,Constatns.SMS_VER_MESSAGE,
+                    Constants.SMS_NOT_FOUND_MESSAGE, Constants.CH_STAGE, Constants.SMS_VER_MESSAGE,
                     false,"",false,""
             );
-        }else if(type.equals(Constatns.OPEN_APP)){
+        }else if(type.equals(Constants.OPEN_APP)){
             Log.i(TAG,"open app");
 
-            data_request.put(Constatns.OPEN_APP_NAME, Constatns.OPEN_INFO_MESSAGE);
-            data.put(Constatns.OPEN_APP_NAME,null);
+            data_request.put(Constants.OPEN_APP_NAME, Constants.OPEN_INFO_MESSAGE);
+            data.put(Constants.OPEN_APP_NAME,null);
 
             app = InitActionObj(
-                    app,type,Intent.CATEGORY_LAUNCHER,false,Constatns.OPEN_APP_NAME,
-                    data_request,data,Constatns.OPEN_URI,
-                    false,Constatns.OPEN_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.OPEN_VER_MESSAGE,
-                    false,"",false,Constatns.OPEN_LAUNCHED_MESSAGE
+                    app,type,Intent.CATEGORY_LAUNCHER,false, Constants.OPEN_APP_NAME,
+                    data_request,data, Constants.OPEN_URI,
+                    false, Constants.OPEN_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.OPEN_VER_MESSAGE,
+                    false,"",false, Constants.OPEN_LAUNCHED_MESSAGE
             );
-        }else if(type.equals(Constatns.DIRECTIONS)){
+        }else if(type.equals(Constants.DIRECTIONS)){
             Log.i(TAG,"directions");
 
 
-            data_request.put(Constatns.MAPS_APP_NAME, Constatns.MAPS_INFO_MESSAGE);
-            data.put(Constatns.MAPS_APP_NAME,null);
+            data_request.put(Constants.MAPS_APP_NAME, Constants.MAPS_INFO_MESSAGE);
+            data.put(Constants.MAPS_APP_NAME,null);
             app = InitActionObj(
-                    app,type,Intent.ACTION_VIEW,true,Constatns.MAPS_APP_NAME,
-                    data_request,data,Constatns.MAPS_URI,
-                    false,Constatns.MAPS_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.MAPS_VER_MESSAGE,
-                    true,Constatns.MAPS_PACKAGE,false,Constatns.MAPS_LAUNCHED_MESSAGE
+                    app,type,Intent.ACTION_VIEW,true, Constants.MAPS_APP_NAME,
+                    data_request,data, Constants.MAPS_URI,
+                    false, Constants.MAPS_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.MAPS_VER_MESSAGE,
+                    true, Constants.MAPS_PACKAGE,false, Constants.MAPS_LAUNCHED_MESSAGE
             );
-        }else if(type.equals(Constatns.PLAY_VIDEO)){
+        }else if(type.equals(Constants.PLAY_VIDEO)){
             Log.i(TAG,"play video");
 
-            data_request.put(Constatns.VIDEO_APP_NAME, Constatns.VIDEO_INFO_MESSAGE);
-            data.put(Constatns.VIDEO_APP_NAME,null);
+            data_request.put(Constants.VIDEO_APP_NAME, Constants.VIDEO_INFO_MESSAGE);
+            data.put(Constants.VIDEO_APP_NAME,null);
 
             app = InitActionObj(
-                    app,type,Intent.ACTION_SEARCH,false,Constatns.VIDEO_APP_NAME,
-                    data_request,data,Constatns.VIDEO_URI,
-                    false,Constatns.VIDEO_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.VIDEO_VER_MESSAGE,
-                    true,Constatns.YOUTUBE_PACKAGE,true,Constatns.VIDEO_LAUNCHED_MESSAGE
+                    app,type,Intent.ACTION_SEARCH,false, Constants.VIDEO_APP_NAME,
+                    data_request,data, Constants.VIDEO_URI,
+                    false, Constants.VIDEO_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.VIDEO_VER_MESSAGE,
+                    true, Constants.YOUTUBE_PACKAGE,true, Constants.VIDEO_LAUNCHED_MESSAGE
             );
-        }else if(type.equals(Constatns.PLAY_MUSIC)){
+        }else if(type.equals(Constants.PLAY_MUSIC)){
             Log.i(TAG,"play music");
 
-            data_request.put(Constatns.MUSIC_APP_NAME, Constatns.MUSIC_INFO_MESSAGE);
-            data.put(Constatns.MUSIC_APP_NAME,null);
+            data_request.put(Constants.MUSIC_APP_NAME, Constants.MUSIC_INFO_MESSAGE);
+            data.put(Constants.MUSIC_APP_NAME,null);
             app = InitActionObj(
-                    app,type,Constatns.MUSIC_SEARCH,false,Constatns.MUSIC_APP_NAME,
-                    data_request,data,Constatns.MUSIC_URI,
-                    false,Constatns.MUSIC_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.MUSIC_VER_MESSAGE,
-                    false,"",true,Constatns.MUSIC_LAUNCHED_MESSAGE
+                    app,type, Constants.MUSIC_SEARCH,false, Constants.MUSIC_APP_NAME,
+                    data_request,data, Constants.MUSIC_URI,
+                    false, Constants.MUSIC_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.MUSIC_VER_MESSAGE,
+                    false,"",true, Constants.MUSIC_LAUNCHED_MESSAGE
             );
 
-        }else if(type.equals(Constatns.SET_REMINDER)){
+        }else if(type.equals(Constants.SET_REMINDER)){
             Log.i(TAG,"set reminder");
 
-            data_request.put(Constatns.REM_APP_NAME, Constatns.REM_CONTENT_MESSAGE);
-            data_request.put(Constatns.REM_KEY_TIME, Constatns.REM_TIME_MESSAGE);
-            data.put(Constatns.REM_APP_NAME,null);
-            data.put(Constatns.REM_KEY_TIME,null);
+            data_request.put(Constants.REM_APP_NAME, Constants.REM_CONTENT_MESSAGE);
+            data_request.put(Constants.REM_KEY_TIME, Constants.REM_TIME_MESSAGE);
+            data.put(Constants.REM_APP_NAME,null);
+            data.put(Constants.REM_KEY_TIME,null);
             app = InitActionObj(
-                    app,type,Constatns.MUSIC_SEARCH,false,Constatns.REM_APP_NAME,
-                    data_request,data,Constatns.REM_URI,
-                    true,Constatns.REM_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.REM_VER_MESSAGE,
-                    false,"",true,Constatns.REM_SUCCESS_MESSAGE
+                    app,type, Constants.MUSIC_SEARCH,false, Constants.REM_APP_NAME,
+                    data_request,data, Constants.REM_URI,
+                    true, Constants.REM_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.REM_VER_MESSAGE,
+                    false,"",true, Constants.REM_SUCCESS_MESSAGE
             );
-        }else if(type.equals(Constatns.SET_ALARM)){
+        }else if(type.equals(Constants.SET_ALARM)){
             Log.i(TAG,"set alarm");
 
-            data_request.put(Constatns.ALARM_DATE_TIME, Constatns.ALARM_TIME_MESSAGE);
-            data.put(Constatns.ALARM_DATE_TIME,null);
+            data_request.put(Constants.ALARM_DATE_TIME, Constants.ALARM_TIME_MESSAGE);
+            data.put(Constants.ALARM_DATE_TIME,null);
             app = InitActionObj(
-                    app,type,Constatns.ACTION_ALARM,false,Constatns.ALARM_DATE_TIME,
-                    data_request,data,Constatns.ALARM_URI,
-                    true,Constatns.ALARM_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,Constatns.ALARM_NOT_FOUND_MESSAGE,
-                    false,"",true,Constatns.ALARM_SUCCESS_MESSAGE
+                    app,type, Constants.ACTION_ALARM,false, Constants.ALARM_DATE_TIME,
+                    data_request,data, Constants.ALARM_URI,
+                    true, Constants.ALARM_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE, Constants.ALARM_NOT_FOUND_MESSAGE,
+                    false,"",true, Constants.ALARM_SUCCESS_MESSAGE
             );
-        }else if(type.equals(Constatns.SEARCH_GOOGLE)){
+        }else if(type.equals(Constants.SEARCH_GOOGLE)){
             Log.i(TAG,"search google");
 
 
-            data_request.put(Constatns.GOOGLE_SEARCH_APP_NAME, Constatns.GOOGLE_SEARCH_INFO_MESSAGE);
-            data.put(Constatns.GOOGLE_SEARCH_APP_NAME,null);
+            data_request.put(Constants.GOOGLE_SEARCH_APP_NAME, Constants.GOOGLE_SEARCH_INFO_MESSAGE);
+            data.put(Constants.GOOGLE_SEARCH_APP_NAME,null);
             app = InitActionObj(
-                    app,type,Intent.ACTION_VIEW,true,Constatns.GOOGLE_SEARCH_APP_NAME,
-                    data_request,data,Constatns.GOOGLE_SEARCH_URI,
-                    false,Constatns.GOOGLE_SEARCH_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,"",
-                    false,Constatns.MAPS_PACKAGE,false,Constatns.GOOGLE_SEARCH_SUCCESS_MESSAGE
+                    app,type,Intent.ACTION_VIEW,true, Constants.GOOGLE_SEARCH_APP_NAME,
+                    data_request,data, Constants.GOOGLE_SEARCH_URI,
+                    false, Constants.GOOGLE_SEARCH_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE,"",
+                    false, Constants.MAPS_PACKAGE,false, Constants.GOOGLE_SEARCH_SUCCESS_MESSAGE
             );
-        }else if(type.equals(Constatns.SET_TIMER)){
+        }else if(type.equals(Constants.SET_TIMER)){
             Log.i(TAG,"set timer");
 
-            data_request.put(Constatns.TIMER_KEY, Constatns.TIMER_INFO_MESSAGE);
-            data.put(Constatns.TIMER_KEY,null);
+            data_request.put(Constants.TIMER_KEY, Constants.TIMER_INFO_MESSAGE);
+            data.put(Constants.TIMER_KEY,null);
 
             app = InitActionObj(
-                    app,type,Constatns.ACTION_TIMER,false,Constatns.TIMER_KEY,
+                    app,type, Constants.ACTION_TIMER,false, Constants.TIMER_KEY,
                     data_request,data,"",
-                    false,Constatns.TIMER_NOT_FOUND_MESSAGE
-                    ,Constatns.CH_STAGE,"",
-                    false,"",true,Constatns.TIMER_SUCCESS_MESSAGE
+                    false, Constants.TIMER_NOT_FOUND_MESSAGE
+                    , Constants.CH_STAGE,"",
+                    false,"",true, Constants.TIMER_SUCCESS_MESSAGE
             );
         }
         return app;
@@ -167,107 +167,107 @@ public class Switcher {
     public static Action transforminfo (Action app, Context con){
 
 
-        if (app.type.equals(Constatns.CALL_APP)){
+        if (app.type.equals(Constants.CALL_APP)){
 
-            String query = app.data.get(Constatns.CALL_APP_NAME);
+            String query = app.data.get(Constants.CALL_APP_NAME);
 
 
 
             if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
 
                 Log.i(TAG,"CALL APP: found number "+query);
-                app.data.put(Constatns.CALL_APP_NAME, query);
-                app.UriQuery = app.data.get(Constatns.CALL_APP_NAME);
-                app.Stage = Constatns.VR_STAGE;
+                app.data.put(Constants.CALL_APP_NAME, query);
+                app.UriQuery = app.data.get(Constants.CALL_APP_NAME);
+                app.Stage = Constants.VR_STAGE;
 
             }else if (ContactUtils.ContactNumber(query,con).size() > 0 ) {
                 Log.i(TAG,"CALL APP: found name ");
-                app.data.put(Constatns.CALL_APP_NAME, ContactUtils.ContactNumber(app.data.get(Constatns.CALL_APP_NAME), con).get(0));
-                app.UriQuery = app.data.get(Constatns.CALL_APP_NAME);
-                app.Stage = Constatns.VR_STAGE;
+                app.data.put(Constants.CALL_APP_NAME, ContactUtils.ContactNumber(app.data.get(Constants.CALL_APP_NAME), con).get(0));
+                app.UriQuery = app.data.get(Constants.CALL_APP_NAME);
+                app.Stage = Constants.VR_STAGE;
             }
             else {
                 Log.i(TAG,"CALL APP: not found tel ");
-                app.Stage = Constatns.NF_STAGE;
+                app.Stage = Constants.NF_STAGE;
             }
 
-        }else if(app.type.equals(Constatns.SEND_SMS)){
+        }else if(app.type.equals(Constants.SEND_SMS)){
 
-            String query = app.data.get(Constatns.SMS_APP_NAME);
+            String query = app.data.get(Constants.SMS_APP_NAME);
             app.UniqueAction=true;
             if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
                 Log.i(TAG,"SEND SMS: found number ");
-                app.Stage = Constatns.VR_STAGE;
+                app.Stage = Constants.VR_STAGE;
                 //app.UniqueAction=true;
 
             }else if (ContactUtils.ContactNumber(query,con).size() > 0 ) {
                 Log.i(TAG,"SEND SMS: found name ");
-                app.data.put(Constatns.SMS_APP_NAME, ContactUtils.ContactNumber(app.data.get(Constatns.SMS_APP_NAME), con).get(0));
-                app.Stage = Constatns.VR_STAGE;
+                app.data.put(Constants.SMS_APP_NAME, ContactUtils.ContactNumber(app.data.get(Constants.SMS_APP_NAME), con).get(0));
+                app.Stage = Constants.VR_STAGE;
                 //app.UniqueAction=true;
             }
             else {
                 Log.i(TAG,"SEND SMS: not found tel ");
-                app.Stage = Constatns.NF_STAGE;
+                app.Stage = Constants.NF_STAGE;
             }
 
-        }else if(app.type.equals(Constatns.OPEN_APP)){
+        }else if(app.type.equals(Constants.OPEN_APP)){
             Log.i(TAG,"open app ");
-            app.Stage = Constatns.RUN_STAGE;
+            app.Stage = Constants.RUN_STAGE;
             app.UniqueAction=true;
 
-        }else if(app.type.equals(Constatns.DIRECTIONS)){
+        }else if(app.type.equals(Constants.DIRECTIONS)){
             Log.i(TAG,"open directions ");
-            app.UriQuery = app.data.get(Constatns.MAPS_APP_NAME);
-            Constatns.app.LAUNCHED = Constatns.app.LAUNCHED+" "+app.UriQuery;
-            app.Stage = Constatns.RUN_STAGE;
+            app.UriQuery = app.data.get(Constants.MAPS_APP_NAME);
+            Constants.app.LAUNCHED = Constants.app.LAUNCHED+" "+app.UriQuery;
+            app.Stage = Constants.RUN_STAGE;
 
-        }else if(app.type.equals(Constatns.PLAY_VIDEO)){
+        }else if(app.type.equals(Constants.PLAY_VIDEO)){
             Log.i(TAG,"play video ");
-            app.extras.putString(Constatns.VIDEO_EXTRA,app.data.get(Constatns.VIDEO_APP_NAME));
-            app.Stage = Constatns.RUN_STAGE;
-        }else if(app.type.equals(Constatns.PLAY_MUSIC)){
+            app.extras.putString(Constants.VIDEO_EXTRA,app.data.get(Constants.VIDEO_APP_NAME));
+            app.Stage = Constants.RUN_STAGE;
+        }else if(app.type.equals(Constants.PLAY_MUSIC)){
             Log.i(TAG,"play music ");
-            app.extras.putString(MediaStore.EXTRA_MEDIA_FOCUS,Constatns.MUSIC_EXTRA);
-            app.extras.putString(SearchManager.QUERY,app.data.get(Constatns.MUSIC_APP_NAME));
-            app.Stage = Constatns.RUN_STAGE;
-        }else if(app.type.equals(Constatns.SET_REMINDER)){
+            app.extras.putString(MediaStore.EXTRA_MEDIA_FOCUS, Constants.MUSIC_EXTRA);
+            app.extras.putString(SearchManager.QUERY,app.data.get(Constants.MUSIC_APP_NAME));
+            app.Stage = Constants.RUN_STAGE;
+        }else if(app.type.equals(Constants.SET_REMINDER)){
             Log.i(TAG,"reminder");
 
-            if(app.data.get(Constatns.REM_APP_NAME)!=null && app.data.get(Constatns.REM_KEY_TIME)!=null ) {
-                app.Stage = Constatns.RUN_STAGE;
+            if(app.data.get(Constants.REM_APP_NAME)!=null && app.data.get(Constants.REM_KEY_TIME)!=null ) {
+                app.Stage = Constants.RUN_STAGE;
                 app.UniqueAction = true;
             }
             else {
-                app.Stage = Constatns.CH_STAGE;
+                app.Stage = Constants.CH_STAGE;
             }
 
 
-        }else if(app.type.equals(Constatns.SET_ALARM)){
+        }else if(app.type.equals(Constants.SET_ALARM)){
             Log.i(TAG,"set alarm");
 
-            if( app.data.get(Constatns.ALARM_DATE_TIME)!=null ) {
-                app.Stage = Constatns.RUN_STAGE;
+            if( app.data.get(Constants.ALARM_DATE_TIME)!=null ) {
+                app.Stage = Constants.RUN_STAGE;
                 app.UniqueAction = true;
             }
             else {
-                app.Stage = Constatns.CH_STAGE;
+                app.Stage = Constants.CH_STAGE;
             }
-        }else if(app.type.equals(Constatns.SEARCH_GOOGLE)){
+        }else if(app.type.equals(Constants.SEARCH_GOOGLE)){
             Log.i(TAG,"search google ");
-            app.UriQuery = app.data.get(Constatns.GOOGLE_SEARCH_APP_NAME);
+            app.UriQuery = app.data.get(Constants.GOOGLE_SEARCH_APP_NAME);
 
-            app.Stage = Constatns.RUN_STAGE;
+            app.Stage = Constants.RUN_STAGE;
 
-        }else if(app.type.equals(Constatns.SET_TIMER)){
+        }else if(app.type.equals(Constants.SET_TIMER)){
             Log.i(TAG,"timer");
 
 
             if( app.entities.getDuration()!=null){
-                app.extras.putInt(Constatns.TIMER_EXTRA, Integer.parseInt(app.data.get(Constatns.TIMER_KEY)));
-                app.Stage = Constatns.RUN_STAGE;
+                app.extras.putInt(Constants.TIMER_EXTRA, Integer.parseInt(app.data.get(Constants.TIMER_KEY)));
+                app.Stage = Constants.RUN_STAGE;
             }else{
-                app.Stage = Constatns.NF_STAGE;
+                app.Stage = Constants.NF_STAGE;
             }
 
 

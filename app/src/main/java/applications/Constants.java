@@ -11,7 +11,7 @@ import androidx.annotation.RequiresApi;
  */
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class Constatns {
+public class Constants {
 
     public static final int FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP;
     public  static final Action app = new Action();
@@ -20,7 +20,7 @@ public class Constatns {
     static final String MAPS_PACKAGE = "com.google.android.apps.maps";
 
     //action receivers
-    public static final String NOT_ACTION="notification.action";
+    public static final String NOTIFICATION_ACTION ="notification.action";
     public static final String MAESTRO_ACTION="speak.action";
     //app names
     static final String CALL_APP="make_call";

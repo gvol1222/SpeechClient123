@@ -18,7 +18,7 @@ import com.example.bill.Activities.R;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import applications.Constatns;
+import applications.Constants;
 import events.Events;
 
 /**
@@ -43,7 +43,7 @@ public class ForeGroundRecognition extends RecognitionService{
             Log.i(TAG,action);
         }
 
-        Intent ConIntent = new Intent(Constatns.NOT_ACTION);
+        Intent ConIntent = new Intent(Constants.NOTIFICATION_ACTION);
         PendingIntent ActionIntent = PendingIntent.getBroadcast(this, 4, ConIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         CreateNotification(ActionIntent);
 
@@ -100,17 +100,6 @@ public class ForeGroundRecognition extends RecognitionService{
         return assistantBinder;
     }
 
-    @Override
-    public void setIsTalking(boolean isTalking) {
-
-    }
-
-    @Override
-    public boolean getIsTalking() {
-        return false;
-    }
-
-
     public class AssistantBinder extends Binder {
         public ForeGroundRecognition getService() {
             return ForeGroundRecognition.this;
@@ -122,7 +111,7 @@ public class ForeGroundRecognition extends RecognitionService{
     public void isComputing(Events.ComputingRecognition event ) {
 
         if(event.isComputing()){
-            ToasMessage("Παρακαλώ περιμένετε");
+            ToastMessage("Παρακαλώ περιμένετε");
         }
 
     }

@@ -7,7 +7,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 import android.util.Log;
 
-import applications.Constatns;
+import applications.Constants;
 import utils.AppPackagesUtils;
 
 /**
@@ -36,8 +36,8 @@ class LaunchApp  {
             try {
                 i = manager.getLaunchIntentForPackage(packagename);
                 if (i != null) {
-                    Constatns.app.LAUNCHED = Constatns.OPEN_LAUNCHED_MESSAGE+" "+appName;
-                    i.setFlags(Constatns.FLAGS);
+                    Constants.app.LAUNCHED = Constants.OPEN_LAUNCHED_MESSAGE+" "+appName;
+                    i.setFlags(Constants.FLAGS);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     con.startActivity(i);
                 } else {
@@ -48,10 +48,10 @@ class LaunchApp  {
                 Log.i(TAG, "something goes wrong " + e);
 
             }
-            return Constatns.CP_STAGE;
+            return Constants.CP_STAGE;
         } else {
             Log.i(TAG, "app does not exist " + qry);
-            return Constatns.NF_STAGE;
+            return Constants.NF_STAGE;
 
         }
 

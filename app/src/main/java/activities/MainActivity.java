@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -53,26 +52,23 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private static final String TAG = "BtroadCast";
     SharedPreferences sharedPref;
     private TextView response;
-    private boolean paused;
     private Toolbar toolbar;
-    private ForeGroundRecognition speechService;
-    private Intent speechintent;
-    private boolean exit, assistantBound;
+    private Button btn;
+    private ForeGroundRecognition foreGroundRecognition;
+    private Intent SpeechIntent;
+    private boolean exit;
 
 
     private ServiceConnection speechConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             ForeGroundRecognition.AssistantBinder binder = (ForeGroundRecognition.AssistantBinder) service;
-            speechService = binder.getService();
+            foreGroundRecognition = binder.getService();
             Log.i(TAG, "adf");
-            assistantBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
-            assistantBound = false;
         }
     };
 
@@ -82,32 +78,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         response.setText(event.getPartialResults());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void isActivated(Events.ActivatedRecognition event) {
-
-       /* if(!event.isActivated() && !speechService.isContinuous()){
-            btnIput.performClick();
-            Constatns.app.Init();
-        }*/
-
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createNotificationChannel();
-        paused = false;
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_gui);
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         exit = sharedPref.getBoolean("exit", true);
         Log.d("exit...", String.valueOf(exit));
-        if (Build.VERSION.SDK_INT < 23) Init();
-
+        Init();
         ButterKnife.bind(this);
-
-
     }
 
     private void createNotificationChannel() {
@@ -126,12 +107,11 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     protected void onStart() {
         super.onStart();
 
-        if (speechService == null) {
-            speechintent = new Intent(MainActivity.this, ForeGroundRecognition.class);
-            speechintent.setAction("com.marothiatechs.foregroundservice.action.startforeground");
-
-            startService(speechintent);
-            bindService(speechintent, speechConnection, Context.BIND_AUTO_CREATE);
+        if (foreGroundRecognition == null) {
+            SpeechIntent = new Intent(MainActivity.this, ForeGroundRecognition.class);
+            SpeechIntent.setAction("com.marothiatechs.foregroundservice.action.startforeground");
+            startService(SpeechIntent);
+            bindService(SpeechIntent, speechConnection, Context.BIND_AUTO_CREATE);
         }
 
     }
@@ -216,9 +196,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     }
 
     private void Init() {
-
-        setText();
-        setToolbar();
+        setGui();
         setDrawerLayout();
         setNavigation();
     }
@@ -237,14 +215,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         toggle.syncState();
     }
 
-    private void setToolbar() {
+    private void setGui() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-    }
-
-
-
-    private void setText() {
+        btn = findViewById(R.id.button2);
         response = findViewById(R.id.textView2);
         response.setText("");
     }
@@ -253,13 +227,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @OnClick(R.id.button2)
     public void startRecord() {
         if (AppPackagesUtils.isNetworkAvailable(this)) {
-            if (speechService.isFinishedTts()) {
-
-                paused = true;
-                speechService.speak(getResources().getString(R.string.StartMessage), true);
-                //showProgressBar();
-
-            }
+            foreGroundRecognition.speak(getResources().getString(R.string.StartMessage), true);
         } else {
             Toast.makeText(this, getResources().getString(R.string.network_error), Toast.LENGTH_LONG).show();
         }
@@ -275,21 +243,18 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         exit = sharedPref.getBoolean("exit", false);
         Log.d("exit...", String.valueOf(exit));
         if (exit) {
-            stopService(speechintent);
+            stopService(SpeechIntent);
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
