@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.example.bill.Activities.R;
 
@@ -37,6 +35,7 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     private Handler startHandler;
     private Handler closeHandler;
     private SpeechHelper TalkEngine;
+    private boolean hasRecognitionAfter;
 
     private boolean isFinishedTts;
     private Handler mHandler;
@@ -51,9 +50,9 @@ public abstract class RecognitionService extends Service implements TtsProgressL
 
     @Subscribe
     public void OnSpeechMessage(Events.SpeechMessage event) {
-        boolean reocgnizeAfter = event.getRecognize_after();
+        boolean recognize_after = event.getRecognize_after();
         String message = event.getSpeechMessage();
-        speak(message, reocgnizeAfter);
+        speak(message, recognize_after);
     }
 
     @Override
@@ -86,7 +85,7 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     public void onStartTalk() {
         //on start talking assistant close recognition and enable beep
         isFinishedTts = false;
-
+        Log.e("Start Talk", "Start");
         runCloseSpeech();
 
     }
@@ -96,13 +95,15 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     public void onEndTalk() {
         //on end talking assistant start recognition
         isFinishedTts = true;
+        Log.e("End Talk", "End");
+        if (hasRecognitionAfter) {
+            startRecognition();
+        }
 
-        startRecognition();
 
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void Init() {
         Log.i(TAG, "Initialization object and messages");
         isFinishedTts = true;
@@ -112,11 +113,10 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     }
 
     //close and destroy speech recognition
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void free() {
         Log.i(TAG, "Free resources");
         if (recognition != null) {
-            recognition.CloseSpeechRecognizer();
+            recognition.CancelSpeechRecognizer();
             recognition = null;
         }
         if (TalkEngine != null)
@@ -154,6 +154,7 @@ public abstract class RecognitionService extends Service implements TtsProgressL
 
     }
 
+    //Helpers to Start-Stop Recognition
 
     public void StopSrecognition() {
         if (recognition != null)
@@ -192,6 +193,7 @@ public abstract class RecognitionService extends Service implements TtsProgressL
 
 
     public void speak(String message, boolean recognize_after) {
+        hasRecognitionAfter = recognize_after;
         StartMessage(message);
     }
 

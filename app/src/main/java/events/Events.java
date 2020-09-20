@@ -6,7 +6,7 @@ public class Events {
 
 
     public static class PartialResults {
-        private String message;
+        private final String message;
 
         public PartialResults(String message) {
             this.message = message;
@@ -21,7 +21,7 @@ public class Events {
 
     public static class ActivatedRecognition {
 
-        private boolean activated;
+        private final boolean activated;
 
         public ActivatedRecognition(boolean activated) {
             this.activated = activated;
@@ -35,7 +35,7 @@ public class Events {
 
     public static class ComputingRecognition {
 
-        private boolean isComputing;
+        private final boolean isComputing;
 
         public ComputingRecognition(boolean isComputing) {
             this.isComputing = isComputing;
@@ -47,8 +47,8 @@ public class Events {
     }
 
     public static class SpeechMessage {
-        private String message;
-        private boolean Recognize_after;
+        private final String message;
+        private final boolean Recognize_after;
 
         public SpeechMessage(String message, boolean recognize_after) {
             this.message = message;
@@ -67,8 +67,8 @@ public class Events {
 
     public static class WitREsp {
 
-        private Witobj witResponse;
-        private String sender;
+        private final Witobj witResponse;
+        private final String sender;
 
         public WitREsp(Witobj witResponse, String sender) {
             this.witResponse = witResponse;

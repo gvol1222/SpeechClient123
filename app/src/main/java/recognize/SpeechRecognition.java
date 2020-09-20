@@ -1,18 +1,12 @@
 package recognize;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -21,208 +15,90 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Locale;
 
-import applications.Constants;
 import events.Events;
 import wit_connection.WitResponse;
 
-/**
- * Created by bill on 11/1/17.
- */
-
 public class SpeechRecognition implements RecognitionListener {
-
-
-    private final String TAG = this.getClass().getSimpleName();
-    private SpeechRecognizer AssistantSpeechRecognizer;
-    private Intent SpeechIntent;
-    private Handler SpeechPartialResult;
-    private Boolean speechResultFound = false;
-
-    private long StartListeningTime, PauseAndSpeakTime;
-    private AudioManager audioManager;
-    private Context context;
-
+    private static final String TAG = "SpeechRecognizer";
+    private final SpeechRecognizer speechRecognizer;
+    private final Intent speechIntent;
+    private final Context context;
 
     public SpeechRecognition(Context context) {
         this.context = context;
-        Init();
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
+        speechRecognizer.setRecognitionListener(this);
+        speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
+        speechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
-    }
-
-    private void Init() {
-        Log.i(TAG, "Initialize parameters");
-        SpeechPartialResult = new Handler();
-        createSpeechIntent();
-        AssistantSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-    }
-
-    private void createSpeechIntent() {
-        SpeechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        SpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        SpeechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
-        SpeechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-        SpeechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
-        SpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-    }
-
-
-    public void StartSpeechRecognize() {
-
-        Log.i(TAG, "start recognize");
-
-        //take the specific time of start listening
-        StartListeningTime = System.currentTimeMillis();
-        PauseAndSpeakTime = StartListeningTime+5000;
-        speechResultFound = false;
-
-        if (SpeechIntent == null || AssistantSpeechRecognizer == null || audioManager == null) {
-            Log.i(TAG, "initializition if null");
-            Init();
-        }
-
-        AssistantSpeechRecognizer.setRecognitionListener(this);
-        // Canceling any running  speech operations, before listening
-
-        // Start Listening
-        AssistantSpeechRecognizer.startListening(SpeechIntent);
-    }
-
-    public void CancelSpeechRecognizer() {
-        if (AssistantSpeechRecognizer != null) {
-            Log.i(TAG, "cancel speech recognize");
-            AssistantSpeechRecognizer.cancel();
-        }
-
-
-    }
-
-    public void CloseSpeechRecognizer() {
-
-        if (AssistantSpeechRecognizer != null) {
-            Log.i(TAG, "destroy speech recognize");
-            AssistantSpeechRecognizer.destroy();
-        }
-        SpeechPartialResult.removeCallbacksAndMessages(null);
 
     }
 
     @Override
-    public void onReadyForSpeech(Bundle bundle) {
-        Log.i(TAG, "ready for speaking");
-
+    public void onReadyForSpeech(Bundle params) {
 
     }
 
     @Override
     public void onBeginningOfSpeech() {
-        Log.i(TAG, "beginning of speaking");
+        Log.e(TAG,"Beggining of Speech");
 
     }
 
     @Override
-    public void onRmsChanged(float v) {
-        //NA
+    public void onRmsChanged(float rmsdB) {
 
     }
 
     @Override
-    public void onBufferReceived(byte[] bytes) {
-        //NA
+    public void onBufferReceived(byte[] buffer) {
+        Log.e(TAG,"Buffer");
     }
 
     @Override
     public void onEndOfSpeech() {
-        Log.i(TAG, "end of speaking");
 
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public void onError(int i) {
-        Log.i(TAG, "error code: " + i);
-
-        Constants.app.Init();
-
-        // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
-        long duration = System.currentTimeMillis() - StartListeningTime;
-        if (i == recognize.Constants.ErrorNoMatch) {
-            Log.i(TAG, "no match and duration is : " + duration);
-            return;
-        }
-        EventBus.getDefault().postSticky(new Events.PartialResults(""));
+    public void onError(int error) {
 
     }
 
     @Override
     public void onResults(Bundle results) {
-
         Log.i(TAG, "final results: " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
-
-        if (speechResultFound) {
-            Log.i(TAG, "If results found returning");
-            return;
-        }
-
-        speechResultFound = true;
-
-        boolean valid = (
-                results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
-                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
-                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
-                        !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty()
-        );
-
-        if (valid) {
-            // Getting the speech final result
-
-            if (!results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
-                RequestQueue queue = Volley.newRequestQueue(context);
-                queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
-                Log.i(TAG, "Results");
-            }
-
-            // Closing the  speech operations
-            CloseSpeechRecognizer();
-
-            EventBus.getDefault().postSticky(new Events.PartialResults(""));
-
-        }
-
-
-    }
-
-    @Override
-    public void onPartialResults(Bundle results) {
-        if (speechResultFound) {
-            Log.i(TAG, "If partial results found returning");
-            //  MuteAudio(true);
-            return;
-        }
-        boolean valid = (
-                results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
-                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
-                        results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
-                        !results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).trim().isEmpty()
-        );
-
         final String partialResult = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
-
-        if (valid) {
-
-            Log.i(TAG, "pause time: " + PauseAndSpeakTime + " current mills: " + System.currentTimeMillis());
-            EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
-
+        if (!results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
+            RequestQueue queue = Volley.newRequestQueue(context);
+            queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
+            Log.i(TAG, "Results");
         }
+        EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
     }
 
     @Override
-    public void onEvent(int i, Bundle bundle) {
-        //NA
+    public void onPartialResults(Bundle partialResults) {
+        Log.e(TAG,"PARTIAL");
+        final String partialResult = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
+        EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
 
     }
 
+    @Override
+    public void onEvent(int eventType, Bundle params) {
 
+    }
+
+    public void StartSpeechRecognize(){
+        speechRecognizer.startListening(speechIntent);
+    }
+
+    public void CancelSpeechRecognizer(){
+        speechRecognizer.stopListening();
+    }
 }
