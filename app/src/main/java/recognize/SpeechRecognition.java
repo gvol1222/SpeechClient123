@@ -76,14 +76,12 @@ public class SpeechRecognition implements RecognitionListener {
         if (!results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(WitResponse.GetResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0)));
-            Log.i(TAG, "Results");
         }
         EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
     }
 
     @Override
     public void onPartialResults(Bundle partialResults) {
-        Log.e(TAG,"PARTIAL");
         final String partialResult = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
         EventBus.getDefault().postSticky(new Events.PartialResults(partialResult));
 
