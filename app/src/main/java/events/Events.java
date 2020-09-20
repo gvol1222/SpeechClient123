@@ -46,11 +46,11 @@ public class Events {
     }
     public static class SpeechMessage {
         private String message;
-        private boolean Recognige_after;
+        private boolean Recognize_after;
 
         public SpeechMessage(String message, boolean recognige_after) {
             this.message = message;
-            Recognige_after = recognige_after;
+            Recognize_after = recognige_after;
         }
 
 
@@ -58,8 +58,8 @@ public class Events {
             return message;
         }
 
-        public boolean getRecognige_after() {
-            return Recognige_after;
+        public boolean getRecognize_after() {
+            return Recognize_after;
         }
     }
 

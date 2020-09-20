@@ -50,7 +50,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     };
     @Subscribe
     public void OnSpeechMessage(Events.SpeechMessage event){
-        boolean reocgnizeAfter = event.getRecognige_after();
+        boolean reocgnizeAfter = event.getRecognize_after();
         String message = event.getSpeechMessage();
         speak(message,reocgnizeAfter);
     }
