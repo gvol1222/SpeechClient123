@@ -11,27 +11,24 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.bill.Activities.R;
+import com.google.android.material.navigation.NavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,6 +37,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import events.Events;
 import recogniton_service.ForeGroundRecognition;
 import utils.AppPackagesUtils;
@@ -55,7 +53,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private static final String TAG = "BtroadCast";
     SharedPreferences sharedPref;
     private TextView response;
-    private ToggleButton btnIput;
     private boolean paused;
     private Toolbar toolbar;
     private ForeGroundRecognition speechService;
@@ -63,13 +60,12 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private boolean exit, assistantBound;
 
 
-
     private ServiceConnection speechConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             ForeGroundRecognition.AssistantBinder binder = (ForeGroundRecognition.AssistantBinder) service;
             speechService = binder.getService();
-            Log.i(TAG,"adf");
+            Log.i(TAG, "adf");
             assistantBound = true;
         }
 
@@ -81,14 +77,14 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     };
 
 
-
-    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(Events.PartialResults event ) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Events.PartialResults event) {
         response.setText(event.getPartialResults());
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void isActivated(Events.ActivatedRecognition event ) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void isActivated(Events.ActivatedRecognition event) {
 
        /* if(!event.isActivated() && !speechService.isContinuous()){
             btnIput.performClick();
@@ -96,11 +92,12 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         }*/
 
     }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createNotificationChannel();
-        paused=false;
+        paused = false;
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_gui);
         sharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -108,12 +105,11 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         Log.d("exit...", String.valueOf(exit));
         if (Build.VERSION.SDK_INT < 23) Init();
 
-
         ButterKnife.bind(this);
 
 
-
     }
+
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
@@ -125,6 +121,7 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
             manager.createNotificationChannel(serviceChannel);
         }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -150,7 +147,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean result = true;
-
 
         switch (item.getItemId()) {
             case R.id.action_settings:
@@ -181,7 +177,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-
         if (!exit) {
             menu.findItem(R.id.action_settings)
                     .setIcon(R.mipmap.power_off);
@@ -209,7 +204,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
         if (id == R.id.nav_action) {
 
-
         } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_manage) {
@@ -223,13 +217,10 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
     private void Init() {
 
-        setButtons();
-
         setText();
         setToolbar();
         setDrawerLayout();
         setNavigation();
-        record();
     }
 
     //set gui functions
@@ -251,9 +242,6 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         setSupportActionBar(toolbar);
     }
 
-    private void setButtons() {
-        btnIput = findViewById(R.id.button2);
-    }
 
 
     private void setText() {
@@ -261,53 +249,22 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         response.setText("");
     }
 
-    private void record() {
 
-
-        btnIput.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-
-                startRecord(b);
-
-            }
-
-        });
-
-
-    }
-
-
-
-    private void startRecord(boolean b) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
-        //speechService.setContinuous(btn);
+    @OnClick(R.id.button2)
+    public void startRecord() {
         if (AppPackagesUtils.isNetworkAvailable(this)) {
-            Log.i(TAG,"boolean ias"+b);
-            if( speechService.isFinishedTts()) {
+            if (speechService.isFinishedTts()) {
 
-                if (b) {
-
-                    paused=true;
-                    speechService.speak(getResources().getString(R.string.StartMessage),true);
-                    //showProgressBar();
-                } else {
-
-                    //clearProgressBar();
-                    speechService.StopSrecognition();
-                    response.setText("");
-
-                }
+                paused = true;
+                speechService.speak(getResources().getString(R.string.StartMessage), true);
+                //showProgressBar();
 
             }
-        }else {
-            Toast.makeText(this,getResources().getString(R.string.network_error),Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.network_error), Toast.LENGTH_LONG).show();
         }
 
     }
-
 
 
     @Override

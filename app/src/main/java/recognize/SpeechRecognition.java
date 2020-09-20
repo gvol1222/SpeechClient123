@@ -28,11 +28,11 @@ import wit_connection.WitResponse;
  * Created by bill on 11/1/17.
  */
 
-public class SpeechRegognition implements RecognitionListener {
+public class SpeechRecognition implements RecognitionListener {
 
 
     private final String TAG = this.getClass().getSimpleName();
-    private SpeechRecognizer AssistantSpeechRegnizer;
+    private SpeechRecognizer AssistantSpeechRecognizer;
     private Intent SpeechIntent;
     private Handler SpeechPartialResult ;
     private Boolean  speechResultFound = false;
@@ -44,7 +44,7 @@ public class SpeechRegognition implements RecognitionListener {
 
     public boolean isTalking;
 
-    public SpeechRegognition(Context context) {
+    public SpeechRecognition(Context context) {
         this.context = context;
 
         Init();
@@ -55,7 +55,7 @@ public class SpeechRegognition implements RecognitionListener {
         Log.i(TAG, "Initialize parameters");
         SpeechPartialResult = new Handler();
         createSpeechIntent();
-        AssistantSpeechRegnizer = SpeechRecognizer.createSpeechRecognizer(context);
+        AssistantSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
     }
@@ -67,11 +67,7 @@ public class SpeechRegognition implements RecognitionListener {
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
         SpeechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        //SpeechIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 500);
     }
-
-
-    //function for mute and unmute audio
 
 
     public void StartSpeechRegognize() {
@@ -83,32 +79,32 @@ public class SpeechRegognition implements RecognitionListener {
         PauseAndSpeakTime = StartListeningTime;
         speechResultFound = false;
 
-        if (SpeechIntent == null || AssistantSpeechRegnizer == null || audioManager == null) {
+        if (SpeechIntent == null || AssistantSpeechRecognizer == null || audioManager == null) {
             Log.i(TAG, "initializition if null");
             Init();
         }
 
-        AssistantSpeechRegnizer.setRecognitionListener(this);
+        AssistantSpeechRecognizer.setRecognitionListener(this);
         // Canceling any running  speech operations, before listening
 
         // Start Listening
-        AssistantSpeechRegnizer.startListening(SpeechIntent);
+        AssistantSpeechRecognizer.startListening(SpeechIntent);
     }
 
     public void CancelSpeechRecognizer() {
-        if (AssistantSpeechRegnizer != null) {
+        if (AssistantSpeechRecognizer != null) {
             Log.i(TAG, "cancel speech recognize");
-            AssistantSpeechRegnizer.cancel();
+            AssistantSpeechRecognizer.cancel();
         }
 
 
     }
 
-    public void CloseSpeechRegognizer() {
+    public void CloseSpeechRecognizer() {
 
-        if (AssistantSpeechRegnizer != null) {
+        if (AssistantSpeechRecognizer != null) {
             Log.i(TAG, "destroy speech recognize");
-            AssistantSpeechRegnizer.destroy();
+            AssistantSpeechRecognizer.destroy();
         }
         SpeechPartialResult.removeCallbacksAndMessages(null);
 
@@ -151,9 +147,9 @@ public class SpeechRegognition implements RecognitionListener {
         Log.i(TAG, "error code: " + i);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Constatns.app.Init();
-        }
+
+        Constatns.app.Init();
+
 
         // If duration is less than the "error timeout" as the system didn't try listening to the user speech so ignoring
         long duration = System.currentTimeMillis() - StartListeningTime;
@@ -172,13 +168,12 @@ public class SpeechRegognition implements RecognitionListener {
 
         if (speechResultFound ) {
             Log.i(TAG, "If results found returning");
-            //  MuteAudio(true);
             return;
         }
 
         speechResultFound = true;
 
-        Boolean valid = (
+        boolean valid = (
                 results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
                         results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
                         results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&
@@ -196,7 +191,7 @@ public class SpeechRegognition implements RecognitionListener {
             }
 
                 // Closing the  speech operations
-            CloseSpeechRegognizer();
+            CloseSpeechRecognizer();
 
             EventBus.getDefault().postSticky(new Events.PartialResults(""));
 
@@ -212,7 +207,7 @@ public class SpeechRegognition implements RecognitionListener {
             //  MuteAudio(true);
             return;
         }
-        Boolean valid = (
+        boolean valid = (
                 results.containsKey(SpeechRecognizer.RESULTS_RECOGNITION) &&
                         results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) != null &&
                         results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).size() > 0 &&

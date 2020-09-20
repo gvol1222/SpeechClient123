@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import applications.Constatns;
 import events.Events;
-import recognize.SpeechRegognition;
+import recognize.SpeechRecognition;
 import tts.SpeecHelper;
 import tts.TtsProgressListener;
 
@@ -32,7 +32,7 @@ import tts.TtsProgressListener;
 public abstract class RecognitionService extends Service implements  TtsProgressListener {
 
     private final String TAG = this.getClass().getSimpleName();
-    protected SpeechRegognition recognition;
+    protected SpeechRecognition recognition;
     private Handler startHandler;
     private Handler closeHandler;
     private boolean isFirst;
@@ -116,7 +116,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
     private void free() {
         Log.i(TAG, "Free resources");
         if (recognition != null) {
-            recognition.CloseSpeechRegognizer();
+            recognition.CloseSpeechRecognizer();
             recognition = null;
         }
         if (talkengine != null)
@@ -153,7 +153,7 @@ public abstract class RecognitionService extends Service implements  TtsProgress
 
     public void setRecognition() {
         Log.i(TAG, "Recognition created");
-        recognition = new SpeechRegognition(getApplicationContext());
+        recognition = new SpeechRecognition(getApplicationContext());
 
 
     }
