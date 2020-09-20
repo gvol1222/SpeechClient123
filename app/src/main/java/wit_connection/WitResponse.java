@@ -53,7 +53,6 @@ public  class WitResponse {
             @Override
             public void onResponse(JSONObject response) {
 
-
                 Log.e("Your Array Response", response.toString());
                 Witobj witResponse = new Gson().fromJson(response.toString(), Witobj.class);
 

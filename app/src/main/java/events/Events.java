@@ -11,12 +11,14 @@ public class Events {
         public PartialResults(String message) {
             this.message = message;
         }
+
         public String getPartialResults() {
             return message;
         }
 
 
     }
+
     public static class ActivatedRecognition {
 
         private boolean activated;
@@ -39,18 +41,18 @@ public class Events {
             this.isComputing = isComputing;
         }
 
-
         public boolean isComputing() {
             return isComputing;
         }
     }
+
     public static class SpeechMessage {
         private String message;
         private boolean Recognize_after;
 
-        public SpeechMessage(String message, boolean recognige_after) {
+        public SpeechMessage(String message, boolean recognize_after) {
             this.message = message;
-            Recognize_after = recognige_after;
+            Recognize_after = recognize_after;
         }
 
 
@@ -67,8 +69,8 @@ public class Events {
 
         private Witobj witResponse;
         private String sender;
-        public WitREsp(Witobj witResponse,String sender) {
 
+        public WitREsp(Witobj witResponse, String sender) {
             this.witResponse = witResponse;
             this.sender = sender;
         }
@@ -76,6 +78,7 @@ public class Events {
         public Witobj getWitResponse() {
             return witResponse;
         }
+
         public String getSender() {
             return sender;
         }
