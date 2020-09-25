@@ -34,6 +34,7 @@ public class SpeechRecognition implements RecognitionListener {
         speechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         speechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
         speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        speechIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,5000);
 
 
     }
@@ -71,7 +72,6 @@ public class SpeechRecognition implements RecognitionListener {
 
     @Override
     public void onResults(Bundle results) {
-        Log.i(TAG, "final results: " + results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0));
         final String partialResult = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
         if (!results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0).equals("")) {
             RequestQueue queue = Volley.newRequestQueue(context);

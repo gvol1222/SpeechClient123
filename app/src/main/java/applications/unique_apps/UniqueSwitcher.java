@@ -29,7 +29,6 @@ public class UniqueSwitcher {
         if(type.equals(Constants.SET_REMINDER)){
             HashMap<String,Integer> datetime = utils.MathUtils.GetDtaeInfo((String) data.get(Constants.REM_KEY_TIME));
 
-
            if(datetime!=null){
                String query = (String) data.get(Constants.REM_APP_NAME);
 
