@@ -36,7 +36,9 @@ public class SpeechHelper implements TextToSpeech.OnInitListener {
     //function for speaking text to speech
     public void speak(String msg) {
         Log.i(TAG, "call speak");
+
         tts.speak(msg, TextToSpeech.QUEUE_FLUSH,null,"UniqueID");
+
     }
 
     public void setIsTalking(boolean isTalking){
@@ -62,6 +64,7 @@ public class SpeechHelper implements TextToSpeech.OnInitListener {
                 public void onDone(String s) {
                     Log.i(TAG, "end speaking");
                     ttsListener.onEndTalk();
+
                 }
 
                 @Override
@@ -81,5 +84,6 @@ public class SpeechHelper implements TextToSpeech.OnInitListener {
             tts.stop();
             tts.shutdown();
         }
+
     }
 }

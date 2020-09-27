@@ -3,6 +3,7 @@ package applications;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ParseException;
 import android.net.Uri;
 
 import android.os.Build;
@@ -195,7 +196,12 @@ public class Switcher {
 
             String query = app.data.get(Constants.SMS_APP_NAME);
             app.UniqueAction=true;
-            if(app.entities.getPhoneNumber()!=null || app.entities.getNumber()!=null){
+            System.out.println("contact sms"+query);
+            System.out.println(app.entities.getPhoneNumber());
+            boolean isNum =query.replaceAll("\\s+","").matches("[0-9]+") ;
+
+            System.out.println("contact sms"+isNum);
+            if(  isNum ){
                 Log.i(TAG,"SEND SMS: found number ");
                 app.Stage = Constants.VR_STAGE;
                 //app.UniqueAction=true;

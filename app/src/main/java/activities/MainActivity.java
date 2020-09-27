@@ -11,21 +11,26 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.example.bill.Activities.R;
 import com.google.android.material.navigation.NavigationView;
 
@@ -35,8 +40,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import activities.permission.PermissionActivity;
 import activities.settings.SettingsActivity;
+import applications.Message;
+import applications.MessageAdapter;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import events.Events;
 import recogniton_service.ForeGroundRecognition;
 import utils.AppPackagesUtils;
@@ -51,13 +57,17 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     // private ResponseReceiver receiver;
     private static final String TAG = "BtroadCast";
     SharedPreferences sharedPref;
-    private TextView response;
+
     private Toolbar toolbar;
     private Button btn;
     private ForeGroundRecognition foreGroundRecognition;
     private Intent SpeechIntent;
     private boolean exit;
-
+    LottieAnimationView toggle;
+    boolean flag = false;
+    private boolean isClicked;
+    private MessageAdapter messageAdapter;
+    private ListView messagesView;
 
     private ServiceConnection speechConnection = new ServiceConnection() {
         @Override
@@ -74,10 +84,55 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
 
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(Events.PartialResults event) {
-        response.setText(event.getPartialResults());
-    }
+    public void onMessageEvent(Events.Results event) {
+        System.out.print(event.getResults());
+        Message msg = new Message(event.getResults(),true);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
+                Log.i("main  res",event.getResults());
+                messageAdapter.add(msg);
+                messagesView.setSelection(messagesView.getCount() - 1);
+
+
+            }
+        });
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void SpeechMessageShow(Events.SpeechMessageShow message) {
+
+        Message msg = new Message(message.getSpeechMessage(),false);
+
+        messageAdapter.add(msg);
+        messagesView.setSelection(messagesView.getCount() - 1);
+
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Events.PartialResults event) {
+
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void isActivated(Events.ActivatedRecognition event )
+    {
+        if(event.isActivated()) {
+
+
+            toggle.setAnimation("pause.json");
+            toggle.setRepeatCount(LottieDrawable.INFINITE);
+            toggle.playAnimation();
+
+        }
+        else
+        {
+            toggle.cancelAnimation();
+            toggle.setAnimation("play_button.json");
+            toggle.clearAnimation();
+
+
+        }
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +144,37 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
         Log.d("exit...", String.valueOf(exit));
         Init();
         ButterKnife.bind(this);
+        messageAdapter = new MessageAdapter(this);
+        messagesView = (ListView) findViewById(R.id.messages_view);
+        messagesView.setAdapter(messageAdapter);
+        isClicked = true;
+        toggle = findViewById(R.id.lav_toggle);
+
+        toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                if (flag == false) {
+                    flag = true;
+                    startRecord(flag);
+
+                    //---- Your code here------
+                } else {
+                    toggle.cancelAnimation();
+                    toggle.clearAnimation();
+                    toggle.setAnimation("play_button.json");
+
+                    flag = false;
+                    startRecord(flag);
+
+                    //---- Your code here------
+                }
+
+
+            }
+        });
+
     }
 
     private void createNotificationChannel() {
@@ -218,18 +304,36 @@ public class MainActivity extends PermissionActivity implements NavigationView.O
     private void setGui() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        btn = findViewById(R.id.button2);
-        response = findViewById(R.id.textView2);
-        response.setText("");
+      //  btn = findViewById(R.id.button2);
+
     }
 
 
-    @OnClick(R.id.button2)
-    public void startRecord() {
+    private void startRecord(boolean b) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean btn = sharedPref.getBoolean(getResources().getString(R.string.switch_continuous), false);
+        //speechService.setContinuous(btn);
+
         if (AppPackagesUtils.isNetworkAvailable(this)) {
-            foreGroundRecognition.speak(getResources().getString(R.string.StartMessage), true);
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.network_error), Toast.LENGTH_LONG).show();
+            Log.i(TAG,"boolean ias"+b);
+
+
+            if (b) {
+
+
+                foreGroundRecognition.speak(getResources().getString(R.string.StartMessage));
+
+            } else {
+
+
+                foreGroundRecognition.StopSrecognition();
+
+
+            }
+
+
+        }else {
+            Toast.makeText(this,getResources().getString(R.string.network_error),Toast.LENGTH_LONG).show();
         }
 
     }

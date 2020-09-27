@@ -88,22 +88,22 @@ public class Maestro extends Service {
             Log.d(TAG, "App stage is"+resp.getIntents().size()+" ");
             //IF response = null
             //Retry to catch user command - ends after RETRY_LIMIT
-            if((resp.getIntents()== null || resp.getIntents().size() ==0) && app.Stage.equals(Constants.IN_STAGE)){
-                speak("Παρακαλώ επαναλάβετε",true);
+            /* if((resp.getIntents()== null || resp.getIntents().size() ==0) && app.Stage.equals(Constants.IN_STAGE)){
+               // speak("Παρακαλώ επαναλάβετε");
                 app.Stage = Constants.NO_SPEACH_STAGE;
                 Log.d(TAG, "no speech "+RETRY_FLAG);
-            if (RETRY_FLAG < RETRY_LIMIT){
+           if (RETRY_FLAG < RETRY_LIMIT){
                 app.Stage= Constants.IN_STAGE;
-                speak("Παρακαλώ επαναλάβετε",true);
+                speak("Παρακαλώ επαναλάβετε");
                 RETRY_FLAG = RETRY_FLAG + 1;
             }
             else {
                 RETRY_FLAG = 0;
-                speak("Παρακαλώ προσπαθήστε ξανά",false);
+                speak("Παρακαλώ προσπαθήστε ξανά");
             }
                 Log.d(TAG, "no speech "+RETRY_FLAG);
 
-            }/**/
+            }*/
 
             if(resp.getEntities()!=null){
                 app.entities = resp.getEntities();
@@ -171,15 +171,18 @@ public class Maestro extends Service {
 
                     for (String key : app.data.keySet()) {
                         Log.i(TAG,"multistage data in comm loop = "+app.data.keySet());
-
+                        Log.i(TAG,"multistage data in comm loop asda = "+app.data.get(key));
                         if (app.data.get(key) == null) {
                             Log.i(TAG," key "+key);
-                            speak(app.data_requests.get(key), true);
+                            speak(app.data_requests.get(key));
                             app.Current_Key = key;
                             app.waiting_data = true;
                             break;
                         }
+
+
                     }
+                    System.out.println(app.data);
                 }else {
                     app.Stage = Constants.TR_STAGE;
 
@@ -199,7 +202,7 @@ public class Maestro extends Service {
 
             if (app.Stage.equals(Constants.VR_STAGE)){
 
-                speak(app.VERIFY_MESSAGE,true);
+                speak(app.VERIFY_MESSAGE);
                 app.Stage = Constants.AFTER_VR_STAGE;
                 Log.i(TAG,"entered in vr stage= ");
             }
@@ -212,7 +215,7 @@ public class Maestro extends Service {
                 else if(resp.getText().contains("όχι") ) {
                      app.Stage = Constants.CP_STAGE;
                     EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
-                    speak("όπως επιθυμείτε", false);
+                    speak("όπως επιθυμείτε");
                 }
                 Log.i(TAG,"entered in after vr stage= ");
             }
@@ -227,19 +230,22 @@ public class Maestro extends Service {
 
             if (app.Stage.equals(Constants.NF_STAGE)){
                 EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
-                speak(app.NOT_FOUND,false);
+                speak(app.NOT_FOUND);
                 Constants.app.Init();
                 Log.i(TAG,"entered in not found stage");
                 app.Stage = Constants.CP_STAGE;
 
+
             }
-            /**/ if (app.Stage.equals(Constants.CP_STAGE)){
+
+        if (app.Stage.equals(Constants.CP_STAGE)){
             Log.i(TAG,"completed"+app.LAUNCHED);
 
             if(!app.LAUNCHED.equals(""))
 
-                speak(app.LAUNCHED,false);
+                speak(app.LAUNCHED);
                 Constants.app.Init();
+            EventBus.getDefault().postSticky(new Events.ActivatedRecognition(false));
             Log.i(TAG,"entered in completed stage");
         }
 
@@ -250,11 +256,11 @@ public class Maestro extends Service {
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void speak(String msg, boolean recognizeAfter){
-        Log.i(TAG,"entered in speak method"+msg+" "+recognizeAfter);
+    private void speak(String msg){
+        Log.i(TAG,"entered in speak method"+msg+" ");
 
         if(!msg.equals(""))
-            EventBus.getDefault().post(new Events.SpeechMessage(msg,recognizeAfter));
+            EventBus.getDefault().post(new Events.SpeechMessage(msg));
 
     }
 }

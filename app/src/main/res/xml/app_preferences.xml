@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Επιλογές Φωνής">
+    <PreferenceCategory
+        android:title="Επιλογές Φωνής">
 
         <SwitchPreference
             android:defaultValue="false"
+
             android:key="@string/switch_continuous"
             android:title="@string/continuous_setting" />
 

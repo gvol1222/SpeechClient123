@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.example.bill.Activities.R;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import applications.Constants;
@@ -35,24 +36,22 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     private Handler startHandler;
     private Handler closeHandler;
     private SpeechHelper TalkEngine;
-    private boolean hasRecognitionAfter;
 
-    private boolean isFinishedTts;
     private Handler mHandler;
 
     //broadcast for actions on clicking notification
     private final BroadcastReceiver NotAction = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            speak(getResources().getString(R.string.StartMessage), true);
+            speak(getResources().getString(R.string.StartMessage));
         }
     };
 
     @Subscribe
     public void OnSpeechMessage(Events.SpeechMessage event) {
-        boolean recognize_after = event.getRecognize_after();
+
         String message = event.getSpeechMessage();
-        speak(message, recognize_after);
+        speak(message);
     }
 
     @Override
@@ -84,7 +83,7 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     @Override
     public void onStartTalk() {
         //on start talking assistant close recognition and enable beep
-        isFinishedTts = false;
+        EventBus.getDefault().postSticky(new Events.ActivatedRecognition (false));
         Log.e("Start Talk", "Start");
         runCloseSpeech();
 
@@ -94,19 +93,16 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     @Override
     public void onEndTalk() {
         //on end talking assistant start recognition
-        isFinishedTts = true;
         Log.e("End Talk", "End");
-        if (hasRecognitionAfter) {
-            startRecognition();
-        }
-
+        EventBus.getDefault().postSticky(new Events.ActivatedRecognition (true));
+        startRecognition();
 
     }
 
 
     private void Init() {
         Log.i(TAG, "Initialization object and messages");
-        isFinishedTts = true;
+
         TalkEngine = new SpeechHelper(getApplicationContext(), this);
         registerReceiver(NotAction, new IntentFilter(Constants.NOTIFICATION_ACTION));
         setRecognition();
@@ -129,15 +125,11 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     public void StartMessage(final String msg) {
         ToastMessage(msg);
         TalkEngine.speak(msg);
+        EventBus.getDefault().postSticky(new Events.SpeechMessageShow (msg));
     }
 
     public void ToastMessage(final String msg) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(RecognitionService.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
+        mHandler.post(() -> Toast.makeText(RecognitionService.this, msg, Toast.LENGTH_SHORT).show());
     }
 
     //initiate handler for running on main thread
@@ -171,29 +163,20 @@ public abstract class RecognitionService extends Service implements TtsProgressL
     }
 
     public void runCloseSpeech() {
-        closeHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                StopSrecognition();
-                Log.i(TAG, "recognition closed");
-            }
+        closeHandler.post(() -> {
+            StopSrecognition();
+            Log.i(TAG, "recognition closed");
         });
     }
 
     public void startRecognition() {
 
-        startHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                StartRecognition();
-
-            }
-        });
+        startHandler.post(() -> StartRecognition());
     }
 
 
-    public void speak(String message, boolean recognize_after) {
-        hasRecognitionAfter = recognize_after;
+    public void speak(String message) {
+
         StartMessage(message);
     }
 

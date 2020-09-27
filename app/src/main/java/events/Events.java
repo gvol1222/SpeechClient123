@@ -18,6 +18,18 @@ public class Events {
 
 
     }
+    public static class Results {
+        private String message;
+
+        public Results(String message) {
+            this.message = message;
+        }
+        public String getResults() {
+            return message;
+        }
+
+
+    }
 
     public static class ActivatedRecognition {
 
@@ -48,23 +60,32 @@ public class Events {
 
     public static class SpeechMessage {
         private final String message;
-        private final boolean Recognize_after;
 
-        public SpeechMessage(String message, boolean recognize_after) {
+
+        public SpeechMessage(String message) {
             this.message = message;
-            Recognize_after = recognize_after;
-        }
 
+        }
 
         public String getSpeechMessage() {
             return message;
         }
 
-        public boolean getRecognize_after() {
-            return Recognize_after;
-        }
     }
+    public static class SpeechMessageShow {
+        private final String message;
 
+
+        public SpeechMessageShow(String message) {
+            this.message = message;
+
+        }
+
+        public String getSpeechMessage() {
+            return message;
+        }
+
+    }
     public static class WitREsp {
 
         private final Witobj witResponse;
